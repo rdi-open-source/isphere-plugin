@@ -59,9 +59,16 @@ Project Locations:
 Cloning Repositories:
 ---------------------
 
+RDi 9.8:
+
    git clone git@github.com:rdi-open-source/isphere.git    --config core.sshCommand="ssh -i c:/Users/thomas/.ssh/id_ecdsa_rdi_github"
    git clone git@github.com:rdi-open-source/rapid-fire.git --config core.sshCommand="ssh -i c:/Users/thomas/.ssh/id_ecdsa_rdi_github"
    git clone git@github.com:tools-400/irpgunit.git         --config core.sshCommand="ssh -i c:/Users/thomas/.ssh/id_ecdsa_rdi_github"
+
+RDi 9.5:
+
+   git clone https://oauth2:<github_acess_token>@github.com/rdi-open-source/isphere.git
+   git clone https://oauth2:<github_acess_token>@github.com/rdi-open-source/rapid-fire.git
 
 Required Plug-ins:
 ------------------
