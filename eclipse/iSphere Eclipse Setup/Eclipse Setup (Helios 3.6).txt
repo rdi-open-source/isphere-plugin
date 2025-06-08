@@ -70,6 +70,9 @@ RDi 9.5:
    git clone https://oauth2:<github_acess_token>@github.com/rdi-open-source/isphere.git
    git clone https://oauth2:<github_acess_token>@github.com/rdi-open-source/rapid-fire.git
 
+Access token scopes (classic): repo
+
+
 Required Plug-ins:
 ------------------
 
