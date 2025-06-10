@@ -1,6 +1,6 @@
 # iSphere
 
-Unit Testing for RPG Developers on IBM i.
+Plug-in for IBM's Rational Developer for i 9.5.1.3+.
 
 ## Description
 
