@@ -1,0 +1,56 @@
+iSphere Development Workspace
+=============================
+
+1) Install RDi 9.8 and the license plug-in.
+
+2) Clone the iSphere project:
+
+   git clone git@github.com:rdi-open-source/isphere-plugin.git
+   
+   or
+   
+   git clone https://github.com/rdi-open-source/isphere-plugin.git
+   
+   or
+   
+   download zip and extract folder "isphere-plugin-main" it into your RDi workspace
+
+3) Import all projets of folder "isphere-plugin" (git clone) or "isphere-plugin-main" (zip file) into RDi:
+
+   File - Import - General - Existing Projects into Workspace
+
+4) Open perspective "Plug-in Development".
+
+   You should find 61 items. Some of them will have errors.
+   Optionally delete the "iSphere JUnit (RDi)" project.
+
+5) Select "Window - Preferences - Java - Installed JREs".
+
+   Rename the existing JVM to "JRE 1.8.0 IBM J9".
+
+   That should fix the build errors.
+
+6) Open file "plugin.xml" of project "iSphere Core Plugin".
+
+   Click option "Launch an Eclipse application in Debug mode"
+   Select one of the two launch configurations:
+     iSphere (de)
+     iSphere (en)
+
+7) Ignore the validation problems dialog:
+
+   com.ibm.commoncomponents.ccaas.core
+   org.eclipse.equinox.http.jetty
+   org.eclipse.jetty.jndi
+   org.eclipse.jetty.xml
+
+   or cancel the operation and fix the problems like this:
+   
+   a) Open "Run - Debug Configuration"
+   b) Select the configuration you want to launch, e.g. "Eclipse Application - iSphere (en)"
+   c) Select the "Plug-ins" tab
+   d) Click "Validate Plug-ins". You should see the same plug-ins as in the error dialog.
+   e) Click "Add Required Plug-ins"
+   f) Click "Validate Plug-ins". The problems should have been fixed.
+
+8) Launch an Eclipse Debug application as described in step 6).
