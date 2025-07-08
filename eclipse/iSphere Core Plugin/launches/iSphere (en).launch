@@ -23,7 +23,7 @@
         <listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
     </listAttribute>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_ATTR_USE_ARGFILE" value="false"/>
-    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/CDC-1.0%Foundation-1.0"/>
+    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl en -consoleLog"/>
     <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
     <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true"/>
@@ -63,7 +63,7 @@
         <setEntry value="com.ibm.debug.pdt.animatedstep.nl1@default:false"/>
         <setEntry value="com.ibm.debug.pdt.animatedstep@default:default"/>
         <setEntry value="com.ibm.debug.pdt.branding@default:default"/>
-        <setEntry value="com.ibm.debug.pdt.codecoverage.core.nl1@default:false"/>
+        <setEntry value="com.ibm.debug.pdt.codecoverage.core.nl1*7.1.5.202504211539@default:false"/>
         <setEntry value="com.ibm.debug.pdt.codecoverage.core.results@default:default"/>
         <setEntry value="com.ibm.debug.pdt.codecoverage.core@default:default"/>
         <setEntry value="com.ibm.debug.pdt.codecoverage.i.doc.nl1@default:false"/>
@@ -87,6 +87,7 @@
         <setEntry value="com.ibm.debug.pdt.editors.rdp.nl1@default:false"/>
         <setEntry value="com.ibm.debug.pdt.editors.rdp@default:default"/>
         <setEntry value="com.ibm.debug.pdt.engines.rdp.iseries@default:false"/>
+        <setEntry value="com.ibm.debug.pdt.genpassword@default:default"/>
         <setEntry value="com.ibm.debug.pdt.persistence.nl1@default:false"/>
         <setEntry value="com.ibm.debug.pdt.persistence@default:default"/>
         <setEntry value="com.ibm.debug.pdt.rsecommon.nl1@default:false"/>
@@ -309,10 +310,8 @@
         <setEntry value="org.apache.lucene.analyzers-common@default:default"/>
         <setEntry value="org.apache.lucene.analyzers-smartcn@default:default"/>
         <setEntry value="org.apache.lucene.core@default:default"/>
-        <setEntry value="org.apache.sshd.osgi*2.8.0.v20211227-1750@default:default"/>
-        <setEntry value="org.apache.sshd.osgi*2.9.2.v20221117-1942@default:default"/>
-        <setEntry value="org.apache.sshd.sftp*2.8.0.v20211227-1750@default:default"/>
-        <setEntry value="org.apache.sshd.sftp*2.9.2.v20221117-1942@default:default"/>
+        <setEntry value="org.apache.sshd.osgi@default:default"/>
+        <setEntry value="org.apache.sshd.sftp@default:default"/>
         <setEntry value="org.apache.xerces@default:default"/>
         <setEntry value="org.apache.xml.resolver@default:default"/>
         <setEntry value="org.apache.xml.serializer@default:default"/>
@@ -607,14 +606,14 @@
         <setEntry value="org.eclipse.jdt.ui.nl1@default:false"/>
         <setEntry value="org.eclipse.jdt.ui@default:default"/>
         <setEntry value="org.eclipse.jdt@default:default"/>
-        <setEntry value="org.eclipse.jetty.http*10.0.20@default:default"/>
-        <setEntry value="org.eclipse.jetty.io*10.0.20@default:default"/>
+        <setEntry value="org.eclipse.jetty.http*10.0.24@default:default"/>
+        <setEntry value="org.eclipse.jetty.io*10.0.24@default:default"/>
         <setEntry value="org.eclipse.jetty.jndi@default:default"/>
         <setEntry value="org.eclipse.jetty.plus@default:default"/>
-        <setEntry value="org.eclipse.jetty.security*10.0.20@default:default"/>
-        <setEntry value="org.eclipse.jetty.server*10.0.20@default:default"/>
-        <setEntry value="org.eclipse.jetty.servlet*10.0.20@default:default"/>
-        <setEntry value="org.eclipse.jetty.util*10.0.20@default:default"/>
+        <setEntry value="org.eclipse.jetty.security*10.0.24@default:default"/>
+        <setEntry value="org.eclipse.jetty.server*10.0.24@default:default"/>
+        <setEntry value="org.eclipse.jetty.servlet*10.0.24@default:default"/>
+        <setEntry value="org.eclipse.jetty.util*10.0.24@default:default"/>
         <setEntry value="org.eclipse.jetty.webapp@default:default"/>
         <setEntry value="org.eclipse.jetty.xml@default:default"/>
         <setEntry value="org.eclipse.jface.databinding@default:default"/>
