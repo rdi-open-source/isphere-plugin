@@ -42,3 +42,7 @@ Please refer to the [iSphere Version History](<https://rdi-open-source.github.io
 Thank you to all the people that helped translating iSphere.
 
 Please find the list of contributors on the [iSphere Web Site](https://rdi-open-source.github.io/isphere/).
+
+## See Also
+
+* [iSphere Update Site](https://github.com/rdi-open-source/isphere)
