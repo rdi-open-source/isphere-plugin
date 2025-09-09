@@ -94,6 +94,7 @@ public final class Configuration {
 
     public File getWorkspace() throws JobCanceledException {
         if (workspace == null) {
+            LogUtil.print("Searching for the workspace folder...");
             File dummyResourceFile = new File(getResourcePath(DUMMY_RESOURCE));
             File directory = dummyResourceFile.getParentFile();
             while (directory != null && !isWorkspace(directory)) {
@@ -105,11 +106,12 @@ public final class Configuration {
                 throw new JobCanceledException("Help Builder Error: Could not find workspace directory.");
             }
         }
-        LogUtil.debug("Using workspace: " + workspace);
+        LogUtil.print("Using workspace: " + workspace);
         return workspace;
     }
 
     private boolean isWorkspace(File directory) {
+        LogUtil.print("Testing workspace directory: " + directory);
         File metadataDirectory = new File(directory, ".metadata");
         if (metadataDirectory.exists() && metadataDirectory.isDirectory()) {
             return true;
