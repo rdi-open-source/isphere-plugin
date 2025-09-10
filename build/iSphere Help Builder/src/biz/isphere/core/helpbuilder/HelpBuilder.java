@@ -50,16 +50,33 @@ public class HelpBuilder {
             Configuration.getInstance().setConfigurationFile(args[0], args[1]);
         }
 
-        File baseDir = Configuration.getInstance().getWorkspace();
         Project[] projects = Configuration.getInstance().getProjects();
 
         Toc[] tocs = loadTocs(projects);
-        resolveLinks(baseDir, tocs);
+        resolveLinks(tocs);
+
+        String outputFile = Configuration.getInstance().getOutputFile();
+        ensureEmptyDirectory(new File(outputFile).getParentFile());
+
+        String outputDirectory = Configuration.getInstance().getOutputDirectory();
+        ensureEmptyDirectory(new File(outputDirectory));
 
         String html = generateHtml(tocs, "treemenu");
-        writeTocToFile(Configuration.getInstance().getOutputFile(), html);
+        writeTocToFile(outputFile, html);
 
-        copyHelpPages(projects, Configuration.getInstance().getOutputDirectory());
+        copyHelpPages(projects, outputDirectory);
+    }
+
+    private void ensureEmptyDirectory(File directory) {
+        if (!directory.exists()) {
+            directory.mkdirs();
+        } else {
+            try {
+                FileUtils.cleanDirectory(directory);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private void copyHelpPages(Project[] projects, String outputDirectory) throws JobCanceledException {
@@ -181,13 +198,13 @@ public class HelpBuilder {
         return space.toString();
     }
 
-    private void resolveLinks(File baseDir, Toc[] tocs) throws JobCanceledException {
+    private void resolveLinks(Toc[] tocs) throws JobCanceledException {
 
         try {
 
             for (Toc toc : tocs) {
                 if (toc.getLinkTo() != null) {
-                    Topic topic = findReferencedTopic(baseDir, toc, tocs);
+                    Topic topic = findReferencedTopic(toc, tocs);
                     if (topic != null) {
                         topic.addTopics(toc.getTopics());
                     }
@@ -199,7 +216,7 @@ public class HelpBuilder {
         }
     }
 
-    private Topic findReferencedTopic(File baseDir, Toc toc, Toc[] tocs) throws IOException {
+    private Topic findReferencedTopic(Toc toc, Toc[] tocs) throws IOException {
 
         LogUtil.debug("Resolving references of toc: " + toc.getPluginTocPath());
 
