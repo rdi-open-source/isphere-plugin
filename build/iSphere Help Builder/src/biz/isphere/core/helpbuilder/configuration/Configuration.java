@@ -105,6 +105,7 @@ public final class Configuration {
             } else {
                 throw new JobCanceledException("Help Builder Error: Could not find workspace directory.");
             }
+            LogUtil.print("Identified as workspace root directory: " + workspace);
         }
         LogUtil.print("Using workspace: " + workspace);
         return workspace;
