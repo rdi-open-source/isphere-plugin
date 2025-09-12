@@ -74,20 +74,23 @@ public class Project {
         });
 
         if (tocFiles == null || tocFiles.length == 0) {
-            throw new JobCanceledException("Table of content file not found.");
+            throw new JobCanceledException("Table of content file(s) not found in directory: " + path);
         }
+
+        String tocFilePath = null;
 
         try {
 
             for (int i = 0; i < tocFiles.length; i++) {
-                tocFiles[i] = FileUtil.resolvePath(tocDir.getPath(), tocFiles[i]);
+                tocFilePath = new File(tocDir.getPath(), tocFiles[i]).getPath();
+                tocFiles[i] = FileUtil.resolvePath(tocFilePath);
                 LogUtil.debug("Added table of content file: " + tocFiles[i]);
             }
 
             return tocFiles;
 
         } catch (IOException e) {
-            throw new JobCanceledException("Table of content file not found.", e);
+            throw new JobCanceledException("Could not resolve path of table of content file: " + tocFilePath, e);
         }
     }
 
