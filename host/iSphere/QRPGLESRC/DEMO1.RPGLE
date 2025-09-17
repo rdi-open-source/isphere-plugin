@@ -81,11 +81,11 @@
        searchArguments(1).regex = SRCHOPTS_ARG_STRING;
 
        FNDSTR_search(
-        GIHDL :         // --> Handle
-        *ON :           // --> Show all records
-        *ON :           // --> Match all search arguments
-        1 :             // --> Number of search arguments
-        searchArguments // --> search arguments
+        GIHDL :               // --> Handle
+        *ON :                 // --> Show all records
+        SRCHOPTS_MATCH_ALL :  // --> Match all search arguments
+        1 :                   // --> Number of search arguments
+        searchArguments       // --> search arguments
        );
 
        // The search results reside in file FNDSTRO. They have to be read and processed
