@@ -3,6 +3,8 @@ Changelog: iSphere 6.1.1.r
 --------------------------
  • Pass correct match option value to message file search.
  • Fix setting message file 'Options' values.
+ • Fix enablement of 'start' and 'end' column buttons of message
+   file search page.
 
 Changelog: iSphere 6.1.0.r
 --------------------------
