@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Team
+ * Copyright (c) 2012-2025 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -742,8 +742,8 @@ public abstract class AbstractSearchPage extends XDialogPage implements ISearchP
 
         allColumnsButton.setEnabled(config.isColumnRangeEnabled());
         betweenColumnsButton.setEnabled(config.isColumnRangeEnabled());
-        startColumnText.setEnabled(config.isColumnRangeEnabled());
-        endColumnText.setEnabled(config.isColumnRangeEnabled());
+        startColumnText.setEnabled(config.isColumnRangeEnabled() && betweenColumnsButton.getSelection());
+        endColumnText.setEnabled(config.isColumnRangeEnabled() && betweenColumnsButton.getSelection());
     }
 
     /**
