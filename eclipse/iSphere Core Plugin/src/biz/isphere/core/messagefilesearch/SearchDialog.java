@@ -196,9 +196,14 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
 
     @Override
     protected void setElementsSearchOptions(SearchOptions _searchOptions) {
-        _searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_FIRST_LEVEL_TEXT, isIncludeFirstLevelText());
-        _searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_SECOND_LEVEL_TEXT, isIncludeSecondLevelText());
-        _searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_MESSAGE_ID, isIncludeMessageId());
+
+        boolean isFirstLevelText = isIncludeFirstLevelText() && includeFirstLevelTextButton.isEnabled();
+        boolean isSecondLevelText = isIncludeSecondLevelText() && includeSecondLevelTextButton.isEnabled();
+        boolean isIncludeMessageId = isIncludeMessageId() && includeMessageIdButton.isEnabled();
+
+        _searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_FIRST_LEVEL_TEXT, isFirstLevelText);
+        _searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_SECOND_LEVEL_TEXT, isSecondLevelText);
+        _searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_MESSAGE_ID, isIncludeMessageId);
     };
 
     protected void setSearchOptionsEnablement(Event anEvent) {

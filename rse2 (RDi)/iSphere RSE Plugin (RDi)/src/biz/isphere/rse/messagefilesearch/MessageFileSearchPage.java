@@ -335,9 +335,12 @@ public class MessageFileSearchPage extends AbstractSearchPage {
                 }
             }
 
-            searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_FIRST_LEVEL_TEXT, new Boolean(isIncludeFirstLevelText()));
-            searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_SECOND_LEVEL_TEXT, new Boolean(isIncludeSecondLevelText()));
-            searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_MESSAGE_ID, new Boolean(isIncludeMessageId()));
+            searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_FIRST_LEVEL_TEXT,
+                new Boolean(isIncludeFirstLevelText() && includeFirstLevelTextButton.isEnabled()));
+            searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_SECOND_LEVEL_TEXT,
+                new Boolean(isIncludeSecondLevelText() && includeSecondLevelTextButton.isEnabled()));
+            searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_MESSAGE_ID,
+                new Boolean(isIncludeMessageId() && includeFirstLevelTextButton.isEnabled()));
 
             Connection jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(tQualifiedConnectionName);
 
