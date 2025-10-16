@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 6.1.0.r
+Bundle-Version: 6.1.1.r
 X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: Add option 'Batch resolve enabled' for stream file search.
-X-Beta-Version: 6.1.0.b001
+X-Bundle-Info: Fixed problems of iSphere Message File Search.
+X-Beta-Version: 6.1.1.r
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Add option 'Batch resolve enabled' for stream file search.
+X-Beta-Info: Fixed problems of iSphere Message File Search.
