@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2025 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,15 @@
 
 package biz.isphere.core.messagefilesearch;
 
-import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.search.GenericSearchOption;
-import biz.isphere.core.search.SearchArgument;
-import biz.isphere.core.search.SearchOptions;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.data.PcmlException;
 import com.ibm.as400.data.ProgramCallDocument;
+
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.search.GenericSearchOption;
+import biz.isphere.core.search.SearchArgument;
+import biz.isphere.core.search.SearchOptions;
 
 public class XFNDSTR_search {
 
@@ -30,8 +30,8 @@ public class XFNDSTR_search {
             // Trace.setTraceOn(true); // Turn on tracing function.
             // Trace.setTracePCMLOn(true); // Turn on PCML tracing.
 
-            ProgramCallDocument pcml = new ProgramCallDocument(_as400, "biz.isphere.core.messagefilesearch.XFNDSTR_search", this.getClass()
-                .getClassLoader());
+            ProgramCallDocument pcml = new ProgramCallDocument(_as400, "biz.isphere.core.messagefilesearch.XFNDSTR_search",
+                this.getClass().getClassLoader());
 
             pcml.setIntValue("XFNDSTR_search.handle", _handle);
 
@@ -55,14 +55,7 @@ public class XFNDSTR_search {
                 pcml.setValue("XFNDSTR_search.showRecords", "0");
             }
 
-            // if
-            // (SearchOptions.MATCH_ALL.equals(_searchOptions.getMatchOption()))
-            // {
-            // pcml.setValue("XFNDSTR_search.matchAll", "1");
-            // } else {
-            // pcml.setValue("XFNDSTR_search.matchAll", "0");
-            // }
-            pcml.setValue("XFNDSTR_search.matchOption", _searchOptions.getMatchOption());
+            pcml.setValue("XFNDSTR_search.matchOption", _searchOptions.getMatchOption().getId());
 
             if (_searchOptions.isGenericOption(GenericSearchOption.Key.MSGF_INCLUDE_FIRST_LEVEL_TEXT)) {
                 pcml.setValue("XFNDSTR_search.firstLvlText", "1");
