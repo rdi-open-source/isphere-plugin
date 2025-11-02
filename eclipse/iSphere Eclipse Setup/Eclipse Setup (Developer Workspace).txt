@@ -5,14 +5,16 @@ Setup Eclipse (Helios) for iSphere
 Prerequisites:
 --------------
 
-Installed IBM Rational Developer for Power Systems Software (RDP 9.5.1.3), which
+Installed IBM Rational Developer for Power Systems Software (RDP 9.6.0.13), which
 is the development IDE for iSphere.
 
 eGit:
 
 Install the following plugins depending on the version of RDi:
 
+--- START-OBSOLETE ---
    9.5.1.3   org.eclipse.egit.repository-4.2.0.201601211800-r.zip
+---  END-OBSOLETE  ---
    9.6.x     org.eclipse.egit.repository-4.6.1.201703071140-r.zip
    9.8.x     org.eclipse.egit.repository-6.5.0.202303070854-r.zip
 
@@ -20,9 +22,11 @@ GitHub requires a "ed25519" private/public SSH key. Create it like this:
 
    ssh-keygen -t ed25519 -C "your_email@example.com"
 
+--- START-OBSOLETE ---
 For RDi 9.5.1.3 add the following line to "eclipse.ini":
 
    -Dhttps.protocols=TLSv1.2
+---  END-OBSOLETE  ---
 
 Set SSH preferences in RDi:
 
@@ -31,7 +35,7 @@ Set SSH preferences in RDi:
    SSH2 home:     C:\Users\traddatz\.ssh
    Private keys:  id_dsa,id_rsa,id_ecdsa_rdi_github
 
-<OBSOLETE>
+--- START-OBSOLETE ---
 For RDi 9.5 it is recommended to install the Subclipse SVNKit and SVN plug-in
 from:
 
@@ -45,7 +49,7 @@ For RDi 9.6 it is recommended to install the SVN plug-in
 from:
 
    Eclipse Marketplace
-<OBSOLETE>
+---  END-OBSOLETE  ---
 		
 Project Locations:
 ------------------
@@ -91,9 +95,9 @@ project from:
 Ant Home:
 ---------
 
-For RDi 9.5.1.3+ use Ant of RDI 9.5.1.3:
+For RDi 9.6.0.13+ use Ant of RDI 9.6.0.13:
 
-   c:/Program Files (x86)/IBM/SDP_Shared/plugins/org.apache.ant_1.9.2.v20140417-1502/
+   c:/Program Files (x86)/IBM/SDP_Shared/plugins/org.apache.ant_1.9.6.v20151016-1327/
 
 Set Ant home to the appropriate version (see above):
 
@@ -104,7 +108,7 @@ Add classpath variable ANT_HOME to the appropriate version (see above):
 
    Preferences - Java - Build path - Classpath variables
 
-   ANT_HOME:   c:/Program Files (x86)/IBM/SDP_Shared/plugins/org.apache.ant_1.9.2.v20140417-1502/
+   ANT_HOME:   c:/Program Files (x86)/IBM/SDP_Shared/plugins/org.apache.ant_1.9.6.v20151016-1327/
 
 
 Optional Plug-ins:
@@ -125,8 +129,8 @@ Eclipse Settings:
 
 a) Preferences -> Java -> Installed JREs (
 
-   RDi 9.5.1.3+:
-   -------------
+   RDi 9.6.0.13+:
+   --------------
 
    JRE home:   C:\Programme_x86\IBM\SDP_095\jdk   (example path)
    JRE name:   JRE 1.8.0 IBM J9                   (must be spelled as shown)

@@ -59,7 +59,6 @@
     <topic label="Preferences" href="html/synchronizememberseditor/preferences/preferences.html" />
   </topic>
   <topic label="Source File Compare/Merge Editor" href="html/sourcefilecomparemergeeditor/sourcefilecomparemergeeditor.html">
-    <topic label="RDi 9.5 Extensions" href="html/sourcefilecomparemergeeditor/rdi95extensions/rdi95extensions.html" />
     <topic label="Preferences" href="html/sourcefilecomparemergeeditor/preferences/preferences.html" />
   </topic>
   <topic label="Source File Search"  href="html/sourcefilesearch/sourcefilesearch.html"> 

@@ -1885,12 +1885,6 @@ public class Messages extends NLS {
     public static String Specifies_the_maximum_depth_of_sub_directories_included_in_the_search;
 
     /*
-     * Warning messages
-     */
-
-    public static String Compare_Filters_not_installed_message;
-
-    /*
      * Informational messages
      */
 

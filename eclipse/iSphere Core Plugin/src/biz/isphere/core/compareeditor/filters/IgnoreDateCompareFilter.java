@@ -81,6 +81,7 @@ public class IgnoreDateCompareFilter implements ICompareFilter {
             // RDi 9.6: biz.isphere.core.compareeditor.CompareNode
             return FileHelper.getFileExtension(((ITypedElement)node).getName());
         } else {
+            // TODO: Remove after 1.1.2026
             // Hack for RDi 9.5, where node is a type of
             // com.ibm.etools.iseries.compare.internal.QSYSMemberAccessorTypedElement
             if ("com.ibm.etools.iseries.compare.internal.QSYSMemberAccessorTypedElement".equals(node.getClass().getName())) { //$NON-NLS-1$

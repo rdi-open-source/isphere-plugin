@@ -4,7 +4,7 @@
 <toc label="iSphere">
    <topic label="Introduction" href="html/introduction/introduction.html" />
    <topic label="Install Instructions" >
-      <topic label="Install Plugin for RDi 9.5.1.3+" href="html/install/rdi8.0/install_rdi.html" />
+      <topic label="Install Plug-in for RDi 9.6.0.13+" href="html/install/rdi8.0/install_rdi.html" />
       <topic label="Install iSphere Library" href="html/install/install_library.html" />
    </topic>
    <topic label="Uninstall Instructions" >

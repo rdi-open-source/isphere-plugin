@@ -1,4 +1,8 @@
 
+Changelog: iSphere x.x.x.r
+--------------------------
+ • Changed development environment to RDi 9.6.0.13.
+
 Changelog: iSphere 6.1.1.r
 --------------------------
  • Pass correct match option value to message file search.

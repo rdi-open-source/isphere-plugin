@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="biz.isphere.journalexplorer.rse"
-      label="iSphere Journal Explorer for RDi 9.5.1.3+ (optional)"
+      label="iSphere Journal Explorer for RDi 9.6.0.13+ (optional)"
       version="6.1.1.r"
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
    <description url="https://github.com/rdi-open-source/isphere/">
-      iSphere Journal Explorer for RDi 9.5.1.3+
+      iSphere Journal Explorer for RDi 9.6.0.13+
 The &quot;iSphere Journal Explorer Feature (RDi)&quot; provides a set of
 views for exploring journals. It can be started from menu &apos;Window
 -&gt; Show View&apos;.
