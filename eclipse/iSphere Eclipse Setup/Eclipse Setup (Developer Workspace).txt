@@ -55,7 +55,9 @@ Project Locations:
 ------------------
 
    https://github.com/rdi-open-source/isphere/
+   https://github.com/rdi-open-source/isphere-plugin/
    https://github.com/rdi-open-source/rapid-fire/
+   https://github.com/rdi-open-source/rapid-fire-plugin/
    https://github.com/tools-400/irpgunit/
 
    Authorization: ECDSA ssh key
@@ -80,7 +82,7 @@ Access token scopes (classic): repo
 Required Plug-ins:
 ------------------
 
-Install the "iSphere Ant Plugin", which is required to build the iSphere
+Install the "iSphere Ant Contribution Plugin", which is required to build the iSphere
 project from:
 
    ${workspace_loc}\iSphere Eclipse Setup\plug-ins\iSphere_Ant_Contribution.zip
@@ -132,8 +134,8 @@ a) Preferences -> Java -> Installed JREs (
    RDi 9.6.0.13+:
    --------------
 
-   JRE home:   C:\Programme_x86\IBM\SDP_095\jdk   (example path)
-   JRE name:   JRE 1.8.0 IBM J9                   (must be spelled as shown)
+   JRE home:   C:\IBM\RDi_096\jdk   (example path)
+   JRE name:   JRE 1.8.0 IBM J9     (must be spelled as shown)
 
    Flagged as "Default JRE".
 
@@ -214,6 +216,7 @@ c) Preferences -> General -> Keys:
    Filter for GRAPH and remove entry "Show Revision graph" of category "SVN" [Unbind Command].
    (Otherwise CTRL-ALT-Q does not work to get the '@'.)
 
+--- START-OBSOLETE ---
 d) Preferences -> Team -> SVN -> Label Decorations -> Text Decorations
 
    File:    {name} {revision} {author}
@@ -225,6 +228,7 @@ d) Preferences -> Team -> SVN -> Label Decorations -> Text Decorations
 e) Preferences -> Team -> SVN -> Label Decorations -> Icons Decorations
 
    Check: Outgoing changes
+---  END-OBSOLETE  ---
 
 f) Preferences -> General -> Workspace
 
@@ -253,6 +257,7 @@ a) Preferences -> Remote Systems -> Remote Systems LPEX Editor
     Lock remote members on startup:     [x]
     Set insert a preferred editor mode: [x]
 
+--- START-OBSOLETE ---
 a) Map the [Enter] key to "splittLine":
      - From the RDp toolbar select Window > Preferences
      - Expand LPEX Editor
@@ -263,6 +268,7 @@ a) Map the [Enter] key to "splittLine":
      - Click on OK
 
    Source: http://www-01.ibm.com/support/docview.wss?uid=swg21639969
+---  END-OBSOLETE  ---
 
 
 Useful plug-ins:
