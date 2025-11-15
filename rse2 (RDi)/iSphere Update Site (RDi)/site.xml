@@ -47,9 +47,11 @@
          iSphere for 9.6.0.13+. Base component of the iSphere plug-in. This component is required for all RDi versions.
       </description>
    </category-def>
-   <category-def name="iSphere Additions for RDi 9.5+ (recommended)" label="iSphere Additions for RDi 9.5+ (recommended)">
+   <category-def name="iSphere Additions for RDi 9.5+ (obsolete)" label="iSphere Additions for RDi 9.5+ (obsolete)">
       <description>
-         Optional additions for RDi 9.5+. Requires installing the iSphere base component &quot;iSphere for RDi 9.6.0.13+&quot;.
+         iSphere Compare Filters for RDi 9.5+
+This plug-in is obsolete, because the compare filters have been moved to the iSphere Core Plugin.
+Do not install it but uninstall old versions of the plug-in.
       </description>
    </category-def>
    <category-def name="iSphere TN5250J for RDi 9.6.0.13+" label="iSphere TN5250J for RDi 9.6.0.13+">

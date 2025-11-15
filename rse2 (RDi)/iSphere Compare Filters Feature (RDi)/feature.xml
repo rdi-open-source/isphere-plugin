@@ -8,8 +8,9 @@
 
    <description url="https://sourceforge.net/projects/isphere/">
       iSphere Compare Filters for RDi 9.5+
-This plug-in is obsolete, because the compare filters have been moved to the iSphere Core Plugin.
-Do not install the plug-in and uninstall old versions of the plug-in.
+This plug-in is obsolete, because the compare filters have
+been moved to the iSphere Core Plugin.
+Do not install it but uninstall old versions of the plug-in.
    </description>
 
    <copyright url="https://sourceforge.net/projects/isphere/">
