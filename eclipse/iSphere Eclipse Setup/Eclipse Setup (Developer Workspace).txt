@@ -54,6 +54,15 @@ RDi 9.5:
 Access token scopes (classic): repo
 
 
+Rational Developer for i:
+-------------------------
+
+Update file RDi.ini:
+
+-Xms2048m
+-Xmx2048m
+
+
 Required Plug-ins:
 ------------------
 
@@ -243,39 +252,10 @@ b) Preferences -> Remote Systems -> Remote Systems LPEX Editor
 Useful plug-ins:
 ================
 
-Eclipse Plug-in Spy:
-
-RDi 9.0/9.1:
-------------
-
-Name:     Eclipse PDE Plug-in Developer Resources
-Location: Eclipse Neon (4.6) Update Site - http://download.eclipse.org/eclipse/updates/4.6
+Eclipse Plug-in Spy (installed):
 
 Window Spy: Alt-Shift-F1
 Menu Spy:   Alt-Shift-F2
-
-Java Decompiler
-
-RDi 9.5:
---------
-
-Name:     Enhanced Class Decompiler
-Location: ${workspace_loc}\iSphere Eclipse Setup\plug-ins\ecd_3.1.1.201811062102.zip
-
-RDi 9.6:
---------
-
-Name:     Enhanced Class Decompiler
-Location: Enhanced Class Decompiler Project Update - https://ecd-plugin.github.io/update/
-
-After installing the decompiler plug-in, change the '*.class without source'
-file association to use the Class Decompiler Viewer as the default viewer.
-Preferences -> File Associations -> '*.class without source' -> Associated editors
-
-Autodetect Encoding Eclipse Plugin:
-
-Name:     Autodetect Encoding
-Location: Install from Eclipse Marketplace
 
 
 Useful Color Settings:
@@ -297,13 +277,22 @@ eGit 6.5 (local)
  - Git integration  for Eclipse
  - Java implementation of Git
 
-Enhanced Class Decompiler (Eclipse Marketplace)
 iSphere (Eclipse Marketplace)
 Rapid Fire (Eclipse Marketplace)
 CMOne (local)
  - CMOne NG for RDi 9.5.1.3+
-iRPGUnit + iRPGUnit for CMOne NG (Eclipse Marketplace)
+iRPGUnit + iRPGUnit CMOne Integration + iRPGUnit iSphere Integration (Eclipse Marketplace)
 
 iSphere Ant Contribution Plugin
-Linoma RPG Toolbox
 Java Scoped Template Variables Plugin
+
+Linoma RPG Toolbox: http://www.linomafiles.com/releases/rpgtoolbox/RDi/
+Enhanced Class Decompiler (Eclipse Marketplace)
+
+
+Java Decompiler
+===============
+
+After installing the decompiler plug-in, change the '*.class without source'
+file association to use the Class Decompiler Viewer as the default viewer.
+Preferences -> File Associations -> '*.class without source' -> Associated editors
