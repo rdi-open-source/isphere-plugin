@@ -67,8 +67,7 @@
 		<echo>Copying template files and folders to: ${build.upload.dir}</echo>
 		<copy todir="${build.upload.dir}">
 			<fileset dir="${build.template.dir}/upload">
-				<exclude name="**/.svn" />
-				<exclude name="**/sample_menu.js" />
+				<include name="**/index.html" />
 			</fileset>
 		</copy>
 
@@ -85,6 +84,17 @@
 				<pathelement location="${build.lib.dir}/xstream-1.4.7.jar"/>
 			</classpath>
 		</java>
+
+		<echo>Copying files and folders to: ${build.upload.dir}</echo>
+		<copy todir="${build.upload.dir}/assets">
+			<fileset dir="${build.template.dir}/upload/assets">
+				<exclude name="**/.svn" />
+				<exclude name="**/sample_menu.js" />
+				<!--
+				<exclude name="**/index.html" />
+				-->
+			</fileset>
+		</copy>
 		
 		<echo>... finished help builder</echo>
 		
