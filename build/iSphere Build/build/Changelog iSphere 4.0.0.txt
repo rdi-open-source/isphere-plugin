@@ -1,7 +1,8 @@
 
-Changelog: iSphere x.x.x.r
+Changelog: iSphere 6.1.2.r
 --------------------------
  • Changed development environment to RDi 9.6.0.13.
+ • Removed obsolete RDi 9.5 code.
 
 Changelog: iSphere 6.1.1.r
 --------------------------
