@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2024 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,6 @@
  *******************************************************************************/
 
 package biz.isphere.core.compareeditor;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
@@ -99,7 +96,7 @@ public class CompareEditorConfiguration extends CompareConfiguration {
      *        ignored
      */
     public void setIgnoreChangesLeft(boolean anIgnoreChangesLeft) {
-        invokeSetChangeIgnored(RangeDifference.LEFT, anIgnoreChangesLeft);
+        setChangeIgnored(RangeDifference.LEFT, anIgnoreChangesLeft);
         setProperty(IGNORE_CHANGES_LEFT, anIgnoreChangesLeft);
     }
 
@@ -119,52 +116,8 @@ public class CompareEditorConfiguration extends CompareConfiguration {
      *        ignored
      */
     public void setIgnoreChangesRight(boolean anIgnoreChangesRight) {
-        invokeSetChangeIgnored(RangeDifference.RIGHT, anIgnoreChangesRight);
+        setChangeIgnored(RangeDifference.RIGHT, anIgnoreChangesRight);
         setProperty(IGNORE_CHANGES_RIGHT, anIgnoreChangesRight);
-    }
-
-    /**
-     * Returns true if method <code>setChangeIgnored</code> of class
-     * {@link #CompareEditorConfiguration()} is available.
-     * 
-     * @return true if method is available; false otherwise
-     */
-    public static boolean isMethodSetChangeIgnoredAvailable() {
-        try {
-            if (CompareConfiguration.class.getDeclaredMethod("setChangeIgnored", int.class, boolean.class) != null) {
-                return true;
-            }
-        } catch (SecurityException e) {
-        } catch (NoSuchMethodException e) {
-        }
-        return false;
-    }
-
-    /**
-     * Invokes method <code>setChangeIgnored</code> of class
-     * {@link #CompareEditorConfiguration()}.
-     */
-    private void invokeSetChangeIgnored(int who, boolean ignore) {
-        if (CompareEditorConfiguration.isMethodSetChangeIgnoredAvailable()) {
-            try {
-                Method _method = this.getClass().getMethod("setChangeIgnored", int.class, boolean.class);
-                if (_method != null) {
-                    try {
-                        _method.invoke(this, new Object[] { who, ignore });
-                    } catch (IllegalArgumentException e) {
-                        System.out.println("IllegalArgumentException received while invoked method setChangeIgnored in class CompareConfiguration.");
-                    } catch (IllegalAccessException e) {
-                        System.out.println("IllegalAccessException received while invoked method setChangeIgnored in class CompareConfiguration.");
-                    } catch (InvocationTargetException e) {
-                        System.out.println("InvocationTargetException received while invoked method setChangeIgnored in class CompareConfiguration.");
-                    }
-                }
-            } catch (SecurityException e) {
-                System.out.println("Method setChangeIgnored not accessable in class CompareConfiguration.");
-            } catch (NoSuchMethodException e) {
-                System.out.println("Method setChangeIgnored not available in class CompareConfiguration.");
-            }
-        }
     }
 
     /**

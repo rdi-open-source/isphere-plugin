@@ -3,6 +3,8 @@ Changelog: iSphere 6.1.2.r
 --------------------------
  • Changed development environment to RDi 9.6.0.13.
  • Removed obsolete RDi 9.5 code.
+ • Remove obsolete compatibility code for WDSCi 7.0 of commit
+   74902a6d46a32109517d59f27e93c23d18868f10 (2018-05-17).
 
 Changelog: iSphere 6.1.1.r
 --------------------------

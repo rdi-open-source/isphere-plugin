@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2024 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -403,7 +403,7 @@ public abstract class CompareDialog extends XDialog {
             }
         });
 
-        if ((isThreeWay || !hasRightMember()) && CompareEditorConfiguration.isMethodSetChangeIgnoredAvailable()) {
+        if ((isThreeWay || !hasRightMember())) {
 
             ignoreChangesGroup = new Composite(modeGroup, SWT.NONE);
             GridLayout ignoreChangesLayout = new GridLayout(2, true);
