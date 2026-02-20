@@ -34,4 +34,16 @@ public class SearchResultMessageId {
         this.message = message;
     }
 
+    @Override
+    public String toString() {
+
+        StringBuilder buffer = new StringBuilder();
+
+        buffer.append(messageId);
+        buffer.append(": '");
+        buffer.append(message);
+        buffer.append("'");
+
+        return buffer.toString();
+    }
 }

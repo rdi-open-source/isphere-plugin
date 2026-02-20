@@ -1,0 +1,92 @@
+<streamFileSearch>
+  <tabFolder>
+    <tabItem>
+      <connectionName>CDDEA061692:GFD400</connectionName>
+      <searchString>demo</searchString>
+      <searchResult>
+        <member>
+          <directory>/home/raddatz/irpgunit/host/iRPGUnit</directory>
+          <streamFile>makefile</streamFile>
+          <type></type>
+          <lastChangedDate>2025-12-24 14:58:57.0</lastChangedDate>
+          <statements>
+            <statement>
+              <statement>8</statement>
+              <line># BIN_LIB is the destination library for the demo programs.</line>
+            </statement>
+          </statements>
+        </member>
+        <member>
+          <directory>/home/raddatz/irpgunit/host/iRPGUnit/QBUILD</directory>
+          <streamFile>A_README.TXT</streamFile>
+          <type>TXT</type>
+          <lastChangedDate>2025-12-24 11:24:55.0</lastChangedDate>
+          <statements>
+            <statement>
+              <statement>594</statement>
+              <line>      New demonstration unit tests:</line>
+            </statement>
+          </statements>
+        </member>
+        <member>
+          <directory>/home/raddatz/irpgunit/host/iRPGUnit/QEXAMPLE</directory>
+          <streamFile>RUPLUGINT1.RPGLE</streamFile>
+          <type>RPGLE</type>
+          <lastChangedDate>2025-12-24 11:24:55.0</lastChangedDate>
+          <statements>
+            <statement>
+              <statement>82</statement>
+              <line>dcl-proc testFailInsideMonitorBlock export;</line>
+            </statement>
+          </statements>
+        </member>
+        <member>
+          <directory>/home/raddatz/irpgunit/host/iRPGUnit/QUNITTEST</directory>
+          <streamFile>ASSERTT.RPGLE</streamFile>
+          <type>RPGLE</type>
+          <lastChangedDate>2025-12-24 11:24:55.0</lastChangedDate>
+          <statements>
+            <statement>
+              <statement>1322</statement>
+              <line>    if (failInsideMonitorBlock());</line>
+            </statement>
+            <statement>
+              <statement>1333</statement>
+              <line>dcl-proc failInsideMonitorBlock;</line>
+            </statement>
+          </statements>
+        </member>
+      </searchResult>
+      <searchOptions>
+        <matchOption>ALL</matchOption>
+        <showAllItems>true</showAllItems>
+        <searchArguments>
+          <biz.isphere.core.search.SearchArgument>
+            <operator>1</operator>
+            <string>demo</string>
+            <fromColumn>1</fromColumn>
+            <toColumn>512</toColumn>
+            <caseSensitive>*IGNORE</caseSensitive>
+            <regularExpression>*STRING</regularExpression>
+          </biz.isphere.core.search.SearchArgument>
+        </searchArguments>
+        <genericOptions>
+          <entry>
+            <biz.isphere.core.search.GenericSearchOption_-Key>STMF_TYPE</biz.isphere.core.search.GenericSearchOption_-Key>
+            <biz.isphere.core.search.GenericSearchOption>
+              <key>STMF_TYPE</key>
+              <value class="string">*</value>
+            </biz.isphere.core.search.GenericSearchOption>
+          </entry>
+          <entry>
+            <biz.isphere.core.search.GenericSearchOption_-Key>MAX_DEPTH</biz.isphere.core.search.GenericSearchOption_-Key>
+            <biz.isphere.core.search.GenericSearchOption>
+              <key>MAX_DEPTH</key>
+              <value class="int">1</value>
+            </biz.isphere.core.search.GenericSearchOption>
+          </entry>
+        </genericOptions>
+      </searchOptions>
+    </tabItem>
+  </tabFolder>
+</streamFileSearch>

@@ -1,0 +1,77 @@
+<sourceFileSearch>
+  <tabFolder>
+    <tabItem>
+      <connectionName>CDDEA061692:GFD400</connectionName>
+      <searchString>demo</searchString>
+      <searchResult>
+        <member>
+          <library>RPGUNITDVP</library>
+          <file>QSRC</file>
+          <member>DEBUGGER</member>
+          <srcType>RPGLE</srcType>
+          <description></description>
+          <lastChangedDate>2025-12-29 18:01:30.0</lastChangedDate>
+          <statements>
+            <statement>
+              <statement>13</statement>
+              <line>ctl-opt main(demoDebugger) dftactgrp(*no) actgrp(*new);</line>
+            </statement>
+            <statement>
+              <statement>18</statement>
+              <line>dcl-pr demoDebugger extpgm(&apos;DEBUGGER&apos;);</line>
+            </statement>
+            <statement>
+              <statement>27</statement>
+              <line>dcl-proc demoDebugger;</line>
+            </statement>
+          </statements>
+        </member>
+        <member>
+          <library>RPGUNITDVP</library>
+          <file>QSRC</file>
+          <member>IGNUNUSED</member>
+          <srcType>RPGLE</srcType>
+          <description></description>
+          <lastChangedDate>2026-01-02 11:14:47.0</lastChangedDate>
+          <statements>
+            <statement>
+              <statement>12</statement>
+              <line>ctl-opt main(demoIgnoreUnused) dftactgrp(*no) actgrp(*new);</line>
+            </statement>
+            <statement>
+              <statement>14</statement>
+              <line>dcl-pr demoIgnoreUnused extpgm(&apos;IGNUNUSED&apos;);</line>
+            </statement>
+            <statement>
+              <statement>25</statement>
+              <line>dcl-proc demoIgnoreUnused;</line>
+            </statement>
+          </statements>
+        </member>
+      </searchResult>
+      <searchOptions>
+        <matchOption>ALL</matchOption>
+        <showAllItems>true</showAllItems>
+        <searchArguments>
+          <biz.isphere.core.search.SearchArgument>
+            <operator>1</operator>
+            <string>demo</string>
+            <fromColumn>1</fromColumn>
+            <toColumn>228</toColumn>
+            <caseSensitive>*IGNORE</caseSensitive>
+            <regularExpression>*STRING</regularExpression>
+          </biz.isphere.core.search.SearchArgument>
+        </searchArguments>
+        <genericOptions>
+          <entry>
+            <biz.isphere.core.search.GenericSearchOption_-Key>SRCMBR_SRC_TYPE</biz.isphere.core.search.GenericSearchOption_-Key>
+            <biz.isphere.core.search.GenericSearchOption>
+              <key>SRCMBR_SRC_TYPE</key>
+              <value class="string">*</value>
+            </biz.isphere.core.search.GenericSearchOption>
+          </entry>
+        </genericOptions>
+      </searchOptions>
+    </tabItem>
+  </tabFolder>
+</sourceFileSearch>

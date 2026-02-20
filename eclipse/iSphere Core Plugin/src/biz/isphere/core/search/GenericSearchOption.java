@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
 
 package biz.isphere.core.search;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import biz.isphere.core.Messages;
@@ -32,6 +33,16 @@ public class GenericSearchOption implements Map.Entry<String, Object> {
     public GenericSearchOption(GenericSearchOption.Key key, Object value) {
         this.key = key;
         this.value = value;
+
+        ensureValidValue(value);
+    }
+
+    private static void ensureValidValue(Object obj) {
+        Class<?> clazz = obj.getClass();
+        if (!(clazz.equals(String.class) || clazz.equals(Integer.class) || clazz.equals(Boolean.class))) {
+            throw new IllegalArgumentException("Unexpected type of parameter 'value': " + Object.class.getName());
+
+        }
     }
 
     public String getKey() {
@@ -94,6 +105,18 @@ public class GenericSearchOption implements Map.Entry<String, Object> {
 
         private String keyValue;
 
+        private static Map<String, Key> values;
+        static {
+            values = new HashMap<String, Key>();
+            for (Key key : Key.values()) {
+                values.put(key.getKeyValue(), key);
+            }
+        }
+
+        public static Key findByKeyValue(String value) {
+            return values.get(value);
+        }
+
         private Key(String keyValue) {
             this.keyValue = keyValue;
         }
@@ -101,5 +124,19 @@ public class GenericSearchOption implements Map.Entry<String, Object> {
         public String getKeyValue() {
             return keyValue;
         }
+
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder buffer = new StringBuilder();
+
+        buffer.append(key.name());
+        buffer.append("-> (");
+        buffer.append(value);
+        buffer.append(")");
+
+        return buffer.toString();
     }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Team
+ * Copyright (c) 2012-2026 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,27 +8,19 @@
 
 package biz.isphere.rse.resourcemanagement;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import biz.isphere.base.internal.BooleanHelper;
-import biz.isphere.base.internal.IntHelper;
 import biz.isphere.core.resourcemanagement.XmlVersion;
+import biz.isphere.core.xml.AbstractBaseXmlHelper;
+import biz.isphere.core.xml.XMLPrettyPrintWriter;
 
-public abstract class AbstractXmlHelper {
+public abstract class AbstractXmlHelper extends AbstractBaseXmlHelper {
 
     protected static final String CONTAINER = "container";
 
@@ -74,22 +66,6 @@ public abstract class AbstractXmlHelper {
         return true;
     }
 
-    protected static XMLEventReader createXMLEventReader(File file) throws FileNotFoundException, XMLStreamException {
-
-        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-        XMLEventReader eventReader = inputFactory.createXMLEventReader(new FileInputStream(file));
-
-        return eventReader;
-    }
-
-    protected static XMLPrettyPrintWriter createXMLStreamWriter(FileOutputStream fileOutputStream) throws FileNotFoundException, XMLStreamException {
-
-        XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-        XMLStreamWriter streamWriter = outputFactory.createXMLStreamWriter(fileOutputStream);
-
-        return new XMLPrettyPrintWriter(streamWriter);
-    }
-
     protected static void startContainer(XMLPrettyPrintWriter eventWriter, String version) throws XMLStreamException {
 
         eventWriter.writeStartElement(CONTAINER);
@@ -115,14 +91,6 @@ public abstract class AbstractXmlHelper {
         return buffer.toString();
     }
 
-    protected static String integerToXml(int value) {
-        return Integer.toString(value);
-    }
-
-    protected static String booleanToXml(boolean value) {
-        return Boolean.toString(value);
-    }
-
     protected static String[] xmlToArray(String xml) {
 
         StringTokenizer st = new StringTokenizer(xml, ARRAY_DELIMITERS);
@@ -134,39 +102,5 @@ public abstract class AbstractXmlHelper {
         }
 
         return fileTypes;
-    }
-
-    protected static int xmlToInteger(String xml) {
-        return IntHelper.tryParseInt(xml, 0);
-    }
-
-    protected static boolean xmlToBoolean(String value, boolean defaultValue) {
-        return BooleanHelper.tryParseBoolean(value, defaultValue);
-    }
-
-    protected static void startElementCharacters(StringBuilder elementData, XMLEvent event) {
-        clearElementCharacters(elementData);
-    }
-
-    protected static void collectElementCharacters(StringBuilder elementData, XMLEvent event) {
-
-        if (event.isCharacters()) {
-            elementData.append(event.asCharacters().getData());
-        }
-    }
-
-    protected static void clearElementCharacters(StringBuilder elementData) {
-        elementData.replace(0, elementData.length(), ""); //$NON-NLS-1$
-    }
-
-    protected static void createNode(XMLPrettyPrintWriter eventWriter, String name, boolean value) throws XMLStreamException {
-        createNode(eventWriter, name, booleanToXml(value));
-    }
-
-    protected static void createNode(XMLPrettyPrintWriter eventWriter, String name, String value) throws XMLStreamException {
-
-        eventWriter.writeStartElement(name);
-        eventWriter.writeCharacters(value);
-        eventWriter.writeEndElement();
     }
 }

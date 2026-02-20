@@ -1,19 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.resourcemanagement;
+package biz.isphere.core.xml;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Stack;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-public class XMLPrettyPrintWriter {
+public class XMLPrettyPrintWriter extends AbstractBaseXmlHelper {
 
     private enum State {
         UNKNOWN,
@@ -48,6 +51,22 @@ public class XMLPrettyPrintWriter {
     public void writeStartElement(String name) throws XMLStreamException {
         performStartElement();
         writer.writeStartElement(name);
+    }
+
+    public void writeStartElement(String name, Map<String, String> attributes) throws XMLStreamException {
+        performStartElement();
+        writer.writeStartElement(name);
+
+        writeElementAttributes(attributes);
+    }
+
+    public void writeElementAttributes(Map<String, String> attributes) throws XMLStreamException {
+
+        Iterator<Entry<String, String>> it = attributes.entrySet().iterator();
+        while (it.hasNext()) {
+            Entry<String, String> attribute = it.next();
+            writer.writeAttribute(attribute.getKey(), attribute.getValue());
+        }
     }
 
     public void writeEndElement() throws XMLStreamException {
