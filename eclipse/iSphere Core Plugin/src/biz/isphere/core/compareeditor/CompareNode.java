@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2024 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.swt.graphics.Image;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.colorcodes.ColorCodesManager;
 
 public class CompareNode extends BufferedContent implements ITypedElement, IEditableContent, IEncodedStreamContentAccessor {
 
@@ -106,6 +107,16 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
     }
 
     public File getTempFile(boolean ignoreCase) {
+        return getTempFile(ignoreCase, false);
+    }
+
+    public File getTempFile(boolean ignoreCase, boolean ignoreColorCodes) {
+
+        ColorCodesManager colorCodesManager = null;
+        if (ignoreColorCodes) {
+            colorCodesManager = new ColorCodesManager();
+        }
+
         try {
             if (tempFile == null) {
                 File file = fResource.getLocation().toFile();
@@ -117,6 +128,9 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
                     String newString = StringHelper.trimR(oldString).substring(column);
                     if (ignoreCase) {
                         newString = newString.toLowerCase();
+                    }
+                    if (colorCodesManager != null) {
+                        newString = colorCodesManager.replaceAll(newString);
                     }
                     out.println(newString);
                 }
