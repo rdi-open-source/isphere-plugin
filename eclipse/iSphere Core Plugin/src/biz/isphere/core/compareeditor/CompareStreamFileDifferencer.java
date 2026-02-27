@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,8 +33,8 @@ public class CompareStreamFileDifferencer extends Differencer {
 
         if (input1 == input2) return true;
 
-        InputStream is1 = getStream(input1, config.isIgnoreCase());
-        InputStream is2 = getStream(input2, config.isIgnoreCase());
+        InputStream is1 = getStream(input1, config.isIgnoreCase(), config.isIgnoreColorCodes());
+        InputStream is2 = getStream(input2, config.isIgnoreCase(), config.isIgnoreColorCodes());
         BufferedReader br1 = null;
         BufferedReader br2 = null;
 
@@ -97,9 +97,9 @@ public class CompareStreamFileDifferencer extends Differencer {
 
     }
 
-    private InputStream getStream(Object o, boolean ignoreCase) {
+    private InputStream getStream(Object o, boolean ignoreCase, boolean ignoreColorCodes) {
         try {
-            return new BufferedInputStream(new FileInputStream(((CompareStreamFileNode)o).getTempFile(ignoreCase)));
+            return new BufferedInputStream(new FileInputStream(((CompareStreamFileNode)o).getTempFile(ignoreCase, ignoreColorCodes)));
         } catch (Exception e) {
             ISpherePlugin.logError("*** Could not return InputStream object ***", e);
             return null;
