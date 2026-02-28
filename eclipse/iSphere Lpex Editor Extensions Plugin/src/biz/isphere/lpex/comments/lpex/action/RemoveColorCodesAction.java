@@ -12,6 +12,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.ide.lpex.helper.LpexHelper;
 import biz.isphere.lpex.comments.ISphereLpexEditorExtensionsPlugin;
 import biz.isphere.lpex.comments.Messages;
+import biz.isphere.lpex.comments.lpex.internal.Position;
 
 public class RemoveColorCodesAction extends AbstractLpexAction {
 
@@ -124,14 +125,66 @@ public class RemoveColorCodesAction extends AbstractLpexAction {
         return getLPEXMenuAction(Messages.Menue_RemoveColorCodes, RemoveColorCodesAction.ID);
     }
 
+    /**
+     * Executor method of the action. This method is executed, when the user
+     * clicks the menu option "Remove Color Codes".
+     */
+    public void doAction(LpexView view) {
+
+        try {
+            saveCursorPosition(view);
+
+            Position start;
+            Position end;
+            if (anythingSelected(view)) {
+                start = new Position(getBlockTopElement(view), getBlockTopPosition(view));
+                end = new Position(getBlockBottomElement(view), getBLockBottomPosition(view));
+                if (end.getColumn() == 1) {
+                    end.setLine(end.getLine() - 1);
+                }
+            } else {
+                start = new Position(getCurrentElement(view), getCurrentPosition(view));
+                end = start;
+            }
+
+            // Range of lines
+            if (start.getLine() < end.getLine()) {
+                doLines(view, start.getLine(), end.getLine());
+            } else if (start.getLine() == end.getLine()) {
+                // Single line
+                if (start.getColumn() == end.getColumn()) {
+                    doLines(view, start.getLine(), end.getLine());
+                } else if (start.getColumn() < end.getColumn()) {
+                    // Selection
+                    doSelection(view, start.getLine(), start.getColumn(), end.getColumn());
+                }
+            }
+
+        } finally {
+            restoreCursorPosition(view);
+        }
+    }
+
     @Override
     protected void doLines(LpexView view, int firstLine, int lastLine) {
-        doAction(view);
+
+        if (view != null) {
+            try {
+                doRemoveColorCodes(view, firstLine, lastLine);
+            } catch (Exception e) {
+                String localizedMessage = ExceptionHelper.getLocalizedMessage(e);
+                LpexHelper.displayMessage(view, localizedMessage);
+                MessageDialog.openError(LpexHelper.getShell(view), Messages.E_R_R_O_R, localizedMessage);
+            }
+        } else {
+            String tErrorMsg = "*** Lpex view is null. Can not remove color codes from file: " + LpexHelper.getFileName(view) + " ***";
+            ISphereLpexEditorExtensionsPlugin.logError(tErrorMsg, null);
+        }
     }
 
     @Override
     protected void doSelection(LpexView view, int line, int startColumn, int endColumn) {
-        doAction(view);
+        doLines(view, line, startColumn);
     }
 
     /**
@@ -145,48 +198,18 @@ public class RemoveColorCodesAction extends AbstractLpexAction {
     }
 
     /**
-     * Executor method of the action. This method is executed, when the user
-     * clicks the menu option "Remove Color Codes".
-     */
-    public void doAction(LpexView view) {
-
-        if (view != null) {
-            try {
-                doRemoveColorCodes(view);
-            } catch (Exception e) {
-                String localizedMessage = ExceptionHelper.getLocalizedMessage(e);
-                LpexHelper.displayMessage(view, localizedMessage);
-                MessageDialog.openError(LpexHelper.getShell(view), Messages.E_R_R_O_R, localizedMessage);
-            }
-        } else {
-            String tErrorMsg = "*** Lpex view is null. Can not remove color codes from file: " + LpexHelper.getFileName(view) + " ***";
-            ISphereLpexEditorExtensionsPlugin.logError(tErrorMsg, null);
-        }
-    }
-
-    /**
      * Internal executor of the action.
      * 
      * @param view - View the action is executed for.
      */
-    private void doRemoveColorCodes(LpexView view) {
-        int originalLineNumber = LpexHelper.getCursorLineNumber(view);
-        int originalLinePosition = LpexHelper.getCursorPosition(view);
+    private void doRemoveColorCodes(LpexView view, int firstLine, int lastLine) {
 
         countReplaced = 0;
 
-        boolean hasChanged = false;
-        int tLines = LpexHelper.getLinesCount(view);
-        for (int tCurrentLineNumber = 1; tCurrentLineNumber <= tLines; tCurrentLineNumber++) {
+        for (int tCurrentLineNumber = firstLine; tCurrentLineNumber <= lastLine; tCurrentLineNumber++) {
             if (LpexHelper.isSourceLine(view, tCurrentLineNumber)) {
-                if (removeColorCodes(view, tCurrentLineNumber)) {
-                    hasChanged = true;
-                }
+                removeColorCodes(view, tCurrentLineNumber);
             }
-        }
-
-        if (hasChanged && (LpexHelper.getCursorLineNumber(view) != originalLineNumber || LpexHelper.getCursorPosition(view) != originalLinePosition)) {
-            LpexHelper.setCursorPosition(view, originalLineNumber, originalLinePosition);
         }
 
         LpexHelper.displayMessage(view, Messages.bind(Messages.Message_Replaced_A_color_codes, countReplaced));
