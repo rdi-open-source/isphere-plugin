@@ -13,6 +13,7 @@ Require-Bundle: org.eclipse.ui,
  biz.isphere.base,
  biz.isphere.core
 Export-Package: biz.isphere.ide.lpex.actions,
+ biz.isphere.ide.lpex.helper,
  biz.isphere.ide.lpex.menu,
  biz.isphere.ide.lpex.menu.model
 Bundle-ActivationPolicy: lazy

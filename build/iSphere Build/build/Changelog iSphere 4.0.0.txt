@@ -1,6 +1,7 @@
 
 Changelog: iSphere 6.1.2.r
 --------------------------
+ • Added option 'Remove Color Codes' to LPEX editor.
  • Added option 'Ignore color codes' to iSphere Compare Editor.
  • Fixed saving/loading iSphere search results. Replaced XStream
    library by own parser.

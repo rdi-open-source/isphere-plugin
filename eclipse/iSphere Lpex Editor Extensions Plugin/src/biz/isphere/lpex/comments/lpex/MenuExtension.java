@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,18 +17,19 @@ import java.util.Set;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+import com.ibm.lpex.alef.LpexPlugin;
+
 import biz.isphere.ide.lpex.menu.AbstractLpexMenuExtension;
 import biz.isphere.ide.lpex.menu.LpexMenuExtensionPlugin;
 import biz.isphere.ide.lpex.menu.model.UserAction;
 import biz.isphere.ide.lpex.menu.model.UserKeyAction;
 import biz.isphere.lpex.comments.lpex.action.CommentAction;
 import biz.isphere.lpex.comments.lpex.action.IndentAction;
+import biz.isphere.lpex.comments.lpex.action.RemoveColorCodesAction;
 import biz.isphere.lpex.comments.lpex.action.ToggleCommentAction;
 import biz.isphere.lpex.comments.lpex.action.UnCommentAction;
 import biz.isphere.lpex.comments.lpex.action.UnIndentAction;
 import biz.isphere.lpex.comments.preferences.Preferences;
-
-import com.ibm.lpex.alef.LpexPlugin;
 
 /**
  * This class extends the popup menue of the Lpex editor. It adds the following
@@ -71,6 +72,8 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
             checkAndAddUserAction(actions, UnIndentAction.ID, UnIndentAction.class.getName());
         }
 
+        checkAndAddUserAction(actions, RemoveColorCodesAction.ID, RemoveColorCodesAction.class.getName());
+
         return actions.toArray(new UserAction[actions.size()]);
     }
 
@@ -87,18 +90,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
     @Override
     protected UserKeyAction[] getUserKeyActions() {
 
-        List<UserKeyAction> actions = new LinkedList<UserKeyAction>();
-
-        if (isCommentsEnabled()) {
-            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.ADD), CommentAction.ID);
-            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.SUBSTRACT), UnCommentAction.ID);
-            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.MULTIPLY), ToggleCommentAction.ID);
-        }
-
-        if (isIndentingEnabled()) {
-            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.TAB), IndentAction.ID);
-            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.TAB), UnIndentAction.ID);
-        }
+        List<UserKeyAction> actions = getUserKeyActionsList();
 
         return actions.toArray(new UserKeyAction[actions.size()]);
     }
@@ -123,6 +115,8 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
             menuActions.add(UnIndentAction.getLPEXMenuAction());
         }
 
+        menuActions.add(RemoveColorCodesAction.getLPEXMenuAction());
+
         return menuActions;
     }
 
@@ -144,6 +138,19 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
     public static String getInitialUserKeyActions() {
 
+        List<UserKeyAction> actions = getUserKeyActionsList();
+
+        StringBuilder buffer = new StringBuilder();
+        for (UserKeyAction action : actions) {
+            appendActionToBuffer(buffer, action);
+        }
+
+        return buffer.toString();
+
+    }
+
+    private static List<UserKeyAction> getUserKeyActionsList() {
+
         List<UserKeyAction> actions = new LinkedList<UserKeyAction>();
 
         if (isCommentsEnabled()) {
@@ -157,13 +164,9 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
             checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.TAB), UnIndentAction.ID);
         }
 
-        StringBuilder buffer = new StringBuilder();
-        for (UserKeyAction action : actions) {
-            appendActionToBuffer(buffer, action);
-        }
+        checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.NUMPAD_0), RemoveColorCodesAction.ID);
 
-        return buffer.toString();
-
+        return actions;
     }
 
     private static boolean isCommentsEnabled() {

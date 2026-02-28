@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ public class Messages extends NLS {
     public static String Menu_Comment_Lines;
     public static String Menu_Uncomment_Lines;
     public static String Menu_Toggle_Comment_Lines;
-    
+
     public static String Menu_Indent_Lines;
     public static String Menu_Unindent_Lines;
 
@@ -39,7 +39,10 @@ public class Messages extends NLS {
     public static String Tooltip_Enables_options_for_commenting_and_uncommenting_source_lines;
     public static String Indention_enabled_colon;
     public static String Tooltip_Enables_options_for_indenting_and_unindenting_source_lines;
-    
+
+    public static String Menue_RemoveColorCodes;
+    public static String Message_Replaced_A_color_codes;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
