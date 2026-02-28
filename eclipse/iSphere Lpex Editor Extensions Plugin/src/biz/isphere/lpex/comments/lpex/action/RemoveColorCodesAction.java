@@ -143,8 +143,8 @@ public class RemoveColorCodesAction extends AbstractLpexAction {
                     end.setLine(end.getLine() - 1);
                 }
             } else {
-                start = new Position(getCurrentElement(view), getCurrentPosition(view));
-                end = start;
+                start = new Position(1, -1);
+                end = new Position(LpexHelper.getLinesCount(view), -1);
             }
 
             // Range of lines
