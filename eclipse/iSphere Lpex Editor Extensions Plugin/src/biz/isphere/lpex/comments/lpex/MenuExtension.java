@@ -19,6 +19,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 import com.ibm.lpex.alef.LpexPlugin;
 
+import biz.isphere.ide.lpex.helper.LpexHelper;
 import biz.isphere.ide.lpex.menu.AbstractLpexMenuExtension;
 import biz.isphere.ide.lpex.menu.LpexMenuExtensionPlugin;
 import biz.isphere.ide.lpex.menu.model.UserAction;
@@ -226,7 +227,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
      */
     private void removeOldPopupMenu() {
 
-        String popupMenu = getCurrentLpexPopupMenu();
+        String popupMenu = LpexHelper.getLpexPopupMenu();
 
         // MARK-Source.Start / MARK-Source.End
         popupMenu = removeMenuItems(popupMenu, "MARK-Source.Start", "MARK-Source.End"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -234,7 +235,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
         // MARK-Quelle.Start / MARK-Quelle.End
         popupMenu = removeMenuItems(popupMenu, "MARK-Quelle.Start", "MARK-Quelle.End"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        doSetLpexViewPopup(popupMenu);
+        LpexHelper.setLpexViewPopup(popupMenu);
     }
 
     @Override

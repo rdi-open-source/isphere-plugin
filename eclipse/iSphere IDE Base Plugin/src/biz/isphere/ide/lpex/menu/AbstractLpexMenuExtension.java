@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,9 @@ import java.util.Set;
 import org.eclipse.jface.util.IPropertyChangeListener;
 
 import com.ibm.lpex.alef.LpexPlugin;
-import com.ibm.lpex.core.LpexView;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.ide.lpex.helper.LpexHelper;
 import biz.isphere.ide.lpex.menu.model.AbstractLpexAction;
 import biz.isphere.ide.lpex.menu.model.UserAction;
 import biz.isphere.ide.lpex.menu.model.UserKeyAction;
@@ -77,9 +77,9 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
 
         plugin.setLpexMenuExtension(this);
 
-        doSetLpexViewUserActions(getLPEXEditorUserActions(getCurrentLpexUserActions()));
-        doSetLpexViewUserKeyActions(getLPEXEditorUserKeyActions(getCurrentLpexUserKeyActions()));
-        doSetLpexViewPopup(getLPEXEditorPopupMenu(getCurrentLpexPopupMenu()));
+        LpexHelper.setLpexViewUserActions(getLPEXEditorUserActions(getCurrentLpexUserActions()));
+        LpexHelper.setLpexViewUserKeyActions(getLPEXEditorUserKeyActions(getCurrentLpexUserKeyActions()));
+        LpexHelper.setLpexViewPopup(getLPEXEditorPopupMenu(getCurrentLpexPopupMenu()));
 
         listener = getPreferencesChangeListener();
         if (listener != null) {
@@ -99,28 +99,16 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
         removePopupMenu();
     }
 
-    private void doSetLpexViewUserActions(String userActions) {
-        LpexView.doGlobalCommand("set default.updateProfile.userActions " + userActions); //$NON-NLS-1$
-    }
-
-    private void doSetLpexViewUserKeyActions(String userKeyActions) {
-        LpexView.doGlobalCommand("set default.updateProfile.userKeyActions " + userKeyActions); //$NON-NLS-1$
-    }
-
-    protected void doSetLpexViewPopup(String popup) {
-        LpexView.doGlobalCommand("set default.popup " + popup); //$NON-NLS-1$
-    }
-
     private UserAction[] getCurrentLpexUserActions() {
-        return parseUserActions(LpexView.globalQuery("current.updateProfile.userActions")); //$NON-NLS-1$
+        return parseUserActions(LpexHelper.getLpexUserActions()); // $NON-NLS-1$
     }
 
     private UserKeyAction[] getCurrentLpexUserKeyActions() {
-        return parseUserKeyActions(LpexView.globalQuery("current.updateProfile.userKeyActions")); //$NON-NLS-1$
+        return parseUserKeyActions(LpexHelper.getLpexUserKeyActions()); // $NON-NLS-1$
     }
 
-    protected String getCurrentLpexPopupMenu() {
-        return LpexView.globalQuery("current.popup"); //$NON-NLS-1$
+    private String getCurrentLpexPopupMenu() {
+        return LpexHelper.getLpexPopupMenu();
     }
 
     protected UserAction[] parseUserActions(String actions) {
@@ -185,7 +173,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
             appendActionToBuffer(buffer, action);
         }
 
-        doSetLpexViewUserActions(buffer.toString());
+        LpexHelper.setLpexViewUserActions(buffer.toString());
     }
 
     protected void removeUserKeyActions() {
@@ -209,7 +197,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
             appendActionToBuffer(buffer, action);
         }
 
-        doSetLpexViewUserKeyActions(buffer.toString());
+        LpexHelper.setLpexViewUserKeyActions(buffer.toString());
     }
 
     protected void removePopupMenu() {
@@ -219,7 +207,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
             popupMenu = removeMenuItems(popupMenu, getMarkStart(), getMarkEnd());
         }
 
-        doSetLpexViewPopup(popupMenu.trim());
+        LpexHelper.setLpexViewPopup(popupMenu.trim());
     }
 
     private String getLPEXEditorUserActions(UserAction[] existingActions) {
@@ -322,15 +310,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
     }
 
     protected static void checkAndAddUserKeyAction(List<UserKeyAction> actions, String shortcut, String actionId) {
-
-        String existingActions = LpexView.globalQuery("current.updateProfile.userKeyActions"); //$NON-NLS-1$
-
-        String userKeyAction = shortcut + ACTION_DELIMITER + actionId;
-
-        // if (existingActions == null || existingActions.indexOf(userKeyAction)
-        // < 0) {
         actions.add(new UserKeyAction(shortcut, actionId));
-        // }
     }
 
     public static String getInitialUserKeyActions() {

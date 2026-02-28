@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.Set;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+import biz.isphere.ide.lpex.helper.LpexHelper;
 import biz.isphere.ide.lpex.menu.AbstractLpexMenuExtension;
 import biz.isphere.ide.lpex.menu.LpexMenuExtensionPlugin;
 import biz.isphere.ide.lpex.menu.model.UserAction;
@@ -154,7 +155,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
         final String SPACE = " "; //$NON-NLS-1$
         final String subMenu = "STRPREPRC"; //$NON-NLS-1$
 
-        String popupMenu = getCurrentLpexPopupMenu();
+        String popupMenu = LpexHelper.getLpexPopupMenu();
 
         // beginSubmenu "STRPREPRC"
         String startMenu = BEGIN_SUB_MENU + SPACE + DOUBLE_QUOTES + subMenu + DOUBLE_QUOTES;
@@ -164,6 +165,6 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
         popupMenu = removeMenuItems(popupMenu, startMenu, endMenu);
 
-        doSetLpexViewPopup(popupMenu);
+        LpexHelper.setLpexViewPopup(popupMenu);
     }
 }

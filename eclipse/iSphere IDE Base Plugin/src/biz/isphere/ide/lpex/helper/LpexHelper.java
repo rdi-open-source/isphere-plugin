@@ -58,15 +58,6 @@ public final class LpexHelper {
     }
 
     /**
-     * Sets the popup menu of the Lpex view.
-     * 
-     * @param popupMenu - String defining the popup menu of the Lpex view.
-     */
-    public static void setPopupMenu(String popupMenu) {
-        LpexView.doGlobalCommand("set default.popup " + popupMenu);
-    }
-
-    /**
      * Returns the file name that is loaded into the view.
      * 
      * @param aLpexView - LpexView that contains the source code.
@@ -224,5 +215,61 @@ public final class LpexHelper {
         }
 
         return null;
+    }
+
+    /**
+     * Returns the user actions of the LPEX editor.
+     * 
+     * @return LPEX editor uUser actions.
+     */
+    public static String getLpexUserActions() {
+        return LpexView.globalQuery("current.updateProfile.userActions");
+    }
+
+    /**
+     * Sets the user actions of the LPEX editor.
+     * 
+     * @param userActions - String value defining the user actions of the LPEX
+     *        editor.
+     */
+    public static void setLpexViewUserActions(String userActions) {
+        LpexView.doGlobalCommand("set default.updateProfile.userActions " + userActions);
+    }
+
+    /**
+     * Returns the user key actions (shortcuts) of the LPEX editor.
+     * 
+     * @return LPEX editor user key actions (shortcuts).
+     */
+    public static String getLpexUserKeyActions() {
+        return LpexView.globalQuery("current.updateProfile.userKeyActions");
+    }
+
+    /**
+     * Sets the user key actions (shortcuts) of the LPEX editor.
+     * 
+     * @param userKeyActions - String value defining the user key actions
+     *        (shortcuts) of the LPEX editor.
+     */
+    public static void setLpexViewUserKeyActions(String userKeyActions) {
+        LpexView.doGlobalCommand("set default.updateProfile.userKeyActions " + userKeyActions); //$NON-NLS-1$
+    }
+
+    /**
+     * Returns the popup menu of the LPEX editor.
+     * 
+     * @return LPEX editor popup menu.
+     */
+    public static String getLpexPopupMenu() {
+        return LpexView.globalQuery("current.popup"); //$NON-NLS-1$
+    }
+
+    /**
+     * Sets the popup menu of the Lpex view.
+     * 
+     * @param popupMenu - String defining the popup menu of the Lpex view.
+     */
+    public static void setLpexViewPopup(String popupMenu) {
+        LpexView.doGlobalCommand("set default.popup " + popupMenu); //$NON-NLS-1$
     }
 }
