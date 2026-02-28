@@ -164,7 +164,6 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
         for (UserAction action : actions) {
             if (userActions.containsKey(action.getActionId())) {
                 userActions.remove(action.getActionId());
-                System.out.println("<== Removed user action: " + action.getClassName());
             }
         }
 
@@ -188,7 +187,6 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
         for (UserKeyAction action : actions) {
             if (userActions.containsKey(action.getKeyStrokes())) {
                 userActions.remove(action.getKeyStrokes());
-                System.out.println("<== Removed user key action: " + action.getActionId());
             }
         }
 
@@ -225,7 +223,6 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
             if (!actionNames.contains(action.getActionId())) {
                 newUserActions.add(action);
                 actionNames.add(action.getActionId());
-                System.out.println("==> Added user action: " + action.getClassName());
             } else {
                 // ISphereAddRemoveCommentsPlugin.logError("STRPREPRC plug-in
                 // conflict: Lpex user action exists: "
@@ -280,7 +277,6 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
             if (!actionKeyStrokes.contains(action.getKeyStrokes())) {
                 newUserActions.add(action);
                 actionKeyStrokes.add(action.getKeyStrokes());
-                System.out.println("==> Added user key action: " + action.getActionId());
             } else {
                 ISpherePlugin.logError("STRPREPRC plug-in conflict: Lpex user key action exists: " + action.getKeyStrokes(), null); //$NON-NLS-1$
             }
