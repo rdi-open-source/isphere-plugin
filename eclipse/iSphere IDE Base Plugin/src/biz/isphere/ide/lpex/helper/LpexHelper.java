@@ -8,11 +8,7 @@
 
 package biz.isphere.ide.lpex.helper;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.progress.UIJob;
 
 import com.ibm.lpex.core.LpexView;
 import com.ibm.lpex.core.LpexWindow;
@@ -115,15 +111,7 @@ public final class LpexHelper {
      * @param message - Message that is displayed.
      */
     public static void displayMessage(final LpexView aLpexView, final String message) {
-
-        UIJob job = new UIJob("") {
-            @Override
-            public IStatus runInUIThread(IProgressMonitor arg0) {
-                aLpexView.doCommand("set messageText " + message);
-                return Status.OK_STATUS;
-            }
-        };
-        job.schedule();
+        aLpexView.doCommand("set messageText " + message);
     }
 
     /**
