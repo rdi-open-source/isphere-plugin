@@ -17,11 +17,11 @@ import java.util.Set;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+import com.ibm.lpex.alef.LpexPlugin;
+
 import biz.isphere.ide.lpex.actions.CompareEditorLpexAction;
 import biz.isphere.ide.lpex.menu.model.UserAction;
 import biz.isphere.ide.lpex.menu.model.UserKeyAction;
-
-import com.ibm.lpex.alef.LpexPlugin;
 
 /**
  * This class extends the popup menue of the Lpex editor. It adds the following
@@ -46,7 +46,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
         super.initializeLpexEditor(plugin);
     }
 
-    protected UserAction[] getUserActions() {
+    protected UserAction[] getUserActionsInternal(boolean allActions) {
 
         List<UserAction> actions = new LinkedList<UserAction>();
         actions.add(new UserAction(CompareEditorLpexAction.ID, CompareEditorLpexAction.class.getName()));
@@ -113,8 +113,10 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
     public static String getInitialUserKeyActions() {
 
         List<UserKeyAction> actions = new LinkedList<UserKeyAction>();
-        //        actions.add(new UserKeyAction("c-s-2", EditHeaderAction.ID)); //$NON-NLS-1$
-        //        actions.add(new UserKeyAction("c-s-4", RemoveHeaderAction.ID)); //$NON-NLS-1$
+        // actions.add(new UserKeyAction("c-s-2", EditHeaderAction.ID));
+        // //$NON-NLS-1$
+        // actions.add(new UserKeyAction("c-s-4", RemoveHeaderAction.ID));
+        // //$NON-NLS-1$
 
         StringBuilder buffer = new StringBuilder();
         for (UserKeyAction action : actions) {
@@ -133,7 +135,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
         UserKeyAction[] newUserKeyActions = parseUserKeyActions((String)event.getNewValue());
 
-        UserAction[] userActionsList = getUserActions();
+        UserAction[] userActionsList = getEnabledUserActions();
         Set<String> knownActionClasses = new HashSet<String>();
         for (UserAction action : userActionsList) {
             knownActionClasses.add(action.getActionId());

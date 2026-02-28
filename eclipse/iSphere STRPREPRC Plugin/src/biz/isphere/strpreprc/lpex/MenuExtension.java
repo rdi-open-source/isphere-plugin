@@ -53,7 +53,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
         super.initializeLpexEditor(plugin);
     }
 
-    protected UserAction[] getUserActions() {
+    protected UserAction[] getUserActionsInternal(boolean allActions) {
 
         List<UserAction> actions = new LinkedList<UserAction>();
         actions.add(new UserAction(EditHeaderAction.ID, EditHeaderAction.class.getName()));
@@ -108,8 +108,10 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
     public static String getInitialUserKeyActions() {
 
         List<UserKeyAction> actions = new LinkedList<UserKeyAction>();
-        //        actions.add(new UserKeyAction("c-s-2", EditHeaderAction.ID)); //$NON-NLS-1$
-        //        actions.add(new UserKeyAction("c-s-4", RemoveHeaderAction.ID)); //$NON-NLS-1$
+        // actions.add(new UserKeyAction("c-s-2", EditHeaderAction.ID));
+        // //$NON-NLS-1$
+        // actions.add(new UserKeyAction("c-s-4", RemoveHeaderAction.ID));
+        // //$NON-NLS-1$
 
         StringBuilder buffer = new StringBuilder();
         for (UserKeyAction action : actions) {
@@ -128,7 +130,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
         UserKeyAction[] newUserKeyActions = parseUserKeyActions((String)event.getNewValue());
 
-        UserAction[] userActionsList = getUserActions();
+        UserAction[] userActionsList = getEnabledUserActions();
         Set<String> knownActionClasses = new HashSet<String>();
         for (UserAction action : userActionsList) {
             knownActionClasses.add(action.getActionId());

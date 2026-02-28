@@ -23,6 +23,7 @@ import biz.isphere.ide.lpex.menu.AbstractLpexMenuExtension;
 import biz.isphere.ide.lpex.menu.LpexMenuExtensionPlugin;
 import biz.isphere.ide.lpex.menu.model.UserAction;
 import biz.isphere.ide.lpex.menu.model.UserKeyAction;
+import biz.isphere.lpex.comments.lpex.action.AbstractLpexAction;
 import biz.isphere.lpex.comments.lpex.action.CommentAction;
 import biz.isphere.lpex.comments.lpex.action.IndentAction;
 import biz.isphere.lpex.comments.lpex.action.RemoveColorCodesAction;
@@ -57,17 +58,17 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
     }
 
     @Override
-    protected UserAction[] getUserActions() {
+    protected UserAction[] getUserActionsInternal(boolean allActions) {
 
         List<UserAction> actions = new LinkedList<UserAction>();
 
-        if (isCommentsEnabled()) {
+        if (allActions || isCommentsEnabled()) {
             checkAndAddUserAction(actions, CommentAction.ID, CommentAction.class.getName());
             checkAndAddUserAction(actions, UnCommentAction.ID, UnCommentAction.class.getName());
             checkAndAddUserAction(actions, ToggleCommentAction.ID, ToggleCommentAction.class.getName());
         }
 
-        if (isIndentingEnabled()) {
+        if (allActions || isIndentingEnabled()) {
             checkAndAddUserAction(actions, IndentAction.ID, IndentAction.class.getName());
             checkAndAddUserAction(actions, UnIndentAction.ID, UnIndentAction.class.getName());
         }
@@ -90,7 +91,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
     @Override
     protected UserKeyAction[] getUserKeyActions() {
 
-        List<UserKeyAction> actions = getUserKeyActionsList();
+        List<UserKeyAction> actions = getUserKeyActionsList(false);
 
         return actions.toArray(new UserKeyAction[actions.size()]);
     }
@@ -138,7 +139,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
     public static String getInitialUserKeyActions() {
 
-        List<UserKeyAction> actions = getUserKeyActionsList();
+        List<UserKeyAction> actions = getUserKeyActionsList(false);
 
         StringBuilder buffer = new StringBuilder();
         for (UserKeyAction action : actions) {
@@ -149,24 +150,43 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
     }
 
-    private static List<UserKeyAction> getUserKeyActionsList() {
+    private static List<UserKeyAction> getUserKeyActionsList(boolean allActions) {
 
         List<UserKeyAction> actions = new LinkedList<UserKeyAction>();
 
-        if (isCommentsEnabled()) {
-            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.ADD), CommentAction.ID);
-            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.SUBSTRACT), UnCommentAction.ID);
-            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.MULTIPLY), ToggleCommentAction.ID);
+        if (allActions || isCommentsEnabled()) {
+            checkAndAddUserKeyAction(actions, getShortcut(CommentAction.class), CommentAction.ID);
+            checkAndAddUserKeyAction(actions, getShortcut(UnCommentAction.class), UnCommentAction.ID);
+            checkAndAddUserKeyAction(actions, getShortcut(ToggleCommentAction.class), ToggleCommentAction.ID);
         }
 
-        if (isIndentingEnabled()) {
-            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.TAB), IndentAction.ID);
-            checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.TAB), UnIndentAction.ID);
+        if (allActions || isIndentingEnabled()) {
+            checkAndAddUserKeyAction(actions, getShortcut(IndentAction.class), IndentAction.ID);
+            checkAndAddUserKeyAction(actions, getShortcut(UnIndentAction.class), UnIndentAction.ID);
         }
 
-        checkAndAddUserKeyAction(actions, createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.NUMPAD_0), RemoveColorCodesAction.ID);
+        checkAndAddUserKeyAction(actions, getShortcut(RemoveColorCodesAction.class), RemoveColorCodesAction.ID);
 
         return actions;
+    }
+
+    private static String getShortcut(Class<? extends AbstractLpexAction> clazz) {
+
+        if (clazz.equals(CommentAction.class)) {
+            return createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.ADD);
+        } else if (clazz.equals(UnCommentAction.class)) {
+            return createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.SUBSTRACT);
+        } else if (clazz.equals(ToggleCommentAction.class)) {
+            return createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.MULTIPLY);
+        } else if (clazz.equals(IndentAction.class)) {
+            return createShortcut(LpexKey.CTRL, LpexKey.TAB);
+        } else if (clazz.equals(UnIndentAction.class)) {
+            return createShortcut(LpexKey.CTRL, LpexKey.SHIFT, LpexKey.TAB);
+        } else if (clazz.equals(RemoveColorCodesAction.class)) {
+            return createShortcut(LpexKey.CTRL, LpexKey.ALT, LpexKey.NUMPAD_0);
+        } else {
+            throw new IllegalArgumentException("Unknown action: " + clazz.getName());
+        }
     }
 
     private static boolean isCommentsEnabled() {
@@ -185,7 +205,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
         UserKeyAction[] newUserKeyActions = parseUserKeyActions((String)event.getNewValue());
 
-        UserAction[] userActionsList = getUserActions();
+        UserAction[] userActionsList = getEnabledUserActions();
         Set<String> knownActionClasses = new HashSet<String>();
         for (UserAction action : userActionsList) {
             knownActionClasses.add(action.getActionId());
@@ -215,5 +235,20 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
         popupMenu = removeMenuItems(popupMenu, "MARK-Quelle.Start", "MARK-Quelle.End"); //$NON-NLS-1$ //$NON-NLS-2$
 
         doSetLpexViewPopup(popupMenu);
+    }
+
+    @Override
+    protected void removeUserActions() {
+        super.removeUserActions();
+    }
+
+    @Override
+    protected void removeUserKeyActions() {
+        super.removeUserKeyActions();
+    }
+
+    @Override
+    protected void removePopupMenu() {
+        super.removePopupMenu();
     }
 }

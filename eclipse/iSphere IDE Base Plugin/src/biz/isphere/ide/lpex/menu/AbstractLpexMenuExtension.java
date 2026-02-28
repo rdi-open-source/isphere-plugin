@@ -17,13 +17,13 @@ import java.util.Set;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 
+import com.ibm.lpex.alef.LpexPlugin;
+import com.ibm.lpex.core.LpexView;
+
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.ide.lpex.menu.model.AbstractLpexAction;
 import biz.isphere.ide.lpex.menu.model.UserAction;
 import biz.isphere.ide.lpex.menu.model.UserKeyAction;
-
-import com.ibm.lpex.alef.LpexPlugin;
-import com.ibm.lpex.core.LpexView;
 
 // MARK-Source.Start
 // MARK-Source.End
@@ -164,7 +164,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
         return actionsList.toArray(new UserKeyAction[actionsList.size()]);
     }
 
-    private void removeUserActions() {
+    protected void removeUserActions() {
 
         UserAction[] existingActions = getCurrentLpexUserActions();
         Map<String, UserAction> userActions = new HashMap<String, UserAction>();
@@ -172,10 +172,11 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
             userActions.put(action.getActionId(), action);
         }
 
-        UserAction[] actions = getUserActions();
+        UserAction[] actions = getAllUserActions();
         for (UserAction action : actions) {
             if (userActions.containsKey(action.getActionId())) {
                 userActions.remove(action.getActionId());
+                System.out.println("<== Removed user action: " + action.getClassName());
             }
         }
 
@@ -187,7 +188,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
         doSetLpexViewUserActions(buffer.toString());
     }
 
-    private void removeUserKeyActions() {
+    protected void removeUserKeyActions() {
 
         UserKeyAction[] existingActions = getCurrentLpexUserKeyActions();
         Map<String, UserKeyAction> userActions = new HashMap<String, UserKeyAction>();
@@ -199,6 +200,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
         for (UserKeyAction action : actions) {
             if (userActions.containsKey(action.getKeyStrokes())) {
                 userActions.remove(action.getKeyStrokes());
+                System.out.println("<== Removed user key action: " + action.getActionId());
             }
         }
 
@@ -210,7 +212,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
         doSetLpexViewUserKeyActions(buffer.toString());
     }
 
-    private void removePopupMenu() {
+    protected void removePopupMenu() {
 
         String popupMenu = getCurrentLpexPopupMenu();
         if (popupMenu != null) {
@@ -230,13 +232,15 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
             actionNames.add(action.getActionId());
         }
 
-        UserAction[] actions = getUserActions();
+        UserAction[] actions = getEnabledUserActions();
         for (UserAction action : actions) {
             if (!actionNames.contains(action.getActionId())) {
                 newUserActions.add(action);
                 actionNames.add(action.getActionId());
+                System.out.println("==> Added user action: " + action.getClassName());
             } else {
-                // ISphereAddRemoveCommentsPlugin.logError("STRPREPRC plug-in conflict: Lpex user action exists: "
+                // ISphereAddRemoveCommentsPlugin.logError("STRPREPRC plug-in
+                // conflict: Lpex user action exists: "
                 // + action.getActionId(), null);
             }
         }
@@ -249,7 +253,15 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
         return buffer.toString();
     }
 
-    protected abstract UserAction[] getUserActions();
+    protected UserAction[] getEnabledUserActions() {
+        return getUserActionsInternal(true);
+    }
+
+    protected UserAction[] getAllUserActions() {
+        return getUserActionsInternal(false);
+    }
+
+    protected abstract UserAction[] getUserActionsInternal(boolean enabled);
 
     protected void checkAndAddUserAction(List<UserAction> actions, String actionId, String className) {
 
@@ -280,6 +292,7 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
             if (!actionKeyStrokes.contains(action.getKeyStrokes())) {
                 newUserActions.add(action);
                 actionKeyStrokes.add(action.getKeyStrokes());
+                System.out.println("==> Added user key action: " + action.getActionId());
             } else {
                 ISpherePlugin.logError("STRPREPRC plug-in conflict: Lpex user key action exists: " + action.getKeyStrokes(), null); //$NON-NLS-1$
             }
@@ -314,9 +327,10 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
 
         String userKeyAction = shortcut + ACTION_DELIMITER + actionId;
 
-        if (existingActions == null || existingActions.indexOf(userKeyAction) < 0) {
-            actions.add(new UserKeyAction(shortcut, actionId));
-        }
+        // if (existingActions == null || existingActions.indexOf(userKeyAction)
+        // < 0) {
+        actions.add(new UserKeyAction(shortcut, actionId));
+        // }
     }
 
     public static String getInitialUserKeyActions() {
