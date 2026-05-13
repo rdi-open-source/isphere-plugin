@@ -8,6 +8,7 @@
 
 package biz.isphere.tn5250j.core.preferencepages;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -36,6 +37,7 @@ public class PreferencePage3 extends PreferencePage implements IWorkbenchPrefere
     private Button buttonMSActive;
     private Text textMSHorizontalSize;
     private Text textMSVerticalSize;
+    private Button checkboxFixAwtScaling;
 
     public PreferencePage3() {
         super();
@@ -102,6 +104,13 @@ public class PreferencePage3 extends PreferencePage implements IWorkbenchPrefere
         textMSVerticalSize.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textMSVerticalSize.setTextLimit(4);
 
+        // Fix AWT Scaling
+
+        final Label labelFixAwtScaling = new Label(container, SWT.NONE);
+        labelFixAwtScaling.setText(Messages.Fix_Awt_Scaling_colon);
+
+        checkboxFixAwtScaling = new Button(container, SWT.CHECK);
+
         // Miscellaneous
 
         setScreenToValues();
@@ -130,22 +139,30 @@ public class PreferencePage3 extends PreferencePage implements IWorkbenchPrefere
 
     protected void setStoreToValues() {
         preferences.setIsMinimalSessionEnabled(buttonMSActive.getSelection());
-        preferences.setMinimalSessionHorizontalSize(IntHelper.tryParseInt(textMSHorizontalSize.getText(),
-            preferences.getDefaultMinimalSessionHorizontalSize()));
-        preferences.setMinimalSessionVerticalSize(IntHelper.tryParseInt(textMSVerticalSize.getText(),
-            preferences.getDefaultMinimalSessionVerticalSize()));
+        preferences.setMinimalSessionHorizontalSize(
+            IntHelper.tryParseInt(textMSHorizontalSize.getText(), preferences.getDefaultMinimalSessionHorizontalSize()));
+        preferences
+            .setMinimalSessionVerticalSize(IntHelper.tryParseInt(textMSVerticalSize.getText(), preferences.getDefaultMinimalSessionVerticalSize()));
+
+        if (preferences.isFixAwtScaling() != checkboxFixAwtScaling.getSelection()) {
+            MessageDialog.openInformation(getShell(), Messages.Information, Messages.Restart_RDi_to_apply_changes);
+        }
+
+        preferences.setFixAwtScaling(checkboxFixAwtScaling.getSelection());
     }
 
     protected void setScreenToDefaultValues() {
         buttonMSActive.setSelection(preferences.getDefaultIsMinimalSessionSizeEnabled());
         textMSHorizontalSize.setText(Integer.toString(preferences.getDefaultMinimalSessionHorizontalSize()));
         textMSVerticalSize.setText(Integer.toString(preferences.getDefaultMinimalSessionVerticalSize()));
+        checkboxFixAwtScaling.setSelection(preferences.getDefaultFixAwtScaling());
     }
 
     protected void setScreenToValues() {
         buttonMSActive.setSelection(preferences.isMinimalSessionSizeEnabled());
         textMSHorizontalSize.setText(Integer.toString(preferences.getMinimalSessionHorizontalSize()));
         textMSVerticalSize.setText(Integer.toString(preferences.getMinimalSessionVerticalSize()));
+        checkboxFixAwtScaling.setSelection(preferences.isFixAwtScaling());
     }
 
     public void init(IWorkbench workbench) {

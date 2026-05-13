@@ -74,10 +74,13 @@ public class Messages extends NLS {
     public static String There_s_at_least_one_signed_on_session_Do_you_really_want_to_close_the_sessions;
     public static String User_colon;
     public static String Vertical_size_colon;
+    public static String Fix_Awt_Scaling_colon;
     public static String View;
     public static String iSphere_5250_Emulator_is_based_on_TN5250j_Emulator;
     public static String Session_configuration_file_A_not_found_in_directory_colon_B;
     public static String E_R_R_O_R;
+    public static String Information;
+    public static String Restart_RDi_to_apply_changes;
     public static String Enable_multiple_sessions;
     public static String Group_sessions_by;
     public static String SessionGrouping_No_Grouping;

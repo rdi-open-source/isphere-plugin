@@ -81,6 +81,8 @@ public final class Preferences {
 
     private static final String BIZ_ISPHERE_TN5250J_MSVSIZE = "BIZ.ISPHERE.TN5250J.MSVSIZE"; //$NON-NLS-1$
 
+    private static final String BIZ_ISPHERE_TN5250J_FIX_AWT_SCALING = "BIZ.ISPHERE.TN5250J.FIX_AWT_SCALING"; //$NON-NLS-1$
+
     private static final String BIZ_ISPHERE_TN5250J_ACTIVATE_VIEWS_ON_STARTUP = "BIZ.ISPHERE.TN5250J.ACTIVATE.VIEWS.ON.STARTUP"; //$NON-NLS-1$
 
     private static final String BIZ_ISPHERE_TN5250J_SSL_TYPE = "BIZ.ISPHERE.TN5250J.SSL_TYPE"; //$NON-NLS-1$
@@ -176,6 +178,10 @@ public final class Preferences {
         return preferenceStore.getBoolean(BIZ_ISPHERE_TN5250J_ACTIVATE_VIEWS_ON_STARTUP);
     }
 
+    public boolean isFixAwtScaling() {
+        return preferenceStore.getBoolean(BIZ_ISPHERE_TN5250J_FIX_AWT_SCALING);
+    }
+
     public String getSSLType() {
         return preferenceStore.getString(BIZ_ISPHERE_TN5250J_SSL_TYPE);
     }
@@ -236,6 +242,10 @@ public final class Preferences {
         preferenceStore.setValue(BIZ_ISPHERE_TN5250J_ACTIVATE_VIEWS_ON_STARTUP, enable);
     }
 
+    public void setFixAwtScaling(boolean enable) {
+        preferenceStore.setValue(BIZ_ISPHERE_TN5250J_FIX_AWT_SCALING, enable);
+    }
+
     public void setSSLType(String sslType) {
         preferenceStore.setValue(BIZ_ISPHERE_TN5250J_SSL_TYPE, sslType);
     }
@@ -262,6 +272,7 @@ public final class Preferences {
         preferenceStore.setDefault(BIZ_ISPHERE_TN5250J_MSHSIZE, getDefaultMinimalSessionHorizontalSize());
         preferenceStore.setDefault(BIZ_ISPHERE_TN5250J_MSVSIZE, getDefaultMinimalSessionVerticalSize());
         preferenceStore.setDefault(BIZ_ISPHERE_TN5250J_ACTIVATE_VIEWS_ON_STARTUP, getDefaultActivateViewsOnStartup());
+        preferenceStore.setDefault(BIZ_ISPHERE_TN5250J_FIX_AWT_SCALING, getDefaultFixAwtScaling());
         preferenceStore.setDefault(BIZ_ISPHERE_TN5250J_SSL_TYPE, getDefaultSSLType());
     }
 
@@ -310,6 +321,10 @@ public final class Preferences {
     }
 
     public boolean getDefaultActivateViewsOnStartup() {
+        return false;
+    }
+
+    public boolean getDefaultFixAwtScaling() {
         return false;
     }
 

@@ -18,6 +18,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.tn5250j.GlobalConfigure;
 
+import biz.isphere.tn5250j.core.preferences.Preferences;
 import biz.isphere.tn5250j.core.tn5250jpart.HandleBindingService;
 
 public class TN5250JCorePlugin extends AbstractUIPlugin {
@@ -33,12 +34,28 @@ public class TN5250JCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_ON = "on.gif";
     public static final String IMAGE_OFF = "off.gif";
 
+    private static final String SUN_JAVA2D_UI_SCALE = "sun.java2d.uiScale";
+
     public TN5250JCorePlugin() {
         plugin = this;
     }
 
     @Override
     public void start(BundleContext context) throws Exception {
+        // HiDPI / double-scaling fix for the embedded TN5250 emulator.
+        // SWT reports physical pixels; AWT/Swing (Java 9+) scales a second
+        // time on top of that, which makes fonts and paddings render too
+        // large at Windows display scaling > 100 %. Disabling AWT's internal
+        // scaling restores 1:1 alignment between SWT and AWT bounds.
+        // Must be set before any AWT class is loaded; the Activator runs
+        // before CreateSessionPanel touches AWT via Albireo's SwingControl.
+        // See iSphere issue #3.
+        if (Preferences.getInstance().isFixAwtScaling()) {
+            if (System.getProperty(SUN_JAVA2D_UI_SCALE) == null) {
+                System.setProperty(SUN_JAVA2D_UI_SCALE, "1.0");
+            }
+        }
+
         super.start(context);
         installURL = context.getBundle().getEntry("/");
 
