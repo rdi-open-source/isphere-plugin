@@ -386,7 +386,6 @@
             <echo>Building IBMi library is enabled.</echo>
         </then>
         <else>
-            <property name="build.library.enabled" value="true" />
             <echo>IGNORED: Building IBMi library</echo>
         </else>
     </if>
@@ -961,14 +960,6 @@
         <mkdir dir="${temp.dir.local_updatesite}" />
         <mkdir dir="${temp.dir.local_updatesite}/features" />
         <mkdir dir="${temp.dir.local_updatesite}/plugins" />
-        <mkdir dir="${temp.dir.local_updatesite}/Server" />
-
-        <if>
-            <equals arg1="${build.help.enabled}" arg2="true" />
-            <then>
-                <copy file="${build.template.dir.web.assets}/upload_savf.cmd" todir="${temp.dir.local_updatesite}/Server" />
-            </then>
-        </if>
 
         <copy todir="${temp.dir.local_updatesite}/features" >
             <fileset dir="${site.dir}/features" />
@@ -998,6 +989,8 @@
         <if>
             <equals arg1="${do.copy.site.xml}" arg2="true" />
             <then>
+                <mkdir dir="${temp.dir.local_updatesite}/Server" />
+                <copy file="${build.template.dir.web.assets}/upload_savf.cmd" todir="${temp.dir.local_updatesite}/Server" />
                 <copy todir="${temp.dir.local_updatesite}" >
                     <fileset dir="${site.dir}" includes="site.xml" />
                 </copy>
