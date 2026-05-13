@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2023 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,19 +90,19 @@ public abstract class AbstractDWidget implements Comparable<AbstractDWidget>, Se
         return false;
     }
 
-    void setLabel(String label) {
+    public void setLabel(String label) {
         this.label = label;
     }
 
-    void setOffset(int offset) {
+    public void setOffset(int offset) {
         this.offset = offset;
     }
 
-    void setLength(int length) {
+    public void setLength(int length) {
         this.length = length;
     }
 
-    void setHorizontalSpan(int horizontalSpan) {
+    public void setHorizontalSpan(int horizontalSpan) {
         this.horizontalSpan = horizontalSpan;
     }
 

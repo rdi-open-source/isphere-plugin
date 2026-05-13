@@ -1,6 +1,10 @@
 
 Changelog: iSphere 6.1.2.r
 --------------------------
+ • Added option 'Remove Color Codes' to LPEX editor.
+ • Added option 'Ignore color codes' to iSphere Compare Editor.
+ • Fixed saving/loading iSphere search results. Replaced XStream
+   library by own parser.
  • Changed development environment to RDi 9.6.0.13.
  • Removed obsolete RDi 9.5 code.
  • Remove obsolete compatibility code for WDSCi 7.0 of commit

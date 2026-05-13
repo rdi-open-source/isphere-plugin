@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditordesigner.model.AbstractDWidget;
 import biz.isphere.core.dataspaceeditordesigner.model.DComment;
+import biz.isphere.core.dataspaceeditordesigner.model.DDecimal;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.model.DTemplateWidget;
 import biz.isphere.core.dataspaceeditordesigner.model.DataSpaceEditorManager;
@@ -275,6 +276,11 @@ public class DWidgetDialog extends AbstractDialog {
 
         if (DataSpaceEditorManager.hasLength(widgetClass)) {
             textLength.setText(new Integer(widget.getLength()).toString());
+        }
+
+        if (DataSpaceEditorManager.hasFraction(widgetClass)) {
+            DDecimal dDecimalWidget = (DDecimal)widget;
+            textFraction.setText(new Integer(dDecimalWidget.getFraction()).toString());
         }
 
         comboHorizontalSpan.setText(new Integer(widget.getHorizontalSpan()).toString());

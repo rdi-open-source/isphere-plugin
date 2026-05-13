@@ -41,6 +41,7 @@ public class CompareEditorConfiguration extends CompareConfiguration {
     private static String OPEN_IN_EDITOR = "biz.isphere.core.compareeditor.openInEditor"; //$NON-NLS-1$
     private static String CONSIDER_DATE = "biz.isphere.core.compareeditor.considerDate"; //$NON-NLS-1$
     private static String IGNORE_CASE = "biz.isphere.core.compareeditor.ignoreCase"; //$NON-NLS-1$
+    private static String IGNORE_COLOR_CODES = "biz.isphere.core.compareeditor.ignoreColorCodes"; //$NON-NLS-1$
     private static String IGNORE_CHANGES_LEFT = "biz.isphere.core.compareeditor.ignoreChangesLeft"; //$NON-NLS-1$
     private static String IGNORE_CHANGES_RIGHT = "biz.isphere.core.compareeditor.ignoreChangesRight"; //$NON-NLS-1$
     private static String THREE_WAY = "biz.isphere.core.compareeditor.threeWay"; //$NON-NLS-1$
@@ -60,6 +61,16 @@ public class CompareEditorConfiguration extends CompareConfiguration {
         setOpenInEditor(true);
 
         setProperty(CompareConfiguration.IGNORE_WHITESPACE, Preferences.getInstance().isSourceMemberCompareIgnoreWhiteSpaces());
+        setProperty(IGNORE_COLOR_CODES, Preferences.getInstance().isSourceMemberCompareIgnoreColorCodes());
+    }
+
+    /**
+     * Returns true if the color codes are ignored.
+     * 
+     * @return true if color codes are ignored; false otherwise
+     */
+    public boolean isIgnoreColorCodes() {
+        return ((Boolean)getProperty(IGNORE_COLOR_CODES)).booleanValue();
     }
 
     /**

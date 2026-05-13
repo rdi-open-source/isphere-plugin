@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,4 +37,16 @@ public class SearchResultStatement implements Serializable {
         this.line = line;
     }
 
+    @Override
+    public String toString() {
+
+        StringBuilder buffer = new StringBuilder();
+
+        buffer.append(statement);
+        buffer.append(": '");
+        buffer.append(line);
+        buffer.append("'");
+
+        return buffer.toString();
+    }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public class SearchArgument {
      * (see: LILINE).
      */
     public static final int MAX_SOURCE_FILE_SEARCH_COLUMN = 228;
-    
+
     /**
      * The value specified here must match the maximum message text length in
      * XFNDSTR (see: LITXT).
@@ -40,6 +40,9 @@ public class SearchArgument {
      * (see: LILINE).
      */
     public static final int MAX_STREAM_FILE_SEARCH_COLUMN = 512;
+
+    public SearchArgument() {
+    }
 
     public SearchArgument(String aString, int aFromColumn, int aToColumn, String aCaseSensitive) {
         this(aString, aFromColumn, aToColumn, aCaseSensitive, SearchOptions.SEARCH_ARG_STRING, SearchOptions.CONTAINS);
@@ -82,6 +85,10 @@ public class SearchArgument {
         return operator;
     }
 
+    public void setOperator(int operator) {
+        this.operator = operator;
+    }
+
     public String getOperatorAsText() {
 
         if (operator == SearchOptions.CONTAINS) {
@@ -95,20 +102,40 @@ public class SearchArgument {
         return string;
     }
 
+    public void setString(String string) {
+        this.string = string;
+    }
+
     public int getFromColumn() {
         return fromColumn;
+    }
+
+    public void setFromColumn(int fromColumn) {
+        this.fromColumn = fromColumn;
     }
 
     public int getToColumn() {
         return toColumn;
     }
 
+    public void setToColumn(int toColumn) {
+        this.toColumn = toColumn;
+    }
+
     public String getCaseSensitive() {
         return caseSensitive;
     }
 
+    public void setCaseSensitive(String caseSensitive) {
+        this.caseSensitive = caseSensitive;
+    }
+
     public String getRegularExpression() {
         return regularExpression;
+    }
+
+    public void setRegularExpression(String RegularExpression) {
+        this.regularExpression = RegularExpression;
     }
 
     public void setRange(int aFromColumn, int aToColumn) {
@@ -140,6 +167,23 @@ public class SearchArgument {
         buffer.append(SPACE);
         buffer.append(getRegularExpression());
         buffer.append(")"); //$NON-NLS-1$
+
+        return buffer.toString();
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder buffer = new StringBuilder();
+
+        buffer.append(string);
+        buffer.append(" (");
+        buffer.append("operator: " + operator);
+        buffer.append(", case-sensitive: " + caseSensitive);
+        buffer.append(", regularExpression: " + regularExpression);
+        buffer.append(", fromColumn: " + fromColumn);
+        buffer.append(", toColumn: " + toColumn);
+        buffer.append(")");
 
         return buffer.toString();
     }

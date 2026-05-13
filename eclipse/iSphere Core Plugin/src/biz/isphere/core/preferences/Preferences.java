@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2025 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -189,6 +189,7 @@ public final class Preferences {
     private static final String SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER = SOURCE_MEMBER_COMPARE
         + "LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER"; //$NON-NLS-1$
     private static final String SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES = SOURCE_MEMBER_COMPARE + "SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES"; //$NON-NLS-1$
+    private static final String SOURCE_MEMBER_COMPARE_IGNORE_COLOR_CODES = SOURCE_MEMBER_COMPARE + "SOURCE_MEMBER_COMPARE_IGNORE_COLOR_CODES"; //$NON-NLS-1$
 
     private static final String SOURCE_STREAM_FILE_COMPARE = DOMAIN + "SOURCE_STREAM_FILE_COMPARE."; //$NON-NLS-1$
     private static final String SOURCE_STREAM_FILE_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_STREAM_FILE = SOURCE_STREAM_FILE_COMPARE
@@ -739,6 +740,10 @@ public final class Preferences {
         return preferenceStore.getBoolean(SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES);
     }
 
+    public boolean isSourceMemberCompareIgnoreColorCodes() {
+        return preferenceStore.getBoolean(SOURCE_MEMBER_COMPARE_IGNORE_COLOR_CODES);
+    }
+
     public String getDateFormatLabel() {
         return preferenceStore.getString(APPEARANCE_DATE_FORMAT);
     }
@@ -1080,6 +1085,10 @@ public final class Preferences {
         preferenceStore.setValue(SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES, enabled);
     }
 
+    public void setSourceMemberCompareIgnoreColorCodes(boolean enabled) {
+        preferenceStore.setValue(SOURCE_MEMBER_COMPARE_IGNORE_COLOR_CODES, enabled);
+    }
+
     public void setDateFormatLabel(String dateFormatLabel) {
         preferenceStore.setValue(APPEARANCE_DATE_FORMAT, dateFormatLabel);
     }
@@ -1230,6 +1239,7 @@ public final class Preferences {
             getDefaultSourceStreamFileCompareLoadingPreviousValuesEnabled().name());
 
         preferenceStore.setDefault(SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES, getDefaultSourceMemberCompareIgnoreWhiteSpaces());
+        preferenceStore.setDefault(SOURCE_MEMBER_COMPARE_IGNORE_COLOR_CODES, getDefaultSourceMemberCompareIgnoreColorCodes());
 
         preferenceStore.setDefault(APPEARANCE_DATE_FORMAT, getDefaultDateFormatLabel());
         preferenceStore.setDefault(APPEARANCE_TIME_FORMAT, getDefaultTimeFormatLabel());
@@ -1887,6 +1897,10 @@ public final class Preferences {
 
     public boolean getDefaultSourceMemberCompareIgnoreWhiteSpaces() {
         return true;
+    }
+
+    public boolean getDefaultSourceMemberCompareIgnoreColorCodes() {
+        return false;
     }
 
     public String getDefaultDateFormatLabel() {

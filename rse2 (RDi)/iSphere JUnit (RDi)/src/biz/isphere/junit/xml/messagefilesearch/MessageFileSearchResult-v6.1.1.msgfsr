@@ -1,0 +1,79 @@
+<sourceFileSearch>
+  <tabFolder>
+    <tabItem>
+      <connectionName>CDDEA061692:GFD400</connectionName>
+      <searchString>error</searchString>
+      <searchResult>
+        <messageFile>
+          <connectionName>CDDEA061692:GFD400</connectionName>
+          <library>ISPHEREDVP</library>
+          <messageFile>TEST#MSG</messageFile>
+          <description>Test Message Descriptions</description>
+          <messageIds>
+            <messageId>
+              <messageId>CAE0031</messageId>
+              <message>CALL to &amp;1 failed due to an error.                                                                                                  </message>
+            </messageId>
+            <messageId>
+              <messageId>CAE0035</messageId>
+              <message>&amp;1 Data type error in input. Enter data again.                                                                                      </message>
+            </messageId>
+          </messageIds>
+        </messageFile>
+        <messageFile>
+          <connectionName>CDDEA061692:GFD400</connectionName>
+          <library>ISPHEREDVP</library>
+          <messageFile>TEST#MSG2</messageFile>
+          <description>Test Message Descriptions 2</description>
+          <messageIds>
+            <messageId>
+              <messageId>CAE0031</messageId>
+              <message>CALL to &amp;1 failed due to an error.                                                                                                  </message>
+            </messageId>
+            <messageId>
+              <messageId>CAE0035</messageId>
+              <message>&amp;1 Data type error in input. Enter data again.                                                                                      </message>
+            </messageId>
+          </messageIds>
+        </messageFile>
+      </searchResult>
+      <searchOptions>
+        <matchOption>ALL</matchOption>
+        <showAllItems>true</showAllItems>
+        <searchArguments>
+          <biz.isphere.core.search.SearchArgument>
+            <operator>1</operator>
+            <string>error</string>
+            <fromColumn>1</fromColumn>
+            <toColumn>132</toColumn>
+            <caseSensitive>*IGNORE</caseSensitive>
+            <regularExpression>*STRING</regularExpression>
+          </biz.isphere.core.search.SearchArgument>
+        </searchArguments>
+        <genericOptions>
+          <entry>
+            <biz.isphere.core.search.GenericSearchOption_-Key>MSGF_INCLUDE_FIRST_LEVEL_TEXT</biz.isphere.core.search.GenericSearchOption_-Key>
+            <biz.isphere.core.search.GenericSearchOption>
+              <key>MSGF_INCLUDE_FIRST_LEVEL_TEXT</key>
+              <value class="boolean">true</value>
+            </biz.isphere.core.search.GenericSearchOption>
+          </entry>
+          <entry>
+            <biz.isphere.core.search.GenericSearchOption_-Key>MSGF_INCLUDE_SECOND_LEVEL_TEXT</biz.isphere.core.search.GenericSearchOption_-Key>
+            <biz.isphere.core.search.GenericSearchOption>
+              <key>MSGF_INCLUDE_SECOND_LEVEL_TEXT</key>
+              <value class="boolean">false</value>
+            </biz.isphere.core.search.GenericSearchOption>
+          </entry>
+          <entry>
+            <biz.isphere.core.search.GenericSearchOption_-Key>MSGF_INCLUDE_MESSAGE_ID</biz.isphere.core.search.GenericSearchOption_-Key>
+            <biz.isphere.core.search.GenericSearchOption>
+              <key>MSGF_INCLUDE_MESSAGE_ID</key>
+              <value class="boolean">false</value>
+            </biz.isphere.core.search.GenericSearchOption>
+          </entry>
+        </genericOptions>
+      </searchOptions>
+    </tabItem>
+  </tabFolder>
+</sourceFileSearch>

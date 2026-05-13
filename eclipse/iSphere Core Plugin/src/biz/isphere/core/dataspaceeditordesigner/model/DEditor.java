@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,8 @@ import biz.isphere.base.internal.StringHelper;
 @SuppressWarnings("serial")
 public class DEditor implements Comparable<DEditor>, Serializable, IAdaptable {
 
+    private static final String LF = "\n";
+
     private static final int STEP_WIDTH = 10;
     private static final int HALF_STEP_WIDTH = STEP_WIDTH / 2;
 
@@ -35,8 +37,9 @@ public class DEditor implements Comparable<DEditor>, Serializable, IAdaptable {
 
     private transient DEditorPropertySource propertySource;
 
-    DEditor(String name, int columns) {
-        this(name, "", columns);
+    // used by XMLRegistryHelper
+    public DEditor() {
+        this("", "", 0);
     }
 
     DEditor(String name, String description, int columns) {
@@ -136,7 +139,7 @@ public class DEditor implements Comparable<DEditor>, Serializable, IAdaptable {
         return null;
     }
 
-    void addReferencedByObject(DReferencedObject object) {
+    public void addReferencedByObject(DReferencedObject object) {
         if (!referencedBy.containsKey(object.getKey())) {
             referencedBy.put(object.toString(), object);
             object.setParent(this);
@@ -150,7 +153,7 @@ public class DEditor implements Comparable<DEditor>, Serializable, IAdaptable {
         }
     }
 
-    void addWidget(AbstractDWidget widget) {
+    public void addWidget(AbstractDWidget widget) {
         if (widget.getSequence() < 1) {
             widget.setSequence(widgets.size() + 1);
         }
@@ -191,16 +194,24 @@ public class DEditor implements Comparable<DEditor>, Serializable, IAdaptable {
         finishMovingWidget();
     }
 
-    void setName(String name) {
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setName(String name) {
         this.name = name;
     }
 
-    void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    void setColumns(int columns) {
+    public void setColumns(int columns) {
         this.columns = columns;
+    }
+
+    public void setColumnsEqualWidth(boolean columnsEqualWidth) {
+        this.columnsEqualWidth = columnsEqualWidth;
     }
 
     private void prepareToMoveWidget() {
@@ -233,18 +244,32 @@ public class DEditor implements Comparable<DEditor>, Serializable, IAdaptable {
 
     @Override
     public String toString() {
+
         StringBuilder sb = new StringBuilder();
+
         sb.append(name);
-        sb.append(" (");
-        for (int i = 0; i < widgets.size(); i++) {
-            if (i == 0) {
-                sb.append(" ");
-            } else {
-                sb.append(" , ");
-            }
-            sb.append(widgets.values().toArray()[i].toString());
+        sb.append(":" + LF);
+
+        sb.append("  widgets:");
+        AbstractDWidget[] dWidgets = widgets.values().toArray(new AbstractDWidget[widgets.values().size()]);
+        Arrays.sort(dWidgets);
+        for (int i = 0; i < dWidgets.length; i++) {
+            sb.append(LF);
+            sb.append("    ");
+            sb.append(dWidgets[i].toString());
         }
-        sb.append(" )");
+        sb.append(" )" + LF);
+
+        sb.append("  referencedBy:");
+        DReferencedObject[] dReferencedBy = referencedBy.values().toArray(new DReferencedObject[referencedBy.values().size()]);
+        Arrays.sort(dReferencedBy);
+        for (int i = 0; i < dReferencedBy.length; i++) {
+            sb.append(LF);
+            sb.append("    ");
+            sb.append(dReferencedBy[i].toString());
+        }
+        sb.append(")");
+
         return sb.toString();
     }
 }

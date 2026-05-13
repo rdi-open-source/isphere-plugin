@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2023 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import biz.isphere.core.preferences.Preferences;
 @SuppressWarnings("serial")
 public class SearchOptions implements Serializable {
 
+    private static String LF = "\n"; //$NON-NLS-1$
     private static String SPACE = " "; //$NON-NLS-1$
     private static final String NEW_LINE = "\n";
 
@@ -83,6 +84,10 @@ public class SearchOptions implements Serializable {
 
     public MatchOption getMatchOption() {
         return matchOption;
+    }
+
+    public void setMatchOption(MatchOption matchOption) {
+        this.matchOption = matchOption;
     }
 
     public List<SearchArgument> getSearchArguments() {
@@ -229,5 +234,28 @@ public class SearchOptions implements Serializable {
         }
 
         return tBuffer.toString();
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder buffer = new StringBuilder();
+
+        buffer.append("matchOption: " + matchOption + LF);
+        buffer.append("showAllItems: " + showAllItems + LF);
+
+        buffer.append("genericOptions: " + LF);
+        for (GenericSearchOption genericOption : genericOptions.values()) {
+            buffer.append("--> ");
+            buffer.append(genericOption + LF);
+        }
+
+        buffer.append("genericOptions: " + LF);
+        for (SearchArgument searchArgument : searchArguments) {
+            buffer.append("--> ");
+            buffer.append(searchArgument.toString() + LF);
+        }
+
+        return buffer.toString();
     }
 }

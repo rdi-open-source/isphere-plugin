@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,10 @@ public class DReferencedObject implements Comparable<DReferencedObject>, Seriali
     @XStreamOmitField
     private DEditor parent;
 
+    public DReferencedObject() {
+        this("", "", "");
+    }
+
     DReferencedObject(String name, String library, String type) {
         this.name = name;
         this.library = library;
@@ -34,16 +38,32 @@ public class DReferencedObject implements Comparable<DReferencedObject>, Seriali
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getLibrary() {
         return library;
+    }
+
+    public void setLibrary(String library) {
+        this.library = library;
     }
 
     public String getType() {
         return type;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public boolean isDefault() {
         return isDefault;
+    }
+
+    public void setIsDefault(boolean isDefault) {
+        this.isDefault = isDefault;
     }
 
     public String getKey() {

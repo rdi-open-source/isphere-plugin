@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,12 @@
 
 package biz.isphere.lpex.comments.lpex.action;
 
+import com.ibm.lpex.core.LpexView;
+
 import biz.isphere.lpex.comments.lpex.delegates.IIndentionDelegate;
 import biz.isphere.lpex.comments.lpex.delegates.RPGIndentionDelegate;
 import biz.isphere.lpex.comments.lpex.exceptions.MemberTypeNotSupportedException;
 import biz.isphere.lpex.comments.lpex.internal.Position;
-
-import com.ibm.lpex.core.LpexView;
 
 public abstract class AbstractLpexIndentionAction extends AbstractLpexAction {
 
@@ -28,6 +28,9 @@ public abstract class AbstractLpexIndentionAction extends AbstractLpexAction {
             if (anythingSelected(view)) {
                 start = new Position(getBlockTopElement(view), getBlockTopPosition(view));
                 end = new Position(getBlockBottomElement(view), getBLockBottomPosition(view));
+                if (end.getColumn() == 1) {
+                    end.setLine(end.getLine() - 1);
+                }
                 isBlockSelection = true;
             } else {
                 start = new Position(getCurrentElement(view), getCurrentPosition(view));

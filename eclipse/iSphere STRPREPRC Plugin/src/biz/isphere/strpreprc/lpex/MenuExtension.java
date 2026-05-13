@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.Set;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+import biz.isphere.ide.lpex.helper.LpexHelper;
 import biz.isphere.ide.lpex.menu.AbstractLpexMenuExtension;
 import biz.isphere.ide.lpex.menu.LpexMenuExtensionPlugin;
 import biz.isphere.ide.lpex.menu.model.UserAction;
@@ -53,7 +54,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
         super.initializeLpexEditor(plugin);
     }
 
-    protected UserAction[] getUserActions() {
+    protected UserAction[] getUserActionsInternal(boolean allActions) {
 
         List<UserAction> actions = new LinkedList<UserAction>();
         actions.add(new UserAction(EditHeaderAction.ID, EditHeaderAction.class.getName()));
@@ -108,8 +109,10 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
     public static String getInitialUserKeyActions() {
 
         List<UserKeyAction> actions = new LinkedList<UserKeyAction>();
-        //        actions.add(new UserKeyAction("c-s-2", EditHeaderAction.ID)); //$NON-NLS-1$
-        //        actions.add(new UserKeyAction("c-s-4", RemoveHeaderAction.ID)); //$NON-NLS-1$
+        // actions.add(new UserKeyAction("c-s-2", EditHeaderAction.ID));
+        // //$NON-NLS-1$
+        // actions.add(new UserKeyAction("c-s-4", RemoveHeaderAction.ID));
+        // //$NON-NLS-1$
 
         StringBuilder buffer = new StringBuilder();
         for (UserKeyAction action : actions) {
@@ -128,7 +131,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
         UserKeyAction[] newUserKeyActions = parseUserKeyActions((String)event.getNewValue());
 
-        UserAction[] userActionsList = getUserActions();
+        UserAction[] userActionsList = getEnabledUserActions();
         Set<String> knownActionClasses = new HashSet<String>();
         for (UserAction action : userActionsList) {
             knownActionClasses.add(action.getActionId());
@@ -152,7 +155,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
         final String SPACE = " "; //$NON-NLS-1$
         final String subMenu = "STRPREPRC"; //$NON-NLS-1$
 
-        String popupMenu = getCurrentLpexPopupMenu();
+        String popupMenu = LpexHelper.getLpexPopupMenu();
 
         // beginSubmenu "STRPREPRC"
         String startMenu = BEGIN_SUB_MENU + SPACE + DOUBLE_QUOTES + subMenu + DOUBLE_QUOTES;
@@ -162,6 +165,6 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
         popupMenu = removeMenuItems(popupMenu, startMenu, endMenu);
 
-        doSetLpexViewPopup(popupMenu);
+        LpexHelper.setLpexViewPopup(popupMenu);
     }
 }

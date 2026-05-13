@@ -8,74 +8,46 @@
 
 package biz.isphere.core.sourcefilesearch;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.OutputStream;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.exception.LoadFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
-import biz.isphere.core.search.SearchOptions;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
+import biz.isphere.core.sourcefilesearch.xml.SourceFileSearchCallback;
+import biz.isphere.core.sourcefilesearch.xml.XMLSearchHelper;
+import biz.isphere.core.xml.XmlParser;
 
 public class SearchResultManager {
 
     public static final String FILE_EXTENSION = "srcfsr"; //$NON-NLS-1$
 
-    public void saveToXml(String fileName, SearchResultTabFolder searchResults) throws SaveFileException {
+    public void saveToXml(String fileName, SearchResultTabFolder searchResultTabFolder) throws SaveFileException {
 
-        File file = null;
+        File xmlFile = null;
 
         try {
-            file = new File(fileName);
-            FileOutputStream stream = new FileOutputStream(file);
-            serialize(searchResults, stream);
-            stream.flush();
-            stream.close();
+            xmlFile = new File(fileName);
+            XMLSearchHelper.saveSearchResultToXML(xmlFile, searchResultTabFolder);
         } catch (Exception e) {
             ISpherePlugin.logError(e.getMessage(), e);
-            throw new SaveFileException(file);
+            throw new SaveFileException(xmlFile);
         }
     }
 
     public SearchResultTabFolder loadFromXml(String fileName) throws LoadFileException {
 
-        File file = new File(fileName);
+        File xmlFile = new File(fileName);
 
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            String line;
-            StringBuffer xml = new StringBuffer();
-            while ((line = reader.readLine()) != null) {
-                xml.append(line);
-            }
-            reader.close();
+            XmlParser xmlParser = new XmlParser();
+            SearchResultTabFolder searchResultTabFolder = (SearchResultTabFolder)xmlParser.parse(xmlFile, new SourceFileSearchCallback(),
+                new SearchResultTabFolder());
 
-            return (SearchResultTabFolder)getXStream().fromXML(xml.toString());
+            return searchResultTabFolder;
 
         } catch (Throwable e) {
             ISpherePlugin.logError(e.getMessage(), e);
-            throw new LoadFileException(file);
+            throw new LoadFileException(xmlFile);
         }
-    }
-
-    private void serialize(SearchResultTabFolder searchResults, OutputStream stream) {
-        XStream xstream = getXStream();
-        xstream.toXML(searchResults, stream);
-    }
-
-    private XStream getXStream() {
-        XStream xstream = new XStream(new DomDriver());
-        xstream.autodetectAnnotations(true);
-        xstream.alias("sourceFileSearch", SearchResultTabFolder.class); //$NON-NLS-1$
-        xstream.alias("tabItem", SearchResultTab.class); //$NON-NLS-1$
-        xstream.alias("searchOptions", SearchOptions.class); //$NON-NLS-1$
-        xstream.alias("member", SearchResult.class); //$NON-NLS-1$
-        xstream.alias("statement", SearchResultStatement.class); //$NON-NLS-1$
-        return xstream;
     }
 }

@@ -12,9 +12,9 @@ public class UserKeyAction extends AbstractLpexAction<UserKeyAction> implements 
 
     private String keyStrokes;
 
-    public UserKeyAction(String name, String actionId) {
+    public UserKeyAction(String keyStroke, String actionId) {
         super(actionId);
-        this.keyStrokes = name;
+        this.keyStrokes = keyStroke;
     }
 
     public String getKeyStrokes() {

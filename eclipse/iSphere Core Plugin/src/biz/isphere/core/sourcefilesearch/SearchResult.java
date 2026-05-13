@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ import java.sql.Timestamp;
 
 @SuppressWarnings("serial")
 public class SearchResult implements Serializable {
+
+    private static final String LF = "\n"; //$NON-NLS-1$
 
     private String library;
     private String file;
@@ -93,12 +95,25 @@ public class SearchResult implements Serializable {
 
     @Override
     public String toString() {
+
         StringBuilder buffer = new StringBuilder();
+
+        buffer.append("member: ");
         buffer.append(library);
         buffer.append("/");
         buffer.append(file);
         buffer.append(".");
         buffer.append(member);
+        buffer.append(" (");
+        buffer.append(srcType);
+        buffer.append(")");
+
+        buffer.append(LF + "    statements:" + LF);
+        for (SearchResultStatement searchResultStatement : statements) {
+            buffer.append("        ");
+            buffer.append(searchResultStatement.toString() + LF);
+        }
+
         return buffer.toString();
     }
 }

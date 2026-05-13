@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2024 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,6 +63,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
     private Combo chkLoadingPreviousValuesRightStreamFileEnabled;
     private Combo chkLoadingPreviousValuesAncestorStreamFileEnabled;
     private Button chkIgnoreWhiteSpaces;
+    private Button chkIgnoreColorCodes;
 
     private Table tblFileExtensions;
     private Button btnNew;
@@ -301,6 +302,19 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
             }
         });
 
+        chkIgnoreColorCodes = WidgetFactory.createCheckbox(options, Messages.Ignore_color_codes);
+        chkIgnoreColorCodes.setToolTipText(Messages.Tooltip_Ignore_color_codes);
+        chkIgnoreColorCodes.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        chkIgnoreColorCodes.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                checkAllValues();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+
         Label lblFileExtensions = new Label(options, SWT.NONE);
         lblFileExtensions.setText(Messages.Compare_Filter_File_extensions);
         lblFileExtensions.setToolTipText(Messages.Tooltip_Compare_Filter_File_extensions);
@@ -430,6 +444,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         }
 
         preferences.setSourceMemberCompareIgnoreWhiteSpaces(chkIgnoreWhiteSpaces.getSelection());
+        preferences.setSourceMemberCompareIgnoreColorCodes(chkIgnoreColorCodes.getSelection());
 
         LoadPreviousMemberValue previousMemberValue;
         previousMemberValue = LoadPreviousMemberValue.valueOfLabel(chkLoadingPreviousValuesRightMemberEnabled.getText());
@@ -457,6 +472,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         }
 
         chkIgnoreWhiteSpaces.setSelection(preferences.isSourceMemberCompareIgnoreWhiteSpaces());
+        chkIgnoreColorCodes.setSelection(preferences.isSourceMemberCompareIgnoreColorCodes());
 
         setPreviousMemberValueSelection(chkLoadingPreviousValuesRightMemberEnabled,
             preferences.getSourceMemberCompareLoadingPreviousValuesOfRightMember());
@@ -506,6 +522,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         }
 
         chkIgnoreWhiteSpaces.setSelection(preferences.getDefaultSourceMemberCompareIgnoreWhiteSpaces());
+        chkIgnoreColorCodes.setSelection(preferences.getDefaultSourceMemberCompareIgnoreColorCodes());
 
         setPreviousMemberValueSelection(chkLoadingPreviousValuesRightMemberEnabled,
             preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
