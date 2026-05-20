@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.junit;
+package biz.isphere.temp;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -39,6 +39,7 @@ import biz.isphere.core.sourcefilesearch.FNDSTR_search;
 import biz.isphere.core.sourcefilesearch.SearchElement;
 import biz.isphere.core.sourcefilesearch.SearchResult;
 import biz.isphere.core.sourcefilesearch.SearchResultStatement;
+import biz.isphere.junit.JUnitHelper;
 
 /**
  * This class is a JUnit test suite for testing the 'iSphere Source File Search'

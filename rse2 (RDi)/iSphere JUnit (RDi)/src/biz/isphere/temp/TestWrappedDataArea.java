@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.junit;
+package biz.isphere.temp;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -78,74 +78,74 @@ public class TestWrappedDataArea {
 
     @Test
     public void testIllegalAccessOfCharacterDataArea() throws Exception {
-        
+
         RemoteObject object = new RemoteObject("", char_name, library, ISeries.DTAARA, "");
         AbstractWrappedDataSpace char_delegate = new WrappedDataSpace(as400, object);
-        
+
         try {
             char_delegate.getBooleanValue();
         } catch (IllegalMethodAccessException e) {
             // exception seen ==> OK
         }
-        
+
         try {
             char_delegate.getDecimalValue();
         } catch (IllegalMethodAccessException e) {
             // exception seen ==> OK
         }
-        
+
         try {
             char_delegate.getDecimalPositions();
         } catch (IllegalMethodAccessException e) {
             // exception seen ==> OK
         }
-        
+
     }
 
     @Test
     public void testIllegalAccessOfLogicalDataArea() throws Exception {
-        
+
         RemoteObject object = new RemoteObject("", lgl_name, library, ISeries.DTAARA, "");
         AbstractWrappedDataSpace lgl_delegate = new WrappedDataSpace(as400, object);
-        
+
         try {
             lgl_delegate.getStringValue();
         } catch (IllegalMethodAccessException e) {
             // exception seen ==> OK
         }
-        
+
         try {
             lgl_delegate.getDecimalValue();
         } catch (IllegalMethodAccessException e) {
             // exception seen ==> OK
         }
-        
+
         try {
             lgl_delegate.getDecimalPositions();
         } catch (IllegalMethodAccessException e) {
             // exception seen ==> OK
         }
-        
+
     }
 
     @Test
     public void testIllegalAccessOfDecimalDataArea() throws Exception {
-        
+
         RemoteObject object = new RemoteObject("", dec_name, library, ISeries.DTAARA, "");
         AbstractWrappedDataSpace dec_delegate = new WrappedDataSpace(as400, object);
-        
+
         try {
             dec_delegate.getBooleanValue();
         } catch (IllegalMethodAccessException e) {
             // exception seen ==> OK
         }
-        
+
         try {
             dec_delegate.getStringValue();
         } catch (IllegalMethodAccessException e) {
             // exception seen ==> OK
         }
-        
+
     }
 
     @Test

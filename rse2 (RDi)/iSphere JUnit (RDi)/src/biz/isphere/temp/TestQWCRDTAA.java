@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.junit;
+package biz.isphere.temp;
 
 import junit.framework.Assert;
 
