@@ -8,7 +8,9 @@
 
 package biz.isphere.junit;
 
-import junit.framework.Assert;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -19,25 +21,12 @@ public class TestValidator {
     @Test
     public void testNameInstanceWithoutCcsid() throws Exception {
 
-        Validator nameValidator = Validator.getNameInstance(null);
-
-        boolean isValid = false;
-
-        isValid = nameValidator.validate("");
-        Assert.assertFalse("isValid must be false, because 'name' is empty", isValid);
-
-        isValid = nameValidator.validate("F:OO");
-        Assert.assertTrue("isValid must be true altough 'name' is invalid, because character checking is disabled due to missing ccsid", isValid);
-
-        isValid = nameValidator.validate("*FOO");
-        Assert.assertTrue("isValid must be true altough 'name' is invalid, because character checking is disabled due to missing ccsid", isValid);
-
-        isValid = nameValidator.validate("FOO$@#"); // US special characters
-        Assert.assertTrue("isValid must be true altough 'name' is invalid, because character checking is disabled due to missing ccsid", isValid);
-
-        isValid = nameValidator.validate("FOO$ง#"); // German special characters
-        Assert.assertTrue("isValid must be true, because 'name' is valid", isValid);
-
+        try {
+            Validator.getNameInstance(null);
+            fail("Expected an IllegalArgumentEception due to nissing ccsid.");
+        } catch (IllegalArgumentException e) {
+            // Exception seen
+        }
     }
 
     @Test
@@ -48,46 +37,38 @@ public class TestValidator {
         boolean isValid = false;
 
         isValid = nameValidator.validate("");
-        Assert.assertFalse("isValid must be false, because 'name' is empty", isValid);
+        assertFalse("isValid must be false, because 'name' is empty", isValid);
 
         isValid = nameValidator.validate("F:OO");
-        Assert.assertFalse("isValid must be false, because of ivalid character ':'", isValid);
+        assertFalse("isValid must be false, because of ivalid character ':'", isValid);
 
         isValid = nameValidator.validate("*FOO");
-        Assert.assertFalse("isValid must be false, because of invalid character '*'", isValid);
+        assertFalse("isValid must be false, because of invalid character '*'", isValid);
 
-        isValid = nameValidator.validate("FOO$@#"); // US special characters
-        Assert.assertFalse("isValid must be false, because of invalid character '@'", isValid);
+        // German special characters
+        isValid = nameValidator.validate("FOO$ยง#");
+        assertTrue("isValid must be true, because 'name' is valid", isValid);
 
-        isValid = nameValidator.validate("FOO$ง#"); // German special characters
-        Assert.assertTrue("isValid must be true, because 'name' is valid", isValid);
+        // US special characters, but German validator
+        isValid = nameValidator.validate("FOO$@#");
+        assertFalse("isValid must be false, because of invalid character '@'", isValid);
 
+        nameValidator = Validator.getNameInstance(37);
+
+        // US special characters
+        isValid = nameValidator.validate("FOO$@#");
+        assertTrue("isValid must be true, because 'name' is valid", isValid);
     }
 
     @Test
     public void testLibraryNameInstanceWithoutCcsid() throws Exception {
 
-        Validator libraryNameValidator = Validator.getLibraryNameInstance(null);
-
-        boolean isValid = false;
-
-        isValid = libraryNameValidator.validate("");
-        Assert.assertFalse("isValid must be false, because 'name' is empty", isValid);
-
-        isValid = libraryNameValidator.validate("F:OO");
-        Assert.assertTrue("isValid must be true altough 'name' is invalid, because character checking is disabled due to missing ccsid", isValid);
-
-        isValid = libraryNameValidator.validate("*FOO");
-        Assert.assertTrue("isValid must be true altough 'name' is invalid, because character checking is disabled due to missing ccsid", isValid);
-
-        isValid = libraryNameValidator.validate("FOO$@#"); // US special
-                                                           // characters
-        Assert.assertTrue("isValid must be true altough 'name' is invalid, because character checking is disabled due to missing ccsid", isValid);
-
-        isValid = libraryNameValidator.validate("FOO$ง#"); // German special
-                                                           // characters
-        Assert.assertTrue("isValid must be true, because 'name' is valid", isValid);
-
+        try {
+            Validator.getLibraryNameInstance(null);
+            fail("Expected an IllegalArgumentEception due to nissing ccsid.");
+        } catch (IllegalArgumentException e) {
+            // Exception seen
+        }
     }
 
     @Test
@@ -98,51 +79,27 @@ public class TestValidator {
         boolean isValid = false;
 
         isValid = libraryNameValidator.validate("");
-        Assert.assertFalse("isValid must be false, because 'name' is empty", isValid);
+        assertFalse("isValid must be false, because 'name' is empty", isValid);
 
         isValid = libraryNameValidator.validate("F:OO");
-        Assert.assertFalse("isValid must be false, because of ivalid character ':'", isValid);
+        assertFalse("isValid must be false, because of ivalid character ':'", isValid);
 
         isValid = libraryNameValidator.validate("*FOO");
-        Assert.assertFalse("isValid must be false, because of invalid character '*'", isValid);
+        assertFalse("isValid must be false, because of invalid character '*'", isValid);
 
-        isValid = libraryNameValidator.validate("FOO$@#"); // US special
-                                                           // characters
-        Assert.assertFalse("isValid must be true, because of invalid character '@'", isValid);
+        // German special characters
+        isValid = libraryNameValidator.validate("FOO$ยง#");
+        assertTrue("isValid must be true, because 'name' is valid", isValid);
 
-        isValid = libraryNameValidator.validate("FOO$ง#"); // German special
-                                                           // characters
-        Assert.assertTrue("isValid must be true, because 'name' is valid", isValid);
+        // US special characters, but German validator
+        isValid = libraryNameValidator.validate("FOO$@#");
+        assertFalse("isValid must be true, because of invalid character '@'", isValid);
 
-    }
+        libraryNameValidator = Validator.getLibraryNameInstance(Integer.valueOf(37));
 
-    @Test
-    public void testLibraryNameInstanceWithoutCcsidAndWithSpecialValues() throws Exception {
-
-        Validator libraryNameValidator = Validator.getLibraryNameInstance(null, "*LIBL", "*CURLIB");
-
-        boolean isValid = false;
-
-        isValid = libraryNameValidator.validate("");
-        Assert.assertFalse("isValid must be false, because 'name' is empty", isValid);
-
-        isValid = libraryNameValidator.validate("F:OO");
-        Assert.assertTrue("isValid must be true altough 'name' is invalid, because character checking is disabled due to missing ccsid", isValid);
-
-        isValid = libraryNameValidator.validate("*FOO");
-        Assert.assertTrue("isValid must be true altough 'name' is invalid, because character checking is disabled due to missing ccsid", isValid);
-
-        isValid = libraryNameValidator.validate("FOO$@#"); // US special
-                                                           // characters
-        Assert.assertTrue("isValid must be true altough 'name' is invalid, because character checking is disabled due to missing ccsid", isValid);
-
-        isValid = libraryNameValidator.validate("FOO$ง#"); // German special
-                                                           // characters
-        Assert.assertTrue("isValid must be true, because 'name' is valid", isValid);
-
-        isValid = libraryNameValidator.validate("*LIBL");
-        Assert.assertTrue("isValid must be true altough 'name' is invalid, because character checking is disabled due to missing ccsid", isValid);
-
+        // US special characters
+        isValid = libraryNameValidator.validate("FOO$@#");
+        assertTrue("isValid must be true, because 'name' is valid", isValid);
     }
 
     @Test
@@ -152,26 +109,16 @@ public class TestValidator {
 
         boolean isValid = false;
 
-        isValid = libraryNameValidator.validate("");
-        Assert.assertFalse("isValid must be false, because 'name' is empty", isValid);
-
-        isValid = libraryNameValidator.validate("F:OO");
-        Assert.assertFalse("isValid must be false, because of ivalid character ':'", isValid);
-
-        isValid = libraryNameValidator.validate("*FOO");
-        Assert.assertFalse("isValid must be false, because of invalid character '*'", isValid);
-
-        isValid = libraryNameValidator.validate("FOO$@#"); // US special
-                                                           // characters
-        Assert.assertFalse("isValid must be true, because of invalid character '@'", isValid);
-
-        isValid = libraryNameValidator.validate("FOO$ง#"); // German special
-                                                           // characters
-        Assert.assertTrue("isValid must be true, because 'name' is valid", isValid);
-
         isValid = libraryNameValidator.validate("*LIBL");
-        Assert.assertTrue("isValid must be true, because '*LIBL' is valid", isValid);
+        assertTrue("isValid must be true, because '*LIBL' is valid", isValid);
 
+        libraryNameValidator = Validator.getLibraryNameInstance(Integer.valueOf(37), "*LIBL", "*CURLIB");
+
+        isValid = libraryNameValidator.validate("*CURLIB");
+        assertTrue("isValid must be true, because '*CURLIB' is valid", isValid);
+
+        isValid = libraryNameValidator.validate("*ALLUSR");
+        assertFalse("isValid must be false, because '*ALLUSR' is invalid", isValid);
     }
 
 }
