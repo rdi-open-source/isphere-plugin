@@ -77,6 +77,7 @@ public class CheckNLSMessages {
         checkMessagesForLocales(biz.isphere.jobtraceexplorer.core.Messages.class, "messages");
 
         checkMessagesForLocales(biz.isphere.journalexplorer.core.Messages.class, "messages");
+        checkMessagesForLocales(biz.isphere.journalexplorer.rse.Messages.class, "messages");
 
         System.out.println("** Finished testing NLS messages **");
     }
