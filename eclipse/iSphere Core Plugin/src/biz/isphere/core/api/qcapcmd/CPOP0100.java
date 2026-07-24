@@ -112,8 +112,8 @@ public class CPOP0100 extends APIFormat {
      * <ul>
      * <li>Limited user checking is performed.</li>
      * <li>Prompting for missing required parameters is performed.</li>
-     * <li>If the System/36™ environment is active and the commands are
-     * System/36 commands, the System/36 environment runs the commands.</li>
+     * <li>If the System/36 environment is active and the commands are System/36
+     * commands, the System/36 environment runs the commands.</li>
      * </ul>
      */
     public static final int CMD_CHECK = 1;
