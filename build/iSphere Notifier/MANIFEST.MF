@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-Version: 6.1.2.r
 X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: Added option 'Remove Color Codes' to LPEX editor.\nAdded option 'Ignore color codes' to iSphere Compare Editor.\nFixed saving/loading iSphere search results.\nChanged development environment to RDi 9.6.0.13.
-X-Beta-Version: 6.1.3.b001
+X-Bundle-Info: Added options for importing search results from Excel.\nAdded option 'Remove Color Codes' to LPEX editor.\nAdded option 'Ignore color codes' to iSphere Compare Editor.\nFixed saving/loading iSphere search results.\nChanged development environment to RDi 9.6.0.13.
+X-Beta-Version: 6.1.3.b002
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
 X-Beta-Info: Fix AWT scaling issue (Issure #3).
