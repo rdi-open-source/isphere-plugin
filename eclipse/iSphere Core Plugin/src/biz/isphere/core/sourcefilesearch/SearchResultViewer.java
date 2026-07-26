@@ -189,7 +189,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
                 result = sortByFile(viewer, e1, e2);
             } else if (Messages.Member.equals(column.getText())) {
                 result = sortByMember(viewer, e1, e2);
-            } else if (Messages.Member_type_short.equals(column.getText())) {
+            } else if (Messages.Source_type_short.equals(column.getText())) {
                 result = sortBySrcType(viewer, e1, e2);
             } else if (Messages.Description.equals(column.getText())) {
                 result = sortByDescription(viewer, e1, e2);
@@ -661,7 +661,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
         final TableColumn tableColumnLibrary = createTableColumn(tableMembers, "library", 100, Messages.Library, 0);
         final TableColumn tableColumnFile = createTableColumn(tableMembers, "file", 100, Messages.File, 1);
         final TableColumn tableColumnMember = createTableColumn(tableMembers, "member", 100, Messages.Member, 2);
-        final TableColumn tableColumnSrcType = createTableColumn(tableMembers, "type", 100, Messages.Member_type_short, 3);
+        final TableColumn tableColumnSrcType = createTableColumn(tableMembers, "type", 100, Messages.Source_type_short, 3);
         final TableColumn tableColumnDescription = createTableColumn(tableMembers, "description", 300, Messages.Description, 4);
         final TableColumn tableColumnLastChangedDate = createTableColumn(tableMembers, "lastChanged", 120, Messages.Last_changed, 5);
         final TableColumn tableColumnStatementsCount = createTableColumn(tableMembers, "statementCount", 80, Messages.StatementsCount, 6);

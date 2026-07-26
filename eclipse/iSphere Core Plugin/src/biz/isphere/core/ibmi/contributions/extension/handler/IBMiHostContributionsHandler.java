@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2024 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -577,9 +578,27 @@ public class IBMiHostContributionsHandler {
     }
 
     /**
+     * Opens an RSE connection selection dialog implemented by the RDi
+     * contributions adapter. Returns <code>null</code> when the user cancels or
+     * when no contribution is registered.
+     *
+     * @param shell - parent shell for the dialog
+     * @return qualified connection name or <code>null</code>
+     */
+    public static String selectConnection(Shell shell) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+        if (factory == null) {
+            return null;
+        }
+
+        return factory.selectConnection(shell);
+    }
+
+    /**
      * Returns the RDi contributions if there is a registered extension for
      * that.
-     * 
+     *
      * @return RDi contributions factory or null
      */
     private static IIBMiHostContributions getContributionsFactory() {

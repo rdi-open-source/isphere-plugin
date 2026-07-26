@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,6 +73,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     private ResetColumnSizeAction resetColumnSizeAction;
     private DisableEditAction actionDisableEdit;
     private Action actionLoadSearchResult;
+    private Action actionLoadExcel;
     private Action actionSaveSearchResult;
     private Action actionSaveAllSearchResults;
     private Action actionEnableAutoSave;
@@ -220,6 +221,14 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         };
         actionLoadSearchResult.setEnabled(false);
 
+        actionLoadExcel = new Action(Messages.Import_Excel) {
+            @Override
+            public void run() {
+                loadFromExcel();
+            };
+        };
+        actionLoadExcel.setEnabled(false);
+
         actionSaveSearchResult = new Action(Messages.Save) {
             @Override
             public void run() {
@@ -263,6 +272,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         IMenuManager viewMenu = actionBars.getMenuManager();
 
         viewMenu.add(actionLoadSearchResult);
+        viewMenu.add(actionLoadExcel);
         viewMenu.add(new Separator());
         viewMenu.add(actionSaveSearchResult);
         viewMenu.add(actionSaveAllSearchResults);
@@ -454,6 +464,17 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         }
     }
 
+    private void loadFromExcel() {
+
+        StreamFilesFromExcelImporter importer = new StreamFilesFromExcelImporter(getSite().getShell());
+        SearchResultTab tab = importer.importTab();
+        if (tab == null) {
+            return;
+        }
+
+        addTabItem(tab.getConnectionName(), tab.getSearchString(), tab.getSearchResult(), tab.getSearchOptions());
+    }
+
     private String selectFile(int style) {
         return selectFile(style, false);
     }
@@ -521,6 +542,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         actionSaveSearchResult.setEnabled(hasTabItems);
         actionSaveAllSearchResults.setEnabled(hasMultipleTabItems);
         actionLoadSearchResult.setEnabled(true);
+        actionLoadExcel.setEnabled(true);
         actionEnableAutoSave.setEnabled(true);
 
         resetColumnSizeAction.setEnabled(true);

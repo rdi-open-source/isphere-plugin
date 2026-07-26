@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Team
+ * Copyright (c) 2012-2026 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,12 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 
 public class MessageFilesToExcelExporter {
+
+    private static final int COLUMN_LIBRARY = 0;
+    private static final int COLUMN_MESSAGE_FILE = 1;
+    private static final int COLUMN_MESSAGE_FILE_DESCRIPTION = 2;
+    private static final int COLUMN_MESSAGE_ID = 3;
+    private static final int COLUMN_MESSAGE_TEXT = 4;
 
     private static final int COLUMN_WIDTH_NAME = 15;
     private static final int COLUMN_WIDTH_DESCRIPTION = 50;
@@ -100,18 +106,18 @@ public class MessageFilesToExcelExporter {
         // Add message files
         WritableSheet sheet = workbook.createSheet(Messages.Files, 0);
 
-        sheet.addCell(new jxl.write.Label(0, 0, Messages.Library));
-        sheet.addCell(new jxl.write.Label(1, 0, Messages.Message_file));
-        sheet.addCell(new jxl.write.Label(2, 0, Messages.Description));
+        sheet.addCell(new jxl.write.Label(COLUMN_LIBRARY, 0, Messages.Library));
+        sheet.addCell(new jxl.write.Label(COLUMN_MESSAGE_FILE, 0, Messages.Message_file));
+        sheet.addCell(new jxl.write.Label(COLUMN_MESSAGE_FILE_DESCRIPTION, 0, Messages.Description));
 
-        sheet.setColumnView(0, COLUMN_WIDTH_NAME);
-        sheet.setColumnView(1, COLUMN_WIDTH_NAME);
-        sheet.setColumnView(2, COLUMN_WIDTH_DESCRIPTION);
+        sheet.setColumnView(COLUMN_LIBRARY, COLUMN_WIDTH_NAME);
+        sheet.setColumnView(COLUMN_MESSAGE_FILE, COLUMN_WIDTH_NAME);
+        sheet.setColumnView(COLUMN_MESSAGE_FILE_DESCRIPTION, COLUMN_WIDTH_DESCRIPTION);
 
         for (int index = 0; index < searchResults.length; index++) {
-            sheet.addCell(new jxl.write.Label(0, index + 1, searchResults[index].getLibrary()));
-            sheet.addCell(new jxl.write.Label(1, index + 1, searchResults[index].getMessageFile()));
-            sheet.addCell(new jxl.write.Label(2, index + 1, searchResults[index].getDescription()));
+            sheet.addCell(new jxl.write.Label(COLUMN_LIBRARY, index + 1, searchResults[index].getLibrary()));
+            sheet.addCell(new jxl.write.Label(COLUMN_MESSAGE_FILE, index + 1, searchResults[index].getMessageFile()));
+            sheet.addCell(new jxl.write.Label(COLUMN_MESSAGE_FILE_DESCRIPTION, index + 1, searchResults[index].getDescription()));
         }
 
         addPartialNotice(sheet);
@@ -121,17 +127,17 @@ public class MessageFilesToExcelExporter {
 
         WritableSheet sheet = workbook.createSheet(Messages.Files_with_Id_s, 0);
 
-        sheet.addCell(new jxl.write.Label(0, 0, Messages.Library));
-        sheet.addCell(new jxl.write.Label(1, 0, Messages.Message_file));
-        sheet.addCell(new jxl.write.Label(2, 0, Messages.Description));
-        sheet.addCell(new jxl.write.Label(3, 0, Messages.Message_Id));
-        sheet.addCell(new jxl.write.Label(4, 0, Messages.Message));
+        sheet.addCell(new jxl.write.Label(COLUMN_LIBRARY, 0, Messages.Library));
+        sheet.addCell(new jxl.write.Label(COLUMN_MESSAGE_FILE, 0, Messages.Message_file));
+        sheet.addCell(new jxl.write.Label(COLUMN_MESSAGE_FILE_DESCRIPTION, 0, Messages.Description));
+        sheet.addCell(new jxl.write.Label(COLUMN_MESSAGE_ID, 0, Messages.Message_Id));
+        sheet.addCell(new jxl.write.Label(COLUMN_MESSAGE_TEXT, 0, Messages.Message));
 
-        sheet.setColumnView(0, COLUMN_WIDTH_NAME);
-        sheet.setColumnView(1, COLUMN_WIDTH_NAME);
-        sheet.setColumnView(2, COLUMN_WIDTH_DESCRIPTION);
-        sheet.setColumnView(3, COLUMN_WIDTH_MESSAGE_ID);
-        sheet.setColumnView(4, COLUMN_WIDTH_MESSAGE_TEXT);
+        sheet.setColumnView(COLUMN_LIBRARY, COLUMN_WIDTH_NAME);
+        sheet.setColumnView(COLUMN_MESSAGE_FILE, COLUMN_WIDTH_NAME);
+        sheet.setColumnView(COLUMN_MESSAGE_FILE_DESCRIPTION, COLUMN_WIDTH_DESCRIPTION);
+        sheet.setColumnView(COLUMN_MESSAGE_ID, COLUMN_WIDTH_MESSAGE_ID);
+        sheet.setColumnView(COLUMN_MESSAGE_TEXT, COLUMN_WIDTH_MESSAGE_TEXT);
 
         int line = 1;
 
@@ -141,11 +147,11 @@ public class MessageFilesToExcelExporter {
 
             for (int index2 = 0; index2 < _messageIds.length; index2++) {
 
-                sheet.addCell(new jxl.write.Label(0, line, searchResults[index1].getLibrary()));
-                sheet.addCell(new jxl.write.Label(1, line, searchResults[index1].getMessageFile()));
-                sheet.addCell(new jxl.write.Label(2, line, searchResults[index1].getDescription()));
-                sheet.addCell(new jxl.write.Label(3, line, _messageIds[index2].getMessageId()));
-                sheet.addCell(new jxl.write.Label(4, line, _messageIds[index2].getMessage()));
+                sheet.addCell(new jxl.write.Label(COLUMN_LIBRARY, line, searchResults[index1].getLibrary()));
+                sheet.addCell(new jxl.write.Label(COLUMN_MESSAGE_FILE, line, searchResults[index1].getMessageFile()));
+                sheet.addCell(new jxl.write.Label(COLUMN_MESSAGE_FILE_DESCRIPTION, line, searchResults[index1].getDescription()));
+                sheet.addCell(new jxl.write.Label(COLUMN_MESSAGE_ID, line, _messageIds[index2].getMessageId()));
+                sheet.addCell(new jxl.write.Label(COLUMN_MESSAGE_TEXT, line, _messageIds[index2].getMessage()));
 
                 line++;
 
@@ -159,11 +165,10 @@ public class MessageFilesToExcelExporter {
 
     private void exportSearchOptions(WritableWorkbook workbook) throws Exception {
 
-        WritableSheet sheet = workbook.createSheet("Search arguments", 0);
+        WritableSheet sheet = workbook.createSheet(Messages.Search_arguments, 0);
 
         sheet.addCell(new jxl.write.Label(0, 0, Messages.Conditions_to_match_colon));
-        sheet.addCell(new jxl.write.Label(1, 0, searchOptions.getMatchOption().getLabel())); // TODO:
-                                                                                             // label
+        sheet.addCell(new jxl.write.Label(1, 0, searchOptions.getMatchOption().getLabel()));
 
         sheet.addCell(new jxl.write.Label(0, 1, Messages.Show_all_matches_colon));
         sheet.addCell(new jxl.write.Boolean(1, 1, searchOptions.isShowAllItems()));

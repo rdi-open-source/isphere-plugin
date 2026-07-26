@@ -26,7 +26,9 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.jface.window.Window;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 
 import com.ibm.as400.access.AS400;
@@ -59,6 +61,7 @@ import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.internal.IFSRemoteFileHelper;
 import biz.isphere.rse.internal.RSEMember;
 import biz.isphere.rse.internal.RSEStreamFile;
+import biz.isphere.rse.sourcefilesearch.SelectConnectionDialog;
 
 /**
  * This class connects to the
@@ -726,6 +729,15 @@ public class XRDiContributions implements IIBMiHostContributions {
         QSYSEditableRemoteSourceFileMember editableMember = new QSYSEditableRemoteSourceFileMember(qsysMember);
 
         return editableMember.getLocalResource();
+    }
+
+    public String selectConnection(Shell shell) {
+
+        SelectConnectionDialog dialog = new SelectConnectionDialog(shell);
+        if (dialog.open() != Window.OK) {
+            return null;
+        }
+        return dialog.getQualifiedConnectionName();
     }
 
     private String produceQualifiedConnectionName(AbstractISeriesProject iSeriesProject) {

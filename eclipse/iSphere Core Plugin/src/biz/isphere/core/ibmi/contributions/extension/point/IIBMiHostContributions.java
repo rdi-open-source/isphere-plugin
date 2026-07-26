@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2024 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.swt.widgets.Shell;
 
 import com.ibm.as400.access.AS400;
 
@@ -297,4 +298,18 @@ public interface IIBMiHostContributions {
      */
     public IFile getLocalResource(String qualifiedConnectionName, String libraryName, String fileName, String memberName, String srcType)
         throws Exception;
+
+    /**
+     * Opens a modal dialog that lets the user pick an RSE connection and,
+     * optionally, create a new one via a "New..." button. The dialog is
+     * implemented in the RSE adapter plug-in because it relies on the
+     * <code>IBMiConnectionCombo</code> widget from the RDi UI plug-in.
+     *
+     * @param shell - parent shell of the dialog
+     * @return the qualified connection name (format
+     *         <code>profile:connection</code>, or bare <code>connection</code>
+     *         when no explicit profile is used), or <code>null</code> when the
+     *         user cancels the dialog
+     */
+    public String selectConnection(Shell shell);
 }

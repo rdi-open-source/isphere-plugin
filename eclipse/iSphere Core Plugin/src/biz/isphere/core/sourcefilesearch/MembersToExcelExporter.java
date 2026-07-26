@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Team
+ * Copyright (c) 2012-2026 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,7 +116,7 @@ public class MembersToExcelExporter {
         sheet.addCell(new jxl.write.Label(COLUMN_LIBRARY, 0, Messages.Library));
         sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_FILE, 0, Messages.Source_file));
         sheet.addCell(new jxl.write.Label(COLUMN_MEMBER, 0, Messages.Member));
-        sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_TYPE, 0, Messages.Member_type_short));
+        sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_TYPE, 0, Messages.Source_type_short));
         sheet.addCell(new jxl.write.Label(COLUMN_LAST_CHANGED, 0, Messages.Last_changed));
         sheet.addCell(new jxl.write.Label(COLUMN_DESCRIPTION, 0, Messages.Description));
         sheet.addCell(new jxl.write.Label(COLUMN_STMTS_COUNT, 0, Messages.StatementsCount));
@@ -156,7 +156,7 @@ public class MembersToExcelExporter {
         sheet.addCell(new jxl.write.Label(COLUMN_LIBRARY, 0, Messages.Library));
         sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_FILE, 0, Messages.Source_file));
         sheet.addCell(new jxl.write.Label(COLUMN_MEMBER, 0, Messages.Member));
-        sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_TYPE, 0, Messages.Member_type_short));
+        sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_TYPE, 0, Messages.Source_type_short));
         sheet.addCell(new jxl.write.Label(COLUMN_LAST_CHANGED, 0, Messages.Last_changed));
         sheet.addCell(new jxl.write.Label(COLUMN_DESCRIPTION, 0, Messages.Description));
         sheet.addCell(new jxl.write.Label(COLUMN_STMTS_COUNT, 0, Messages.StatementsCount));
@@ -210,11 +210,14 @@ public class MembersToExcelExporter {
 
     private void exportSearchOptions(WritableWorkbook workbook) throws Exception {
 
-        WritableSheet sheet = workbook.createSheet("Search arguments", 0);
+        if (searchOptions == null) {
+            return;
+        }
+
+        WritableSheet sheet = workbook.createSheet(Messages.Search_arguments, 0);
 
         sheet.addCell(new jxl.write.Label(0, 0, Messages.Conditions_to_match_colon));
-        sheet.addCell(new jxl.write.Label(1, 0, searchOptions.getMatchOption().getLabel())); // TODO:
-                                                                                             // label
+        sheet.addCell(new jxl.write.Label(1, 0, searchOptions.getMatchOption().getLabel()));
 
         sheet.addCell(new jxl.write.Label(0, 1, Messages.Show_all_matches_colon));
         sheet.addCell(new jxl.write.Boolean(1, 1, searchOptions.isShowAllItems()));

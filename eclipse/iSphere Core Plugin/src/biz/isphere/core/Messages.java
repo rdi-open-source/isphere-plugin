@@ -64,6 +64,10 @@ public class Messages extends NLS {
 
     public static String Connection_colon;
 
+    public static String Select_Connection;
+
+    public static String No_RSE_contribution_available_for_connection_selection;
+
     public static String Consider_date;
 
     public static String Copy;
@@ -140,7 +144,7 @@ public class Messages extends NLS {
 
     public static String Member;
 
-    public static String Member_type_short;
+    public static String Source_type_short;
 
     public static String Member_colon;
 
@@ -485,6 +489,10 @@ public class Messages extends NLS {
     public static String Stream_files;
 
     public static String Stream_files_with_statements;
+
+    public static String Search_arguments;
+
+    public static String Not_all_items_exported;
 
     public static String Line;
 
@@ -979,6 +987,8 @@ public class Messages extends NLS {
     public static String Value_too_large;
 
     public static String Load;
+
+    public static String Import_Excel;
 
     public static String Save;
 

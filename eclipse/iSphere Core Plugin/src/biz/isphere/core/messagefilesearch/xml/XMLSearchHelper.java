@@ -100,6 +100,11 @@ public class XMLSearchHelper extends AbstractXmlSearchHelper {
 
     private static void writeSearchOptions(XMLPrettyPrintWriter streamWriter, SearchOptions searchOptions) throws XMLStreamException {
 
+        // Required, if search results imported from Excel shall be auto-saved.
+        if (searchOptions == null) {
+            return;
+        }
+
         streamWriter.writeStartElement(SEARCH_OPTIONS);
 
         createNode(streamWriter, "matchOption", searchOptions.getMatchOption());

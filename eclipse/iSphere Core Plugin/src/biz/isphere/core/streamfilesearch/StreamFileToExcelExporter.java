@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Team
+ * Copyright (c) 2012-2026 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,14 +75,14 @@ public class StreamFileToExcelExporter {
 
         dialog.setFilterNames(new String[] { "Excel Files", FileHelper.getAllFilesText() }); //$NON-NLS-1$ //$NON-NLS-2$
         dialog.setFilterExtensions(new String[] { "*.xls", FileHelper.getAllFilesFilter() }); //$NON-NLS-1$ //$NON-NLS-2$
-        dialog.setFilterPath(Preferences.getInstance().getSourceFileSearchExportDirectory());
+        dialog.setFilterPath(Preferences.getInstance().getStreamFileSearchExportDirectory());
         dialog.setFileName("export.xls"); //$NON-NLS-1$
         dialog.setOverwrite(true);
         String file = dialog.open();
 
         if (file != null) {
 
-            Preferences.getInstance().setSourceFileSearchExportDirectory(dialog.getFilterPath());
+            Preferences.getInstance().setStreamFileSearchExportDirectory(dialog.getFilterPath());
 
             try {
 
@@ -110,9 +110,9 @@ public class StreamFileToExcelExporter {
         WritableSheet sheet = workbook.createSheet(Messages.Stream_files, 0);
 
         // Add headline
-        sheet.addCell(new jxl.write.Label(COLUMN_DIRECTORY, 0, Messages.Library));
-        sheet.addCell(new jxl.write.Label(COLUMN_STREAM_FILE, 0, Messages.Source_file));
-        sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_TYPE, 0, Messages.Member_type_short));
+        sheet.addCell(new jxl.write.Label(COLUMN_DIRECTORY, 0, Messages.Directory));
+        sheet.addCell(new jxl.write.Label(COLUMN_STREAM_FILE, 0, Messages.Stream_file));
+        sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_TYPE, 0, Messages.Source_type_short));
         sheet.addCell(new jxl.write.Label(COLUMN_LAST_CHANGED, 0, Messages.Last_changed));
         sheet.addCell(new jxl.write.Label(COLUMN_STMTS_COUNT, 0, Messages.StatementsCount));
 
@@ -146,7 +146,7 @@ public class StreamFileToExcelExporter {
         // Add headline
         sheet.addCell(new jxl.write.Label(COLUMN_DIRECTORY, 0, Messages.Library));
         sheet.addCell(new jxl.write.Label(COLUMN_STREAM_FILE, 0, Messages.Source_file));
-        sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_TYPE, 0, Messages.Member_type_short));
+        sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_TYPE, 0, Messages.Source_type_short));
         sheet.addCell(new jxl.write.Label(COLUMN_LAST_CHANGED, 0, Messages.Last_changed));
         sheet.addCell(new jxl.write.Label(COLUMN_STMTS_COUNT, 0, Messages.StatementsCount));
         sheet.addCell(new jxl.write.Label(COLUMN_LINE, 0, Messages.Line));
@@ -195,11 +195,16 @@ public class StreamFileToExcelExporter {
 
     private void exportSearchOptions(WritableWorkbook workbook) throws Exception {
 
-        WritableSheet sheet = workbook.createSheet("Search arguments", 0);
+        // Required, if search results imported from Excel shall be exported
+        // again.
+        if (searchOptions == null) {
+            return;
+        }
+
+        WritableSheet sheet = workbook.createSheet(Messages.Search_arguments, 0);
 
         sheet.addCell(new jxl.write.Label(0, 0, Messages.Conditions_to_match_colon));
-        sheet.addCell(new jxl.write.Label(1, 0, searchOptions.getMatchOption().getLabel())); // TODO:
-                                                                                             // label
+        sheet.addCell(new jxl.write.Label(1, 0, searchOptions.getMatchOption().getLabel()));
 
         sheet.addCell(new jxl.write.Label(0, 1, Messages.Show_all_matches_colon));
         sheet.addCell(new jxl.write.Boolean(1, 1, searchOptions.isShowAllItems()));
