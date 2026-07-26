@@ -33,7 +33,9 @@ public class SearchResultCallback extends AbstractCallbackHandler<SearchResult> 
 
     public void doEndElement(Object userData, String path, int level, String elementData, XmlParser xmlParser) throws Exception {
 
-        if ("/library".equals(path)) {
+        if ("/connectionName".equals(path)) {
+            getUserData().setConnectionName(xmlToString(elementData));
+        } else if ("/library".equals(path)) {
             getUserData().setLibrary(xmlToString(elementData));
         } else if ("/messageFile".equals(path)) {
             getUserData().setMessageFile(xmlToString(elementData));
