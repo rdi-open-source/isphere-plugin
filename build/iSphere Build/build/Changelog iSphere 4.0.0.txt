@@ -8,6 +8,8 @@ Changelog: iSphere 6.1.3.r
  • Added options for importing iSphere search results from Excel.
  • Fix setting connection name when loading message file search
    result.
+ • Fix division by zero error when synchronizing source members
+   and no differences were found.
 
 Changelog: iSphere 6.1.2.r
 --------------------------

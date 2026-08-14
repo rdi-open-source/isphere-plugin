@@ -82,6 +82,10 @@ public abstract class AbstractResult<M> {
     }
 
     public void finished() {
-        averageTime = (System.currentTimeMillis() - startTime) / countTotal;
+        if (countTotal == 0) {
+            averageTime = 0;
+        } else {
+            averageTime = (System.currentTimeMillis() - startTime) / countTotal;
+        }
     }
 }
