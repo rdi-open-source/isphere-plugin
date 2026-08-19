@@ -289,6 +289,11 @@ Java Scoped Template Variables Plugin
 Linoma RPG Toolbox: http://www.linomafiles.com/releases/rpgtoolbox/RDi/
 Enhanced Class Decompiler (Eclipse Marketplace)
 
+If you get a PKIX path error when searching for updates, search the RDi plugins folder
+for 'jssecacerts'. This file overides 'cacerts'. Copying 'cacerts' of the same folder
+to 'jssecacerts' solves the problem.
+
+Example path: [RDI_HOME]\plugins\com.ibm.semeru.certified.jdk.x64.windows_9.8.7.202601221600\jdk\lib\security\jssecacerts
 
 Java Decompiler
 ===============
