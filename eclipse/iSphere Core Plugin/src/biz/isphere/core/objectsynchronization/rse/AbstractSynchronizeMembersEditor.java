@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2024 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,10 @@ package biz.isphere.core.objectsynchronization.rse;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -193,8 +191,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
     private EditorCloseListener editorCloseListener;
 
-    private Set<Image> disposableImages;
-
     public AbstractSynchronizeMembersEditor() {
 
         isLeftObjectValid = false;
@@ -202,8 +198,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
         dialogSettingsManager = new DialogSettingsManager(ISpherePlugin.getDefault().getDialogSettings(), getClass());
         shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-
-        disposableImages = new HashSet<Image>();
     }
 
     @Override
@@ -664,7 +658,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
         tableViewer.setContentProvider(new TableContentProvider(tableStatistics));
         tableViewer.addFilter(tableFilter);
-        labelProvider = getTableLabelProvider(tableViewer, 7);
+        labelProvider = getTableLabelProvider(tableViewer);
         tableViewer.setLabelProvider(labelProvider);
         Menu menuTableViewerContextMenu = new Menu(tableViewer.getTable());
         menuTableViewerContextMenu.addMenuListener(new TableContextMenu(menuTableViewerContextMenu, getEditorInput().getConfiguration()));
@@ -1653,31 +1647,19 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
             jobToCancel.cancelOperation();
         }
 
-        disposeImages();
-
         super.dispose();
-    }
-
-    private void disposeImages() {
-
-        for (Image image : disposableImages) {
-            if (!image.isDisposed()) {
-                image.dispose();
-            }
-        }
     }
 
     private Image getImage(String name) {
 
         Image image = ISpherePlugin.getDefault().getImage(name);
-        disposableImages.add(image);
 
         return image;
     }
 
     protected abstract RemoteObject performSelectRemoteObject(String connectionName, String libraryName, String objectName, String objectType);
 
-    protected abstract AbstractTableLabelProvider getTableLabelProvider(TableViewer tableViewer, int columnIndex);
+    protected abstract AbstractTableLabelProvider getTableLabelProvider(TableViewer tableViewer);
 
     private class WatchedMember {
 

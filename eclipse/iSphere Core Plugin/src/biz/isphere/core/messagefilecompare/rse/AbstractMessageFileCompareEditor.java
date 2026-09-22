@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2024 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,10 +9,8 @@
 package biz.isphere.core.messagefilecompare.rse;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
@@ -134,8 +132,6 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private String statusMessage;
     private int numFilteredItems;
 
-    private Set<Image> disposableImages;
-
     public AbstractMessageFileCompareEditor() {
 
         selectionChanged = true;
@@ -144,8 +140,6 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         dialogSettingsManager = new DialogSettingsManager(ISpherePlugin.getDefault().getDialogSettings(), getClass());
         shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-
-        disposableImages = new HashSet<Image>();
     }
 
     @Override
@@ -451,7 +445,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         tableViewer.setContentProvider(new TableContentProvider(tableStatistics));
         tableViewer.addFilter(tableFilter);
-        tableViewer.setLabelProvider(getTableLabelProvider(tableViewer, 3));
+        tableViewer.setLabelProvider(getTableLabelProvider(tableViewer));
         Menu menuTableViewerContextMenu = new Menu(tableViewer.getTable());
         menuTableViewerContextMenu.addMenuListener(new TableContextMenu(menuTableViewerContextMenu, getEditorInput().getConfiguration()));
         tableViewer.getTable().setMenu(menuTableViewerContextMenu);
@@ -1030,31 +1024,19 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             jobToCancel.setCanceled(true);
         }
 
-        disposeImages();
-
         super.dispose();
-    }
-
-    private void disposeImages() {
-
-        for (Image image : disposableImages) {
-            if (!image.isDisposed()) {
-                image.dispose();
-            }
-        }
     }
 
     private Image getImage(String name) {
 
         Image image = ISpherePlugin.getDefault().getImage(name);
-        disposableImages.add(image);
 
         return image;
     }
 
     protected abstract RemoteObject performSelectRemoteObject(String connectionName, String libraryName, String objectName);
 
-    protected abstract LabelProvider getTableLabelProvider(TableViewer tableViewer, int columnIndex);
+    protected abstract LabelProvider getTableLabelProvider(TableViewer tableViewer);
 
     /**
      * Class that implements the context menu for the table rows.

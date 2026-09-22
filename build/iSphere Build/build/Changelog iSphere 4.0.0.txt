@@ -1,4 +1,8 @@
 
+Changelog: iSphere 6.1.4.r
+--------------------------
+ • Fixed 'IllegalArgumentException' on disposed images in 'iSphere
+   Synchronize Members' and 'iSphere Compare Message Files' editors.
 
 Changelog: iSphere 6.1.3.r
 --------------------------

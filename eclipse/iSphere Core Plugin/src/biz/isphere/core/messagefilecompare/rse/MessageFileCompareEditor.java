@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,8 +44,8 @@ public class MessageFileCompareEditor extends AbstractMessageFileCompareEditor {
     }
 
     @Override
-    protected LabelProvider getTableLabelProvider(TableViewer tableViewer, int columnIndex) {
-        return new TableLabelProvider(tableViewer, columnIndex);
+    protected LabelProvider getTableLabelProvider(TableViewer tableViewer) {
+        return new TableLabelProvider(tableViewer);
     }
 
     /**
@@ -53,8 +53,8 @@ public class MessageFileCompareEditor extends AbstractMessageFileCompareEditor {
      */
     private class TableLabelProvider extends AbstractTableLabelProvider {
 
-        public TableLabelProvider(TableViewer tableViewer, int columnIndex) {
-            super(tableViewer, columnIndex);
+        public TableLabelProvider(TableViewer tableViewer) {
+            super(tableViewer);
         }
     }
 }

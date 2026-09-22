@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2024 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,7 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
 
     private CompareOptions compareOptions;
 
-    public AbstractTableLabelProvider(TableViewer tableViewer, int columnIndex) {
+    public AbstractTableLabelProvider(TableViewer tableViewer) {
 
         this.compareOptions = null;
 
@@ -60,7 +60,7 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
         this.error = ISpherePlugin.getDefault().getImage(ISpherePlugin.IMAGE_ERROR);
 
         if (useCompareStatusImagePainter()) {
-            tableViewer.getTable().addListener(SWT.PaintItem, new CompareStatusImagePainter(columnIndex));
+            tableViewer.getTable().addListener(SWT.PaintItem, new CompareStatusImagePainter(COLUMN_COMPARE_RESULT));
         }
     }
 
@@ -206,24 +206,6 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
 
         default:
             return ""; //$NON-NLS-1$
-        }
-    }
-
-    @Override
-    public void dispose() {
-
-        dispose(copyToLeft);
-        dispose(copyToRight);
-        dispose(copyNotEqual);
-        dispose(copyEqual);
-        dispose(error);
-
-        super.dispose();
-    }
-
-    private void dispose(Image image) {
-        if (!image.isDisposed()) {
-            image.dispose();
         }
     }
 

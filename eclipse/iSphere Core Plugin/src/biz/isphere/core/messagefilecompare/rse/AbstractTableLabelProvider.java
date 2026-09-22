@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
     protected Image copyNotEqual;
     protected Image copyEqual;
 
-    public AbstractTableLabelProvider(TableViewer tableViewer, int columnIndex) {
+    public AbstractTableLabelProvider(TableViewer tableViewer) {
 
         this.copyToLeft = ISpherePlugin.getDefault().getImage(ISpherePlugin.IMAGE_COPY_LEFT);
         this.copyToRight = ISpherePlugin.getDefault().getImage(ISpherePlugin.IMAGE_COPY_RIGHT);
@@ -44,12 +44,13 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
         this.copyEqual = ISpherePlugin.getDefault().getImage(ISpherePlugin.IMAGE_COPY_EQUAL);
 
         if (useCompareStatusImagePainter()) {
-            tableViewer.getTable().addListener(SWT.PaintItem, new CompareStatusImagePainter(columnIndex));
+            tableViewer.getTable().addListener(SWT.PaintItem, new CompareStatusImagePainter(COLUMN_COMPARE_RESULT));
         }
     }
 
     protected boolean useCompareStatusImagePainter() {
-        return true;
+        // Must be false; otherwise image is not updated properly in TreeViewer.
+        return false;
     }
 
     public Image getColumnImage(Object element, int columnIndex) {
@@ -128,17 +129,6 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
         default:
             return ""; //$NON-NLS-1$
         }
-    }
-
-    @Override
-    public void dispose() {
-
-        copyToLeft.dispose();
-        copyToRight.dispose();
-        copyNotEqual.dispose();
-        copyEqual.dispose();
-
-        super.dispose();
     }
 
     protected class CompareStatusImagePainter implements Listener {
