@@ -127,15 +127,11 @@ dcl-proc doCompare;
   // ... finish setting start values
   close SYNCMBRW;
 
-  // Resolve *generic* elements
-  // SYNCMBR_resolveGenericCompareElements(handle: i_mode: '');
-
   // Resolve *generic* files
   SYNCMBR_resolveGenericFiles(handle: i_mode);
 
   // Resolve *generic* members
   SYNCMBR_resolveGenericMembers(handle: i_mode: 'DEMO.{1,6}\.(PRT|DSP)F': *on);
-  // SYNCMBR_resolveGenericMembers(handle: i_mode: '<DEMO4.*': *on);
 
   // Get number of compare elements
   numElems = SYNCMBR_getNumberOfCompareElements(handle: i_mode);
