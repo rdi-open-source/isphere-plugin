@@ -9,7 +9,7 @@
 //
 // ------------------------------------------------------------------------------------------
 //
-//  Wrapper (SYNCMBR - resolveGenericCompareElements)
+//  Wrapper (SYNCMBR - resolveGenericMembers)
 //
 // ------------------------------------------------------------------------------------------
 //  STRPREPRC Compile Options:
