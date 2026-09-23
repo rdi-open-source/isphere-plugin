@@ -20,9 +20,6 @@ import java.sql.Timestamp;
  */
 public class MemberDescription implements Serializable, Comparable<MemberDescription> {
 
-    private static final String CRLF = "\n"; //$NON-NLS-1$
-    private static final String TAB = "\t"; //$NON-NLS-1$
-
     private static final long serialVersionUID = 6390106167717880849L;
 
     private String connectionName;
