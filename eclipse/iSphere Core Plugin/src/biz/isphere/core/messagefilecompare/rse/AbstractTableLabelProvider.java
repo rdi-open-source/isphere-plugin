@@ -64,6 +64,16 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
         }
 
         MessageFileCompareItem compareItem = (MessageFileCompareItem)element;
+        Image compareStatusImage = getCompareStatusImage(compareItem);
+
+        return compareStatusImage;
+    }
+
+    /**
+     * Returns the image that visualizes the compare status of an item.
+     */
+    private Image getCompareStatusImage(MessageFileCompareItem compareItem) {
+
         if (compareItem == null) {
             return null;
         }
@@ -77,9 +87,9 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
             return copyEqual;
         } else if (compareStatus == MessageFileCompareItem.NOT_EQUAL) {
             return copyNotEqual;
+        } else {
+            return null;
         }
-
-        return null;
     }
 
     public String getColumnText(Object element, int columnIndex) {
@@ -167,21 +177,8 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
         private Image getImage(TableItem tableItem) {
 
             MessageFileCompareItem compareItem = (MessageFileCompareItem)tableItem.getData();
-            if (compareItem == null) {
-                return null;
-            }
 
-            int compareStatus = compareItem.getCompareStatus();
-            if (compareStatus == MessageFileCompareItem.RIGHT_MISSING) {
-                return copyToRight;
-            } else if (compareStatus == MessageFileCompareItem.LEFT_MISSING) {
-                return copyToLeft;
-            } else if (compareStatus == MessageFileCompareItem.LEFT_EQUALS_RIGHT) {
-                return copyEqual;
-            } else if (compareStatus == MessageFileCompareItem.NOT_EQUAL) {
-                return copyNotEqual;
-            }
-            return null;
+            return getCompareStatusImage(compareItem);
         }
     }
 }
