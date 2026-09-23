@@ -265,6 +265,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         btnSelectLeftObject.setToolTipText(Messages.Tooltip_Select_object);
         btnSelectLeftObject.setImage(getImage(ISpherePlugin.IMAGE_OPEN));
         btnSelectLeftObject.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent arg0) {
                 String connectionName = null;
                 String libraryName = null;
@@ -320,6 +321,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         btnSelectRightObject.setToolTipText(Messages.Tooltip_Select_object);
         btnSelectRightObject.setImage(getImage(ISpherePlugin.IMAGE_OPEN));
         btnSelectRightObject.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent arg0) {
                 String connectionName = null;
                 String libraryName = null;
@@ -744,6 +746,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         return shell;
     }
 
+    @Override
     public SynchronizeMembersEditorInput getEditorInput() {
 
         IEditorInput input = super.getEditorInput();
@@ -1162,7 +1165,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
         IEditor editor = ISpherePlugin.getEditor();
         if (editor != null) {
-            editor.openEditor(connectionName, libraryName, fileName, memberName, IEditor.EDIT);
+            editor.openEditor(connectionName, libraryName, fileName, memberName, IEditor.DISPLAY);
             IEditorPart editorPart = editor.findEditorPart(connectionName, libraryName, fileName, memberName);
             if (editorPart != null) {
                 editorCloseListener.addMember(editorPart, new WatchedMember(memberDescription, null));
@@ -1450,7 +1453,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         if (MessageDialog.openConfirm(getShell(), Messages.Confirmation,
             Messages.Do_you_want_to_start_synchronizing_members + "\n\n" + leftToRight + "\n" + rightToLeft)) { // //$NON-NLS-1$ //$NON-NLS-2$
             setIsSynchronizing(true);
-            setButtonEnablementAndDisplayCompareStatus();
             jobToCancel = synchronizeMembersJob;
             setButtonEnablementAndDisplayCompareStatus();
             synchronizeMembersJob.schedule();
@@ -1507,9 +1509,8 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
         // Update copy status...
         if (MemberCopyError.ERROR_NONE == errorId) {
-            MemberCompareItem memberCompareItem = (MemberCompareItem)item.getData();
             if (compareItem.getCompareStatus(sharedValues.getCompareOptions()) == MemberCompareItem.LEFT_MISSING) {
-                MemberDescription rightMemberDescription = memberCompareItem.getRightMemberDescription();
+                MemberDescription rightMemberDescription = compareItem.getRightMemberDescription();
                 String connectionName = getEditorInput().getLeftObject().getConnectionName();
                 String libraryName = item.getToLibrary();
                 String fileName = item.getToFile();
@@ -1520,7 +1521,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                 String text = rightMemberDescription.getText();
                 compareItem.setLeftMemberDescription(connectionName, libraryName, fileName, memberName, srcType, lastChanged, checksum, text);
             } else if (compareItem.getCompareStatus(sharedValues.getCompareOptions()) == MemberCompareItem.RIGHT_MISSING) {
-                MemberDescription leftMemberDescription = memberCompareItem.getLeftMemberDescription();
+                MemberDescription leftMemberDescription = compareItem.getLeftMemberDescription();
                 String connectionName = getEditorInput().getRightObject().getConnectionName();
                 String libraryName = item.getToLibrary();
                 String fileName = item.getToFile();
@@ -1598,7 +1599,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
             IBMiHostContributionsHandler.compareSourceMembers(members, cc);
 
         } catch (Throwable e) {
-            ISpherePlugin.logError("*** Clould not open source member compare editor ***", e); //$NON-NLS-1$
+            ISpherePlugin.logError("*** Could not open source member compare editor ***", e); //$NON-NLS-1$
         }
     }
 
@@ -1704,13 +1705,27 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
             IWorkbenchPart closedPart = partRef.getPart(false);
             if (closedPart == owner) {
+                debug("Closing synchronize source members editor.");
                 unregisterEditorListener(this);
                 for (Object entry : members.keySet().toArray()) {
-                    IEditorPart editorPart = (IEditorPart)entry;
-                    closeEditor(editorPart);
+                    final IEditorPart editorPart = (IEditorPart)entry;
+                    // Schedule closing the stream file editor, because
+                    // otherwise DdsDocumentListener.partClosed() throws a NPE
+                    // on line 934 in RDi 9.8.0.7.
+                    // partClosed() is called twice and this._editor is null on
+                    // the second call, as it was set to null on the first call.
+                    new UIJob("") {
+                        @Override
+                        public IStatus runInUIThread(IProgressMonitor arg0) {
+                            debug("Closing edit source member popup editor.");
+                            closeEditor(editorPart);
+                            return Status.OK_STATUS;
+                        }
+                    }.schedule();
                 }
             } else {
                 if (closedPart instanceof IEditorPart) {
+                    debug("Closing edit source member popup editor.");
                     IEditorPart closedEditorPart = (IEditorPart)closedPart;
                     WatchedMember watchedMember = members.get(closedEditorPart);
                     updateAndRemoveWatchedMember(closedEditorPart, watchedMember);
