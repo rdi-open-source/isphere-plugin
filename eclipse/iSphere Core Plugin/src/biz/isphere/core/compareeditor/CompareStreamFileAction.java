@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ public class CompareStreamFileAction {
     private StreamFile leftStreamFile;
     private StreamFile rightStreamFile;
     private String editorTitle;
+    private boolean onPage;
     private CompareStreamFileInput fInput;
 
     @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
@@ -57,7 +58,7 @@ public class CompareStreamFileAction {
         this.leftStreamFile = leftStreamFile;
         this.rightStreamFile = rightStreamFile;
         this.editorTitle = editorTitle;
-
+        this.onPage = cc.isOpenInEditor();
     }
 
     public CompareStreamFileAction(CompareEditorConfiguration compareConfiguration, StreamFile ancestorStreamFile, StreamFile leftStreamFile,
@@ -181,11 +182,38 @@ public class CompareStreamFileAction {
                     return;
                 }
 
-                CompareUI.openCompareEditorOnPage(fInput, UIHelper.getActivePage());
+                if (onPage) {
+                    openCompareEditorOnPage();
+                } else {
+                    openCompareEditorDialog();
+                }
+
                 for (int index = 0; index < cleanupListener.size(); index++) {
                     (cleanupListener.get(index)).cleanup();
                 }
 
+            }
+
+            private void openCompareEditorOnPage() {
+
+                IEditorReference editorReference = findCompareEditor(leftStreamFile, rightStreamFile);
+                if (editorReference != null) {
+
+                    // TODO: make a decision, what is better: closing the editor
+                    // or restoring it. Now the part is brought to front
+                    // IEditorPart editorPart =
+                    // editorReference.getEditor(false);
+                    // editorPart.getEditorSite().getPage().closeEditor(editorPart,
+                    // false);
+
+                    UIHelper.getActivePage().activate(editorReference.getPart(false));
+                    return;
+                }
+                CompareUI.openCompareEditorOnPage(fInput, UIHelper.getActivePage());
+            }
+
+            private void openCompareEditorDialog() {
+                CompareUI.openCompareDialog(fInput);
             }
 
             private String createLabel(StreamFile streamFile) {

@@ -150,6 +150,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_CURRENT_LIBRARY = "current_library.gif";
     public static final String IMAGE_LIBRARY_LIST = "library_list.gif";
     public static final String IMAGE_SYNCHRONIZE_MEMBERS = "synchronize_members.gif";
+    public static final String IMAGE_SYNCHRONIZE_STREAM_FILES = "synchronize_stream_files.gif";
     public static final String IMAGE_PHYSICAL_FILE = "physicalfile.gif";
     public static final String IMAGE_SOURCE_FILE = "sourcefile.gif";
 
@@ -340,6 +341,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_CURRENT_LIBRARY, getImageDescriptor(IMAGE_CURRENT_LIBRARY));
         reg.put(IMAGE_LIBRARY_LIST, getImageDescriptor(IMAGE_LIBRARY_LIST));
         reg.put(IMAGE_SYNCHRONIZE_MEMBERS, getImageDescriptor(IMAGE_SYNCHRONIZE_MEMBERS));
+        reg.put(IMAGE_SYNCHRONIZE_STREAM_FILES, getImageDescriptor(IMAGE_SYNCHRONIZE_STREAM_FILES));
         reg.put(IMAGE_PHYSICAL_FILE, getImageDescriptor(IMAGE_PHYSICAL_FILE));
         reg.put(IMAGE_SOURCE_FILE, getImageDescriptor(IMAGE_SOURCE_FILE));
     }

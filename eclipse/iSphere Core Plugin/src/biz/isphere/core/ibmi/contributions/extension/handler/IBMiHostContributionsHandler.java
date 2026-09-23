@@ -546,6 +546,45 @@ public class IBMiHostContributionsHandler {
     }
 
     /**
+     * Opens the iSphere compare editor for the given stream files.
+     * <p>
+     * The available options are:
+     * <p>
+     * <b>Empty stream file list</b> <br>
+     * Opens the compare dialog to let the user specify the stream files that
+     * are compares.
+     * <p>
+     * <b>One stream file</b> <br>
+     * Opens the compare dialog with that stream file set as the left (editable)
+     * file. The right stream file is initialized with the properties of the
+     * left file.
+     * <p>
+     * <b>Two stream files</b> <br>
+     * Opens the compare dialog with the first stream file set as the left
+     * (editable) and the second stream file set as the right file.
+     * <p>
+     * <b>More than 2 stream files</b> <br>
+     * Opens the compare dialog to let the user specify the directory that
+     * contains the stream files, which are compared one by one with the
+     * selected files.
+     * 
+     * @param streamFiles - stream files that are compared
+     * @param compareConfiguration - configuration of the Eclipse compare editor
+     * @throws Exception
+     */
+    public static void compareStreamFiles(List<StreamFile> streamFiles, SourceMemberCompareEditorConfiguration compareConfiguration)
+        throws Exception {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return;
+        }
+
+        factory.compareStreamFiles(streamFiles, compareConfiguration);
+    }
+
+    /**
      * Returns the local resource of a given remote member.
      * 
      * @param qualifiedConnectionName - name that uniquely identifies the

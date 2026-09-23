@@ -276,6 +276,7 @@ public abstract class CompareStreamFileDialog extends XDialog {
             editButton.setText(Messages.Open_for_edit);
             editButton.setLayoutData(getGridData());
             editButton.addSelectionListener(new SelectionAdapter() {
+                @Override
                 public void widgetSelected(SelectionEvent e) {
                     if (editButton.getSelection()) {
                         dontIgnoreCaseButton.setSelection(true);
@@ -300,6 +301,7 @@ public abstract class CompareStreamFileDialog extends XDialog {
         ignoreCaseButton.setText(Messages.Ignore_case);
         ignoreCaseButton.setLayoutData(getGridData());
         ignoreCaseButton.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent e) {
                 if (selectEditable) {
                     if (ignoreCaseButton.getSelection()) {
@@ -465,7 +467,7 @@ public abstract class CompareStreamFileDialog extends XDialog {
 
     protected String getLeftGroupLabel() {
 
-        if (editButton.getSelection()) {
+        if (editButton != null && editButton.getSelection()) {
             return Messages.Left + " " + Messages.Editable;
         } else {
             return Messages.Left;

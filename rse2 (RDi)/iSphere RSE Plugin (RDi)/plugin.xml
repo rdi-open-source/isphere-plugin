@@ -248,7 +248,7 @@
 					</or>
 				</or>
          	</enablement>
-            
+
             <action
                 class="biz.isphere.rse.actions.OpenSynchronizeMemberEditorAction"
                 enablesFor="2"
@@ -373,6 +373,15 @@
                 icon="icons/compare_stream_file.gif"
                 menubarPath="additions">
 	         </action>
+
+            <action
+                class="biz.isphere.rse.actions.OpenSynchronizeStreamFileEditorAction"
+                enablesFor="2"
+                id="biz.isphere.rse.actions.OpenSynchronizeStreamFileEditorAction"
+                label="%iSphere_Synchronize_IfsFiles_Editor"
+                icon="icons\synchronize_stream_files.gif"
+                menubarPath="additions">
+            </action>
       	</objectContribution>
       	
       	<!--

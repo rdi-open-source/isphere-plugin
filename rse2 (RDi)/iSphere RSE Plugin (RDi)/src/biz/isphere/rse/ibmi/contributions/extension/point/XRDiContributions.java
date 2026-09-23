@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2024 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,14 +22,14 @@ import java.util.Properties;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.window.Window;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.jface.window.Window;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.rse.ui.SystemPreferencesManager;
+import org.eclipse.swt.widgets.Shell;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.SecureAS400;
@@ -701,6 +701,39 @@ public class XRDiContributions implements IIBMiHostContributions {
     }
 
     /**
+     * Opens the iSphere compare editor for the given stream files.
+     * <p>
+     * The available options are:
+     * <p>
+     * <b>Empty stream file list</b> <br>
+     * Opens the compare dialog to let the user specify the stream files that
+     * are compares.
+     * <p>
+     * <b>One stream file</b> <br>
+     * Opens the compare dialog with that stream file set as the left (editable)
+     * file. The right stream file is initialized with the properties of the
+     * left file.
+     * <p>
+     * <b>Two stream files</b> <br>
+     * Opens the compare dialog with the first stream file set as the left
+     * (editable) and the second stream file set as the right file.
+     * <p>
+     * <b>More than 2 stream files</b> <br>
+     * Opens the compare dialog to let the user specify the directory that
+     * contains the stream files, which are compared one by one with the
+     * selected files.
+     * 
+     * @param streamFiles - stream files that are compared
+     * @param compareConfiguration - configuration of the Eclipse compare editor
+     * @throws Exception
+     */
+    public void compareStreamFiles(List<StreamFile> streamFiles, SourceMemberCompareEditorConfiguration compareConfiguration) throws Exception {
+
+        CompareStreamFilesHandler handler = new CompareStreamFilesHandler();
+        handler.handleSourceCompare(streamFiles.toArray(new StreamFile[streamFiles.size()]), compareConfiguration);
+    }
+
+    /**
      * Returns the local resource of a given remote member.
      * 
      * @param qualifiedConnectionName - name that uniquely identifies the
@@ -755,4 +788,5 @@ public class XRDiContributions implements IIBMiHostContributions {
     private String produceQualifiedConnectionName(String profileName, String connectionName) {
         return new QualifiedConnectionName(profileName, connectionName).getQualifiedName();
     }
+
 }

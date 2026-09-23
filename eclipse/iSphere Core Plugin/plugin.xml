@@ -72,6 +72,12 @@
             class="biz.isphere.core.objectsynchronization.rse.SynchronizeMembersEditor"
             contributorClass="biz.isphere.core.objectsynchronization.rse.SynchronizeMembersEditorActionBarContributor"
             id="biz.isphere.core.objectsynchronization.rse.SynchronizeMembersEditor"/>
+      <editor
+            name=""
+            icon="icons\synchronize_stream_files.gif"
+            class="biz.isphere.core.ifssynchronization.rse.SynchronizeStreamFilesEditor"
+            contributorClass="biz.isphere.core.ifssynchronization.rse.SynchronizeStreamFilesEditorActionBarContributor"
+            id="biz.isphere.core.ifssynchronization.rse.SynchronizeStreamFilesEditor"/>
    </extension>
       	
       	<!--

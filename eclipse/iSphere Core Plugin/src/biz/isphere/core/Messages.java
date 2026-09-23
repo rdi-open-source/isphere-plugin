@@ -1308,9 +1308,13 @@ public class Messages extends NLS {
 
     public static String Label_Existing_members_action_colon;
 
+    public static String Label_Existing_stream_files_action_colon;
+
     public static String Label_Error;
 
     public static String Label_Replace_existing_members;
+
+    public static String Label_Replace_existing_stream_files;
 
     public static String Label_Rename_existing_members;
 
@@ -1806,7 +1810,11 @@ public class Messages extends NLS {
 
     public static String Warning_Both_sides_show_the_same_source_members;
 
+    public static String Warning_Both_sides_show_the_same_stream_file;
+
     public static String Job_Loading_source_members;
+
+    public static String Job_Loading_stream_files;
 
     public static String Task_Preparing;
 
@@ -1834,11 +1842,17 @@ public class Messages extends NLS {
 
     public static String Tooltip_Member_name_and_source_type_filter;
 
+    public static String Tooltip_stream_file_name_and_type_filter;
+
     public static String Copying_source_members;
 
     public static String Delete_left_member_colon;
 
     public static String Delete_right_member_colon;
+
+    public static String Delete_left_stream_file_colon;
+
+    public static String Delete_right_stream_file_colon;
 
     public static String Left_source_file_or_library_is_missing;
 
@@ -1848,7 +1862,11 @@ public class Messages extends NLS {
 
     public static String Tooltip_start_compare_source_members;
 
+    public static String Tooltip_start_compare_stream_files;
+
     public static String Tooltip_start_synchronize_source_members;
+
+    public static String Tooltip_start_synchronize_stream_files;
 
     public static String Do_you_want_to_start_synchronizing_members;
 
@@ -1857,6 +1875,8 @@ public class Messages extends NLS {
     public static String Copy_A_source_members_from_right_to_left;
 
     public static String Tooltip_Compare_after_member_synchronization;
+
+    public static String Tooltip_Compare_after_stream_file_synchronization;
 
     public static String Property_No_action;
 
@@ -1897,6 +1917,52 @@ public class Messages extends NLS {
     public static String Max_depth_colon;
 
     public static String Specifies_the_maximum_depth_of_sub_directories_included_in_the_search;
+
+    /*
+     * Copy / synchronize IFS files
+     */
+
+    public static String Directory_A_not_found;
+
+    public static String IFS_file_A_not_found;
+
+    public static String Invalid_IFS_path_name_A;
+
+    public static String IFS_file_is_open_in_editor_and_has_unsaved_changes;
+
+    public static String Can_not_copy_stream_file_twice_to_same_target_stream_file;
+
+    public static String Target_stream_file_A_already_exists;
+
+    public static String Create_missing_directory_question;
+
+    public static String Could_not_create_directory_A;
+
+    public static String Could_not_rename_stream_file_A_to_B;
+
+    public static String Error_Invalid_stream_file_name_Name_is_too_long_A;
+
+    public static String Copying_stream_files;
+
+    public static String Successfully_copied_A_stream_files;
+
+    public static String Could_not_copy_A_stream_files_due_to_errors;
+
+    public static String A_stream_files_copied_B_stream_files_not_copied_due_to_errors;
+
+    public static String Do_you_want_to_start_synchronizing_stream_files;
+
+    public static String Copy_A_stream_files_from_left_to_right;
+
+    public static String Copy_A_stream_files_from_right_to_left;
+
+    public static String Label_Empty_directories;
+
+    public static String Tooltip_Empty_directories;
+
+    public static String Directory_A_is_not_empty;
+
+    public static String Could_not_delete_A;
 
     /*
      * Informational messages

@@ -1,0 +1,9 @@
+<pcml version="4.0">
+   <program name="SYNCIFS_resolveGenericFiles" path="/QSYS.LIB/%LIBL%.LIB/W006007.PGM">
+      <data name="handle" type="zoned" length="10" precision="0" usage="input" />
+      <data name="mode" type="char" length="10" usage="input" />
+      <data name="itemFilter" type="char" length="1024" usage="input" />
+      <data name="isRegEx" type="char" length="1" usage="input" />
+      <data name="maxDepth" type="int" length="4" usage="input" />
+   </program>
+</pcml>

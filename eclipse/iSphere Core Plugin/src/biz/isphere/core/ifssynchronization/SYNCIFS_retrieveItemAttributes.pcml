@@ -1,0 +1,24 @@
+<pcml version="4.0">
+   <!--
+      RPG: dcl-s ifsItem_t varchar(1024) template;
+
+      PCML data type 'varchar' is parsed by JTOpen, but not supported at run
+      time (PcmlDataValues.byteLength() throws 'Unknown data type, 11'), hence
+      the 2 byte length prefix of a varying length field is declared here.
+   -->
+   <struct name="ifsItem_t">
+     <data name="length"      type="int"       length="2"     precision="16"  usage="inherit"/>
+     <data name="value"       type="char"      length="1024"                  usage="inherit"/>
+   </struct>
+   <struct name="itemAttrs_t">
+     <data name="name"        type="struct"    struct="ifsItem_t"             usage="inherit"/>
+     <data name="type"        type="char"      length="1"                     usage="inherit"/>
+     <data name="lastChanged" type="timestamp"                                usage="inherit"/>
+     <data name="checkSum"    type="int"       length="8"     precision="63"  usage="inherit"/>
+   </struct>
+   <program name="SYNCIFS_retrieveItemAttributes" path="/QSYS.LIB/%LIBL%.LIB/W006006.PGM">
+      <data name="path"      type="struct" struct="ifsItem_t"   usage="input" />
+      <data name="itemAttrs" type="struct" struct="itemAttrs_t" usage="output" outputsize="1061" />
+   </program>
+</pcml>
+

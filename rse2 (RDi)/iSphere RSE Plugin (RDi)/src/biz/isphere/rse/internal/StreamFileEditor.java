@@ -9,7 +9,6 @@
 package biz.isphere.rse.internal;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -25,13 +24,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.internal.IStreamFileEditor;
-import biz.isphere.rse.connection.ConnectionManager;
-
 import com.ibm.etools.iseries.subsystems.ifs.files.IFSFileServiceSubSystem;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.systems.editor.SystemTextEditor;
+
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.IStreamFileEditor;
+import biz.isphere.rse.connection.ConnectionManager;
 
 public class StreamFileEditor implements IStreamFileEditor {
 
@@ -40,53 +39,51 @@ public class StreamFileEditor implements IStreamFileEditor {
         IBMiConnection _connection = ConnectionManager.getIBMiConnection(connectionName);
 
         try {
-            
+
             IRemoteFile remoteFile = null;
-            
+
             ISubSystem[] sses = RSECorePlugin.getTheSystemRegistry().getSubSystems(_connection.getHost());
-            
+
             for (int i = 0; i < sses.length; i++) {
-                
+
                 if ((sses[i] instanceof IFSFileServiceSubSystem)) {
-                    
+
                     IFSFileServiceSubSystem fileServiceSubSystem = (IFSFileServiceSubSystem)sses[i];
-                    
+
                     NullProgressMonitor monitor = new NullProgressMonitor();
-                    
+
                     try {
-                        
+
                         remoteFile = fileServiceSubSystem.getRemoteFileObject(directory + "/" + streamFile, monitor);
-                        
-                    } 
-                    catch (SystemMessageException e) {
-                    } 
-                    catch (Exception e) {
+
+                    } catch (SystemMessageException e) {
+                    } catch (Exception e) {
                     }
-                    
+
                     break;
-                    
+
                 }
-                
+
             }
-            
+
             if (remoteFile != null) {
-                
+
                 String editor = "com.ibm.etools.systems.editor";
-                
+
                 IEditorDescriptor _editorDescriptor = PlatformUI.getWorkbench().getEditorRegistry().findEditor(editor);
-                
+
                 if (_editorDescriptor != null) {
-            
+
                     SystemEditableRemoteFile editableRemoteFile = new SystemEditableRemoteFile(remoteFile, _editorDescriptor);
 
                     if (editableRemoteFile != null) {
-                        
+
                         if (mode.equals(IStreamFileEditor.EDIT)) {
                             editableRemoteFile.open(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), false);
                         } else if (mode.equals(IStreamFileEditor.DISPLAY)) {
                             editableRemoteFile.open(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), true);
                         }
-                        
+
                         if (statement != 0) {
                             SystemTextEditor systemTextEditor = (SystemTextEditor)editableRemoteFile.getEditor();
                             if (systemTextEditor != null) {
@@ -95,7 +92,7 @@ public class StreamFileEditor implements IStreamFileEditor {
                         }
 
                     }
-                    
+
                 }
 
             }
@@ -108,11 +105,38 @@ public class StreamFileEditor implements IStreamFileEditor {
 
     }
 
-    private boolean isOpenInEditor(SystemEditableRemoteFile editableRemoteFile) throws CoreException {
-        return !(editableRemoteFile.checkOpenInEditor() == -1);
+    private SystemEditableRemoteFile getEditableStreamFile(String connectionName, String directory, String streamFile) {
+
+        IBMiConnection connection = ConnectionManager.getIBMiConnection(connectionName);
+        if (connection == null) {
+            return null;
+        }
+
+        IRemoteFile remoteFile = IFSRemoteFileHelper.getRemoteStreamFile(connection, directory, streamFile);
+        if (remoteFile == null) {
+            return null;
+        }
+
+        return new SystemEditableRemoteFile(remoteFile);
+    }
+
+    public IEditorPart findEditorPart(String connectionName, String directory, String streamFile) {
+
+        try {
+            SystemEditableRemoteFile editableRemoteFile = getEditableStreamFile(connectionName, directory, streamFile);
+            return findEditorPart(editableRemoteFile);
+        } catch (Throwable e) {
+            ISpherePlugin.logError("Failed to find Lpex editor.", e); //$NON-NLS-1$
+        }
+
+        return null;
     }
 
     private IEditorPart findEditorPart(SystemEditableRemoteFile editableRemoteFile) {
+
+        if (editableRemoteFile == null) {
+            return null;
+        }
 
         IFile localFileResource = editableRemoteFile.getLocalResource();
         if (localFileResource == null) {
