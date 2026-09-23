@@ -1,0 +1,67 @@
+-- *------------------------------------------------------------------------*
+-- *                                                                        *
+-- * Copyright (c) 2012-2026 iSphere Project Owners                         *
+-- * All rights reserved. This program and the accompanying materials       *
+-- * are made available under the terms of the Common Public License v1.0   *
+-- * which accompanies this distribution, and is available at               *
+-- * http://www.eclipse.org/legal/cpl-v10.html                              *
+-- *                                                                        *
+-- *------------------------------------------------------------------------*
+-- *                                                                        *
+-- * Synchronize IFS Files (Work)                                           *
+-- *                                                                        *
+-- *------------------------------------------------------------------------*
+-- * STRPREPRC Compile Options:                                             *
+-- *   >>PRE-COMPILER<<                                                     *
+-- *     >>CRTCMD<<    RUNSQLSTM  SRCFILE(&SL/&SF) SRCMBR(&SM);             *
+-- *       >>COMPILE<<                                                      *
+-- *         >>PARM<<  DFTRDBCOL(&LI);                                      *
+-- *       >>END-COMPILE<<                                                  *
+-- *       >>EXECUTE<<                                                      *
+-- *   >>END-PRE-COMPILER<<                                                 *
+-- *------------------------------------------------------------------------*
+
+CREATE TABLE SYNCIFSW
+(
+ XWHDL      DECIMAL(10, 0)             NOT NULL WITH DEFAULT,
+ XWID       INTEGER                    NOT NULL WITH DEFAULT,
+ XWPARENT   INTEGER                    NOT NULL WITH DEFAULT,
+ XWTYPE     CHAR(1)                    NOT NULL WITH DEFAULT,
+ XWITEM     VARCHAR(5000) ALLOCATE(64) NOT NULL WITH DEFAULT,
+ XWLEFTLCHG TIMESTAMP  NOT NULL WITH DEFAULT '0001-01-01-00.00.00.000000',
+ XWLEFTCRC  BIGINT                     NOT NULL WITH DEFAULT 0,
+ XWRGHTLCHG TIMESTAMP  NOT NULL WITH DEFAULT '0001-01-01-00.00.00.000000',
+ XWRGHTCRC  BIGINT                     NOT NULL WITH DEFAULT 0,
+ XWRESULT   INTEGER                    NOT NULL WITH DEFAULT
+);
+
+LABEL ON TABLE SYNCIFSW
+ IS 'Synchronize Source Members (Work)';
+
+LABEL ON COLUMN SYNCIFSW
+(
+ XWHDL      IS 'Handle' ,
+ XWID       IS 'Item ID',
+ XWPARENT   IS 'Parent ID',
+ XWTYPE     IS 'Item type',
+ XWITEM     IS 'Member',
+ XWLEFTLCHG IS 'Left Last Changed',
+ XWLEFTCRC  IS 'Left Checksum',
+ XWRGHTLCHG IS 'Right Last Changed',
+ XWRGHTCRC  IS 'Right Checksum',
+ XWRESULT   IS 'Compare Result      0=Equal, 1=Type     2=Date, 4=CRC, 8=NF '
+);
+
+LABEL ON COLUMN SYNCIFSW
+(
+ XWHDL      TEXT IS 'Handle' ,
+ XWID       TEXT IS 'Item ID',
+ XWPARENT   TEXT IS 'Parent ID',
+ XWTYPE     TEXT IS 'Item type (F=File, D=Directory)',
+ XWITEM     TEXT IS 'Member',
+ XWLEFTLCHG TEXT IS 'Left Last Changed',
+ XWLEFTCRC  TEXT IS 'Left Checksum',
+ XWRGHTLCHG TEXT IS 'Right Last Changed',
+ XWRGHTCRC  TEXT IS 'Right Checksum',
+ XWRESULT   TEXT IS 'Compare Result'
+);

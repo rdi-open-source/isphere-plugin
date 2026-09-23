@@ -197,7 +197,7 @@ dcl-proc matches export;
   dcl-pi *n ind;
     i_pattern      like(string_t) const;
     i_string       like(string_t) const;
-    i_ignoreCase   ind options(*nopass);
+    i_ignoreCase   ind options(*nopass) const;
   end-pi;
 
   dcl-s string like(i_string);

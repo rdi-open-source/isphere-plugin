@@ -29,7 +29,7 @@ end-pr;
 dcl-pr matches ind extproc('STRING_matches');
   i_pattern      like(string_t) const;
   i_string       like(string_t) const;
-  i_ignoreCase   ind options(*nopass);
+  i_ignoreCase   ind options(*nopass) const;
 end-pr;
 
 dcl-pr lcase like(string_t) extproc('STRING_lcase');
