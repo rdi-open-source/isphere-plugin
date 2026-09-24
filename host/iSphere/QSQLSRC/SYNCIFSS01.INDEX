@@ -22,7 +22,7 @@
 -- *------------------------------------------------------------------------*
 
 CREATE UNIQUE INDEX SYNCIFSS01
-ON SYNCMBRS
+ON SYNCIFSS
 (
  XSHDL ASC
 )
