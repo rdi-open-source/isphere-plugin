@@ -51,6 +51,36 @@ public class StreamFileDescription implements Serializable, Comparable<StreamFil
      */
     private transient StreamFileDescription parentDirectory;
 
+    /**
+     * Indicates that this directory description <i>directly</i> contains
+     * stream files, set by
+     * {@link #setParentDirectory(StreamFileDescription)} of the file
+     * descriptions found in it. It is used to decide whether the root
+     * directory is displayed, which serves as the anchor of the context menu
+     * that sets the compare status of all items below it.
+     * <p>
+     * Intentionally excluded from {@link #equals(Object)},
+     * {@link #hashCode()} and {@link #compareTo(StreamFileDescription)}
+     * (structure only, not part of the value) and marked transient, since it
+     * is not meant to survive serialization.
+     */
+    private transient boolean hasFiles;
+
+    /**
+     * Indicates that the directory tree below this directory description
+     * contains at least one stream file, set by
+     * {@link #setParentDirectory(StreamFileDescription)} of the file
+     * descriptions found below it. A directory whose subtree is free of stream
+     * files is an <i>empty</i> directory, no matter how many subdirectories it
+     * has, because there is nothing below it that could be synchronized.
+     * <p>
+     * Intentionally excluded from {@link #equals(Object)},
+     * {@link #hashCode()} and {@link #compareTo(StreamFileDescription)}
+     * (structure only, not part of the value) and marked transient, since it
+     * is not meant to survive serialization.
+     */
+    private transient boolean hasFilesInSubtree;
+
     public static StreamFileDescription newFileDescription() {
         return new StreamFileDescription("F");
     }
@@ -135,12 +165,63 @@ public class StreamFileDescription implements Serializable, Comparable<StreamFil
         return getAbsolutePath();
     }
 
+    public boolean isRootDirectory() {
+        if (isDirectory() && parentDirectory == null) {
+            return true;
+        }
+        return false;
+    }
+
     public StreamFileDescription getParentDirectory() {
         return parentDirectory;
     }
 
+    /**
+     * Sets the directory description this item was found in and marks the
+     * directories above it as <i>not empty</i>, when this item is a stream
+     * file. A directory does not mark its parent directories, because a
+     * directory that contains nothing but subdirectories without stream files
+     * is an empty directory, too.
+     */
     public void setParentDirectory(StreamFileDescription parentDirectory) {
+
         this.parentDirectory = parentDirectory;
+
+        if (parentDirectory != null && isFile()) {
+            parentDirectory.hasFiles = true;
+            markFilesInSubtree(parentDirectory);
+        }
+    }
+
+    /**
+     * Marks a directory and all directories above it as <i>not empty</i>.
+     * Walking up stops at the first directory that has been marked before,
+     * because then the directories above it have been marked before, too.
+     */
+    private void markFilesInSubtree(StreamFileDescription directory) {
+
+        StreamFileDescription tempDirectory = directory;
+
+        while (tempDirectory != null && !tempDirectory.hasFilesInSubtree) {
+            tempDirectory.hasFilesInSubtree = true;
+            tempDirectory = tempDirectory.getParentDirectory();
+        }
+    }
+
+    /**
+     * @return <code>true</code>, if this directory directly contains stream
+     *         files, else <code>false</code>
+     */
+    public boolean haveFiles() {
+        return hasFiles;
+    }
+
+    /**
+     * @return <code>true</code>, if the directory tree below this directory
+     *         contains at least one stream file, else <code>false</code>
+     */
+    public boolean haveFilesInSubtree() {
+        return hasFilesInSubtree;
     }
 
     /**

@@ -1846,7 +1846,6 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
             streamFiles.add(leftIfsFile);
             streamFiles.add(rightIfsFile);
 
-            // TODO: synchronize IFS files: open editor without dialog
             IBMiHostContributionsHandler.compareStreamFiles(streamFiles, cc);
 
         } catch (Throwable e) {

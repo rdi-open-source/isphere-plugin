@@ -8,7 +8,6 @@
 
 package biz.isphere.core.ifssynchronization.rse;
 
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertySource;
 
@@ -73,6 +72,78 @@ public class StreamFileCompareItem implements Comparable<StreamFileCompareItem>,
         }
 
         return ifsFileDescription != null && ifsFileDescription.isDirectory();
+    }
+
+    public boolean isRootDirectory() {
+
+        if (!isDirectory()) {
+            return false;
+        }
+
+        StreamFileDescription ifsFileDescription;
+
+        ifsFileDescription = getLeftIfsFileDescription();
+        if (ifsFileDescription != null && ifsFileDescription.isRootDirectory()) {
+            return true;
+        }
+
+        ifsFileDescription = getRightIfsFileDescription();
+        if (ifsFileDescription != null && ifsFileDescription.isRootDirectory()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return <code>true</code>, if the directory tree below this item
+     *         contains at least one stream file on the left or on the right
+     *         side, else <code>false</code>
+     */
+    public boolean haveFilesInSubtree() {
+
+        if (!isDirectory()) {
+            return false;
+        }
+
+        StreamFileDescription ifsFileDescription;
+
+        ifsFileDescription = getLeftIfsFileDescription();
+        if (ifsFileDescription != null && ifsFileDescription.haveFilesInSubtree()) {
+            return true;
+        }
+
+        ifsFileDescription = getRightIfsFileDescription();
+        if (ifsFileDescription != null && ifsFileDescription.haveFilesInSubtree()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return <code>true</code>, if this item directly contains stream files on
+     *         the left or on the right side, else <code>false</code>
+     */
+    public boolean haveFiles() {
+
+        if (!isDirectory()) {
+            return false;
+        }
+
+        StreamFileDescription ifsFileDescription;
+
+        ifsFileDescription = getLeftIfsFileDescription();
+        if (ifsFileDescription != null && ifsFileDescription.haveFiles()) {
+            return true;
+        }
+
+        ifsFileDescription = getRightIfsFileDescription();
+        if (ifsFileDescription != null && ifsFileDescription.haveFiles()) {
+            return true;
+        }
+
+        return false;
     }
 
     public StreamFileDescription getLeftIfsFileDescription() {
