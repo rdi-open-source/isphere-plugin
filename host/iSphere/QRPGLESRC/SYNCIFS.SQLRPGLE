@@ -617,7 +617,7 @@ dcl-proc resolveGenericFiles;
 
                   fileNameMask = i_nameTypeFilters.entry(i).name + '.'
                                  + i_nameTypeFilters.entry(i).type;
-                  isFound = matches(fileNameMask : fullFileName: *on);
+                  isFound = not (matches(fileNameMask : fullFileName: *on));
                   if (isFound);
                     leave;
                   endif;
