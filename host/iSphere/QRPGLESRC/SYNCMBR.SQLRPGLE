@@ -545,6 +545,7 @@ dcl-proc SYNCMBR_resolveGenericMembers export;
   dcl-s fullMemberName varchar(21);
   dcl-s memberNameMask varchar(21);
 
+  dcl-s countNonNegatedPatterns int(10);
   dcl-s countMembersResolved int(10);
 
   dcl-ds lastUpdateMembersResolved qualified inz;
@@ -757,34 +758,45 @@ dcl-proc SYNCMBR_resolveGenericMembers export;
               isFound = matchRegex(fullMemberName: hRegex);
             else;
               // String compare
-              for i = 1 to numFilters;
-                if (nameTypeFilter(i).isNegated);
-                  iter;
+              if (numFilters = 0);
+                isFound = *on;
+              else;
+
+                countNonNegatedPatterns = 0;
+                for i = 1 to numFilters;
+                  if (nameTypeFilter(i).isNegated);
+                    iter;
+                  endif;
+
+                  countNonNegatedPatterns += 1;
+
+                  memberNameMask = nameTypeFilter(i).name + '.' + nameTypeFilter(i).srcType;
+                  isFound = matches(memberNameMask: fullMemberName);
+                  if (isFound);
+                    leave;
+                  endif;
+                endfor;
+
+                if (countNonNegatedPatterns = 0);
+                  isFound = *on;
                 endif;
 
-                memberNameMask = nameTypeFilter(i).name + '.' + nameTypeFilter(i).srcType;
-                isFound = matches(memberNameMask: fullMemberName);
                 if (isFound);
-                  leave;
-                endif;
-              endfor;
 
-              if (not isFound);
-                iter;
+                  // Check negated patterns:
+                  for i = 1 to numFilters;
+                    if (not nameTypeFilter(i).isNegated);
+                      iter;
+                    endif;
+
+                    memberNameMask = nameTypeFilter(i).name + '.' + nameTypeFilter(i).srcType;
+                    isFound = not (matches(memberNameMask: fullMemberName));
+                    if (isFound);
+                      leave;
+                    endif;
+                  endfor;
+                endif;
               endif;
-
-              // Check negated patterns:
-              for i = 1 to numFilters;
-                if (not nameTypeFilter(i).isNegated);
-                  iter;
-                endif;
-
-                memberNameMask = nameTypeFilter(i).name + '.' + nameTypeFilter(i).srcType;
-                isFound = not (matches(memberNameMask: fullMemberName));
-                if (isFound);
-                  leave;
-                endif;
-              endfor;
             endif;
 
             if (not isFound);
