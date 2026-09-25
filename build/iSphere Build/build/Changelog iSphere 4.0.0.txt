@@ -5,6 +5,9 @@ Changelog: iSphere 6.1.4.r
    Synchronize Members' and 'iSphere Compare Message Files' editors.
  • Fix NPE in synchronize members editor when closing the editor,
    while a printer file is displayed in the "Edit" editor.
+ • Fix problem that members where not selected in the iSphere
+   Synchronize Members editor, if the mask filter is a 1-filter
+   negated-mask.
 
 Changelog: iSphere 6.1.3.r
 --------------------------
