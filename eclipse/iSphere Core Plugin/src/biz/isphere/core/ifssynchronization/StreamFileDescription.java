@@ -52,17 +52,16 @@ public class StreamFileDescription implements Serializable, Comparable<StreamFil
     private transient StreamFileDescription parentDirectory;
 
     /**
-     * Indicates that this directory description <i>directly</i> contains
-     * stream files, set by
-     * {@link #setParentDirectory(StreamFileDescription)} of the file
-     * descriptions found in it. It is used to decide whether the root
+     * Indicates that this directory description <i>directly</i> contains stream
+     * files, set by {@link #setParentDirectory(StreamFileDescription)} of the
+     * file descriptions found in it. It is used to decide whether the root
      * directory is displayed, which serves as the anchor of the context menu
      * that sets the compare status of all items below it.
      * <p>
-     * Intentionally excluded from {@link #equals(Object)},
-     * {@link #hashCode()} and {@link #compareTo(StreamFileDescription)}
-     * (structure only, not part of the value) and marked transient, since it
-     * is not meant to survive serialization.
+     * Intentionally excluded from {@link #equals(Object)}, {@link #hashCode()}
+     * and {@link #compareTo(StreamFileDescription)} (structure only, not part
+     * of the value) and marked transient, since it is not meant to survive
+     * serialization.
      */
     private transient boolean hasFiles;
 
@@ -74,10 +73,10 @@ public class StreamFileDescription implements Serializable, Comparable<StreamFil
      * files is an <i>empty</i> directory, no matter how many subdirectories it
      * has, because there is nothing below it that could be synchronized.
      * <p>
-     * Intentionally excluded from {@link #equals(Object)},
-     * {@link #hashCode()} and {@link #compareTo(StreamFileDescription)}
-     * (structure only, not part of the value) and marked transient, since it
-     * is not meant to survive serialization.
+     * Intentionally excluded from {@link #equals(Object)}, {@link #hashCode()}
+     * and {@link #compareTo(StreamFileDescription)} (structure only, not part
+     * of the value) and marked transient, since it is not meant to survive
+     * serialization.
      */
     private transient boolean hasFilesInSubtree;
 
