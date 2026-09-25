@@ -538,6 +538,7 @@ dcl-proc resolveGenericFiles;
   dcl-s parentID like(i_parentID);
 
   dcl-s i int(10);
+  dcl-s countNonNegatedPatterns int(10);
   dcl-s countFilesFound int(10);
   dcl-s subDirPath like(i_dirPath);
 
@@ -586,10 +587,14 @@ dcl-proc resolveGenericFiles;
             if (i_nameTypeFilters.numE = 0);
               isFound = *on;
             else;
+
+              countNonNegatedPatterns = 0;
               for i = 1 to i_nameTypeFilters.numE;
                 if (i_nameTypeFilters.entry(i).isNegated);
                   iter;
                 endif;
+
+                countNonNegatedPatterns += 1;
 
                 fileNameMask = i_nameTypeFilters.entry(i).name + '.'
                                + i_nameTypeFilters.entry(i).type;
@@ -598,6 +603,10 @@ dcl-proc resolveGenericFiles;
                   leave;
                 endif;
               endfor;
+
+              if (countNonNegatedPatterns = 0);
+                isFound = *on;
+              endif;
 
               if (isFound);
                 // Check negated patterns:
