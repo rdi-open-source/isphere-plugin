@@ -58,6 +58,9 @@
     <topic label="Performance" href="html/synchronizememberseditor/performance.html" />
     <topic label="Preferences" href="html/synchronizememberseditor/preferences/preferences.html" />
   </topic>
+  <topic label="Synchronize Stream Files Editor" href="html/synchronizestreamfileseditor/synchronizestreamfileseditor.html">
+    <topic label="Preferences" href="html/synchronizememberseditor/preferences/preferences.html" />
+  </topic>
   <topic label="Source File Compare/Merge Editor" href="html/sourcefilecomparemergeeditor/sourcefilecomparemergeeditor.html">
     <topic label="Preferences" href="html/sourcefilecomparemergeeditor/preferences/preferences.html" />
   </topic>
