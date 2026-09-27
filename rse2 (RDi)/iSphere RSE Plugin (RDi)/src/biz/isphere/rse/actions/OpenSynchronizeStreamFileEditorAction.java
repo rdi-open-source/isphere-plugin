@@ -8,7 +8,6 @@
 
 package biz.isphere.rse.actions;
 
-import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
@@ -80,9 +79,7 @@ public class OpenSynchronizeStreamFileEditorAction implements IObjectActionDeleg
 
         IHost host = qsysRemoteObject.getParentRemoteFileSubSystem().getHost();
         String qualifiedConnectionName = ConnectionManager.getConnectionName(host);
-
-        File fullPath = new File(qsysRemoteObject.getParentPath(), qsysRemoteObject.getName());
-        String name = fullPath.getPath();
+        String name = qsysRemoteObject.getAbsolutePath();
 
         return new RemoteStreamFile(qualifiedConnectionName, name);
     }

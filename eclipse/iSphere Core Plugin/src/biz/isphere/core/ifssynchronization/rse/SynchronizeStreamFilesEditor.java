@@ -11,9 +11,8 @@ package biz.isphere.core.ifssynchronization.rse;
 import org.eclipse.jface.viewers.TableViewer;
 
 import biz.isphere.core.internal.RemoteStreamFile;
-import biz.isphere.core.swt.widgets.objectselector.ISelectRemoteQSYSObjectDialog;
-import biz.isphere.core.swt.widgets.objectselector.ISelectedObject;
-import biz.isphere.core.swt.widgets.objectselector.SelectRemoteQSYSObjectDialog;
+import biz.isphere.core.swt.widgets.objectselector.ISelectRemoteIFSDirectoryDialog;
+import biz.isphere.core.swt.widgets.objectselector.SelectRemoteIFSDirectoryDialog;
 
 public class SynchronizeStreamFilesEditor extends AbstractSynchronizeStreamFilesEditor {
 
@@ -24,20 +23,14 @@ public class SynchronizeStreamFilesEditor extends AbstractSynchronizeStreamFiles
     @Override
     protected RemoteStreamFile performSelectRemoteObject(String connectionName, String objectName) {
 
-        ISelectRemoteQSYSObjectDialog dialog;
-        dialog = SelectRemoteQSYSObjectDialog.createSelectSourceFileDialog(getShell(), connectionName);
-        dialog.setObjectName(objectName);
+        ISelectRemoteIFSDirectoryDialog dialog = new SelectRemoteIFSDirectoryDialog(getShell(), connectionName);
+        dialog.setDirectory(objectName);
 
-        if (dialog.open() == SelectRemoteQSYSObjectDialog.CANCEL) {
+        if (dialog.open() == SelectRemoteIFSDirectoryDialog.CANCEL) {
             return null;
         }
 
-        ISelectedObject selectedObject = dialog.getObject();
-
-        String connection = selectedObject.getConnectionName();
-        String name = selectedObject.getName();
-
-        return new RemoteStreamFile(connection, name);
+        return new RemoteStreamFile(dialog.getConnectionName(), dialog.getDirectory());
     }
 
     @Override
