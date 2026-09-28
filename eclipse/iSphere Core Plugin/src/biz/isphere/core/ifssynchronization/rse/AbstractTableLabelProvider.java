@@ -103,7 +103,17 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
             return null;
         }
 
-        int compareStatus = compareItem.getCompareStatus(compareOptions);
+        return getCompareStatusImage(compareItem.getCompareStatus(compareOptions));
+    }
+
+    /**
+     * Returns the image that visualizes a given compare status. It is used by
+     * the editor, which paints the check box of a directory row with the image
+     * of the status the directory got from the comparison, no matter whether
+     * the user has deselected the directory in the meantime.
+     */
+    public Image getCompareStatusImage(int compareStatus) {
+
         if (compareStatus == StreamFileCompareItem.RIGHT_MISSING) {
             return copyToRight;
         } else if (compareStatus == StreamFileCompareItem.LEFT_MISSING) {

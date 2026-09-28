@@ -286,6 +286,51 @@ public class StreamFileCompareItem implements Comparable<StreamFileCompareItem>,
         oldOverridenCompareStatus = OVERRIDE_STATUS_NULL;
     }
 
+    /**
+     * Returns whether this item is a directory that is marked with a check box,
+     * which the user clicks to select or deselect the directory for copying.
+     * <p>
+     * Only a directory that is missing on one side gets a check box, because
+     * that is the only directory that has to be created on the other side. A
+     * directory that is present on both sides is not copied at all and a
+     * directory that is in error cannot be copied.
+     *
+     * @return <code>true</code>, if this item is marked with a check box, else
+     *         <code>false</code>
+     */
+    public boolean isCheckableDirectory() {
+
+        if (!isDirectory()) {
+            return false;
+        }
+
+        return isSingle() && !isError();
+    }
+
+    /**
+     * Returns whether this item is selected for copying. A <i>checked</i> item
+     * carries the compare status produced by the comparison, an
+     * <i>unchecked</i> item has been set to {@link #NO_ACTION} by the user.
+     */
+    public boolean isCheckedForCopying(CompareOptions compareOptions) {
+
+        return getCompareStatus(compareOptions) == compareIfsFileDescriptions(compareOptions);
+    }
+
+    /**
+     * Selects or deselects this item for copying. Selecting it restores the
+     * compare status produced by the comparison, deselecting it sets the item
+     * to {@link #NO_ACTION}.
+     */
+    public void setCheckedForCopying(boolean isChecked, CompareOptions compareOptions) {
+
+        if (isChecked) {
+            clearCompareStatus();
+        } else {
+            setCompareStatus(NO_ACTION, compareOptions);
+        }
+    }
+
     public boolean isSingle() {
 
         if (getLeftIfsFileDescription() == null || getRightIfsFileDescription() == null) {
@@ -351,6 +396,19 @@ public class StreamFileCompareItem implements Comparable<StreamFileCompareItem>,
 
         if (compareOptions == null) {
             throw new IllegalArgumentException("Parameter 'compareOptions' is [null]."); //$NON-NLS-1$
+        }
+
+        /*
+         * An item cannot be copied, when the side it had to be copied from is
+         * missing. Instead of rejecting the status, the item is deselected, so
+         * that a mixed selection ends up with either the requested copy
+         * direction or no action at all. That is the behavior of the Total
+         * Commander and it keeps the user from copying items that do not exist.
+         */
+        if (status == LEFT_MISSING && getRightIfsFileDescription() == null) {
+            status = NO_ACTION;
+        } else if (status == RIGHT_MISSING && getLeftIfsFileDescription() == null) {
+            status = NO_ACTION;
         }
 
         if (status == NO_ACTION && isDuplicate()) {

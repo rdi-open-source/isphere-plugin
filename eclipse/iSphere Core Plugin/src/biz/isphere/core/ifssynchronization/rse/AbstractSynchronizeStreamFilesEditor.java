@@ -36,6 +36,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -140,6 +141,21 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
 
     private static final int LEFT = 1;
     private static final int RIGHT = 2;
+
+    /**
+     * Index of the column the content of a directory row is painted in. Column
+     * 0 has a width of 0, see {@link #createCompareArea(Composite)}.
+     */
+    private static final int DIRECTORY_ROW_COLUMN = 1;
+
+    /** Space between the border of a directory row and its content. */
+    private static final int DIRECTORY_ROW_MARGIN = 4;
+
+    /** Space between the frame of a check box and the image inside it. */
+    private static final int CHECK_BOX_BORDER = 2;
+
+    /** Size of a check box that is painted without an image. */
+    private static final int CHECK_BOX_DEFAULT_IMAGE_SIZE = 16;
 
     private boolean isLeftObjectValid;
     private boolean isRightObjectValid;
@@ -636,6 +652,7 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
         tableViewer.getTable().setMenu(menuTableViewerContextMenu);
 
         addRowPainter(tableViewer.getTable());
+        addCheckBoxListener(tableViewer.getTable());
 
         TableAutoSizeControlListener tableAutoSizeAdapter = new TableAutoSizeControlListener(tableViewer.getTable());
         tableAutoSizeAdapter.addResizableColumn(tblClmnLeftFile, 1);
@@ -857,19 +874,26 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
         gc.fillRectangle(rowBounds);
         gc.setForeground(foreground);
 
-        int x = clientArea.x + 4;
+        int x = clientArea.x + DIRECTORY_ROW_MARGIN;
 
         /*
-         * Directories that are copied to the other side are marked with the
-         * image of their compare status, which tells the side the directory is
-         * created on.
+         * Directories that are created on the other side are marked with a
+         * check box, which the user clicks to select or deselect the directory
+         * for copying. The image inside the check box tells the side the
+         * directory is created on.
          */
-        Image compareStatusImage = getDirectoryCompareStatusImage(compareItem);
-        if (compareStatusImage != null) {
-            Rectangle imageBounds = compareStatusImage.getBounds();
-            int imageY = event.y + (event.height - imageBounds.height) / 2;
-            gc.drawImage(compareStatusImage, x, imageY);
-            x = x + imageBounds.width + 4;
+        if (hasCheckBox(compareItem)) {
+            Rectangle checkBoxBounds = getCheckBoxBounds(table, compareItem, event.y, event.height);
+            paintCheckBox(table, event, checkBoxBounds, compareItem);
+            x = checkBoxBounds.x + checkBoxBounds.width + DIRECTORY_ROW_MARGIN;
+        } else {
+            Image errorImage = getDirectoryErrorImage(compareItem);
+            if (errorImage != null) {
+                Rectangle imageBounds = errorImage.getBounds();
+                int imageY = event.y + (event.height - imageBounds.height) / 2;
+                gc.drawImage(errorImage, x, imageY);
+                x = x + imageBounds.width + DIRECTORY_ROW_MARGIN;
+            }
         }
 
         String text = compareItem.getIfsFileName();
@@ -882,29 +906,213 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
     }
 
     /**
-     * Returns the image a directory row is marked with, or <code>null</code>,
-     * when the directory is not marked at all. Directories are not compared,
-     * hence only a directory that is missing on one side or that is in error
-     * gets an image.
+     * Returns the error image a directory row is marked with, or
+     * <code>null</code>, when the directory is not in error. Directories are
+     * not compared, hence a directory that is present on both sides never gets
+     * an image. A directory that is missing on one side is marked with a check
+     * box, see {@link #hasCheckBox(StreamFileCompareItem)}.
      */
-    private Image getDirectoryCompareStatusImage(StreamFileCompareItem compareItem) {
+    private Image getDirectoryErrorImage(StreamFileCompareItem compareItem) {
 
         if (labelProvider == null || sharedValues == null) {
             return null;
         }
 
-        int compareStatus = compareItem.getCompareStatus(sharedValues.getCompareOptions());
-        if (compareStatus != StreamFileCompareItem.LEFT_MISSING && compareStatus != StreamFileCompareItem.RIGHT_MISSING
-            && compareStatus != StreamFileCompareItem.ERROR) {
+        if (compareItem.getCompareStatus(sharedValues.getCompareOptions()) != StreamFileCompareItem.ERROR) {
             return null;
         }
 
-        Image compareStatusImage = labelProvider.getCompareStatusImage(compareItem);
-        if (compareStatusImage == null || compareStatusImage.isDisposed()) {
+        Image errorImage = labelProvider.getCompareStatusImage(compareItem);
+        if (errorImage == null || errorImage.isDisposed()) {
             return null;
         }
 
-        return compareStatusImage;
+        return errorImage;
+    }
+
+    /**
+     * Returns whether a directory row is marked with a check box that selects
+     * or deselects the directory for copying.
+     * <p>
+     * Only a directory that is missing on one side gets a check box and only,
+     * when empty directories are part of the comparison. Without that option a
+     * directory is not synchronized on its own; it is created along with the
+     * stream files that are copied into it, hence there is nothing the user
+     * could select or deselect.
+     */
+    private boolean hasCheckBox(StreamFileCompareItem compareItem) {
+
+        if (sharedValues == null || !sharedValues.getCompareOptions().isIncludeEmptyDirectories()) {
+            return false;
+        }
+
+        return compareItem.isCheckableDirectory();
+    }
+
+    /**
+     * Returns the image that is painted inside the check box of a directory
+     * row, that is the image of the compare status the directory got from the
+     * comparison. The <i>current</i> status of the directory must not be used,
+     * because that is {@link StreamFileCompareItem#NO_ACTION}, as soon as the
+     * user has deselected the directory.
+     */
+    private Image getCheckBoxImage(StreamFileCompareItem compareItem) {
+
+        if (labelProvider == null || sharedValues == null) {
+            return null;
+        }
+
+        CompareOptions compareOptions = sharedValues.getCompareOptions();
+
+        Image checkBoxImage = labelProvider.getCompareStatusImage(compareItem.compareIfsFileDescriptions(compareOptions));
+        if (checkBoxImage == null || checkBoxImage.isDisposed()) {
+            return null;
+        }
+
+        return checkBoxImage;
+    }
+
+    /**
+     * Returns the bounds of the check box of a directory row. Painting the
+     * check box and testing whether the user clicked it share this method, so
+     * that both use the same geometry.
+     *
+     * @param table - table the directory row belongs to
+     * @param compareItem - item of the directory row
+     * @param rowY - y position of the directory row
+     * @param rowHeight - height of the directory row
+     */
+    private Rectangle getCheckBoxBounds(Table table, StreamFileCompareItem compareItem, int rowY, int rowHeight) {
+
+        int imageSize;
+
+        Image checkBoxImage = getCheckBoxImage(compareItem);
+        if (checkBoxImage != null) {
+            imageSize = Math.max(checkBoxImage.getBounds().width, checkBoxImage.getBounds().height);
+        } else {
+            imageSize = CHECK_BOX_DEFAULT_IMAGE_SIZE;
+        }
+
+        /*
+         * The check box must not be higher than the row, because the row is
+         * just high enough to display a 16x16 image, which would cut off the
+         * upper and the lower edge of the frame.
+         */
+        int size = Math.min(imageSize + 2 * CHECK_BOX_BORDER, rowHeight - 2);
+
+        int x = table.getClientArea().x + DIRECTORY_ROW_MARGIN;
+        int y = rowY + (rowHeight - size) / 2;
+
+        return new Rectangle(x, y, size, size);
+    }
+
+    /**
+     * Paints the check box of a directory row. A <i>checked</i> check box
+     * displays the image of the compare status of the directory, an
+     * <i>unchecked</i> check box is empty.
+     */
+    private void paintCheckBox(Table table, Event event, Rectangle bounds, StreamFileCompareItem compareItem) {
+
+        GC gc = event.gc;
+        Display display = table.getDisplay();
+
+        Color oldBackground = gc.getBackground();
+        Color oldForeground = gc.getForeground();
+
+        gc.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+        gc.fillRectangle(bounds);
+
+        gc.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+        gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1, bounds.height - 1);
+
+        if (compareItem.isCheckedForCopying(sharedValues.getCompareOptions())) {
+            Image checkBoxImage = getCheckBoxImage(compareItem);
+            if (checkBoxImage != null) {
+                Rectangle imageBounds = checkBoxImage.getBounds();
+                int imageX = bounds.x + (bounds.width - imageBounds.width) / 2;
+                int imageY = bounds.y + (bounds.height - imageBounds.height) / 2;
+                gc.drawImage(checkBoxImage, imageX, imageY);
+            }
+        }
+
+        /*
+         * Restore the colors, because the caller goes on painting the name of
+         * the directory with them.
+         */
+        gc.setBackground(oldBackground);
+        gc.setForeground(oldForeground);
+    }
+
+    /**
+     * Installs the mouse listener that selects or deselects a directory for
+     * copying, when the user clicks its check box.
+     */
+    private void addCheckBoxListener(final Table table) {
+
+        table.addListener(SWT.MouseDown, new Listener() {
+            public void handleEvent(Event event) {
+
+                /*
+                 * Ignore the second click of a double click, which would
+                 * otherwise toggle the check box twice.
+                 */
+                if (event.button != 1 || event.count != 1) {
+                    return;
+                }
+
+                TableItem tableItem = table.getItem(new Point(event.x, event.y));
+                StreamFileCompareItem directoryItem = getDirectoryCompareItem(tableItem);
+                if (directoryItem == null || !hasCheckBox(directoryItem)) {
+                    return;
+                }
+
+                Rectangle rowBounds = tableItem.getBounds(DIRECTORY_ROW_COLUMN);
+                Rectangle checkBoxBounds = getCheckBoxBounds(table, directoryItem, rowBounds.y, rowBounds.height);
+                if (!checkBoxBounds.contains(event.x, event.y)) {
+                    return;
+                }
+
+                toggleDirectorySelection(directoryItem);
+            }
+        });
+    }
+
+    /**
+     * Selects or deselects a directory for copying, when the user clicks its
+     * check box.
+     * <p>
+     * Deselecting a directory deselects the stream files it contains, too,
+     * because they cannot be copied without the directory. Selecting it again
+     * selects the directory only, so that the user can pick the stream files
+     * that are copied with it. Sub directories keep their selection in both
+     * cases, because they have a check box of their own. That is the behavior
+     * of the Total Commander.
+     */
+    private void toggleDirectorySelection(StreamFileCompareItem directoryItem) {
+
+        CompareOptions compareOptions = sharedValues.getCompareOptions();
+
+        boolean isChecked = !directoryItem.isCheckedForCopying(compareOptions);
+
+        directoryItem.setCheckedForCopying(isChecked, compareOptions);
+        tableViewer.update(directoryItem, null);
+
+        if (!isChecked) {
+            for (TableItem tableItem : tableViewer.getTable().getItems()) {
+                Object data = tableItem.getData();
+                if (!(data instanceof StreamFileCompareItem)) {
+                    continue;
+                }
+                StreamFileCompareItem compareItem = (StreamFileCompareItem)data;
+                if (isChildOf(compareItem, directoryItem)) {
+                    compareItem.setCheckedForCopying(false, compareOptions);
+                    tableViewer.update(compareItem, null);
+                }
+            }
+        }
+
+        tableViewer.getTable().redraw();
+        setButtonEnablementAndDisplayCompareStatus();
     }
 
     private void createrFooterArea(Composite parent) {
@@ -2507,8 +2715,8 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
                             /*
                              * Neither the left nor the right IFS file does
                              * exist anymore. Hence there is nothing left to
-                             * display or to synchronize and the item is
-                             * removed from the table.
+                             * display or to synchronize and the item is removed
+                             * from the table.
                              */
                             getTableContentProvider().removeCompareItem(selectedItem);
                             tableViewer.remove(selectedItem);
