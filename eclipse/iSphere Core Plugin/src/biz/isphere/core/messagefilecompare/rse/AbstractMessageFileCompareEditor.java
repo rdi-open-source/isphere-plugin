@@ -1363,6 +1363,17 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                         }
 
                         if (compareItem.getLeftMessageDescription() == null && compareItem.getRightMessageDescription() == null) {
+                            /*
+                             * Neither the left nor the right message
+                             * description does exist anymore. Hence there is
+                             * nothing left to display or to synchronize and
+                             * the item is removed from the table. It is also
+                             * removed from the table content provider,
+                             * because that is where the table viewer gets the
+                             * items from, whenever the table filter is
+                             * refreshed.
+                             */
+                            getTableContentProvider().removeCompareItem(compareItem);
                             tableViewer.remove(compareItem);
                         } else {
                             tableViewer.update(compareItem, null);

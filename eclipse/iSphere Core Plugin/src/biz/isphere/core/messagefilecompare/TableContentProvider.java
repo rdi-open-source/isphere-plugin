@@ -68,6 +68,25 @@ public class TableContentProvider implements IStructuredContentProvider {
         return compareItemsArray;
     }
 
+    /**
+     * Removes an item from the list of compare items, for example, when both
+     * the left and the right message description have been deleted.
+     * <p>
+     * The item is removed from the cached map, because that map is used by
+     * {@link #getElements(Object)} as long as the input of the table viewer
+     * does not change.
+     * 
+     * @param compareItem - item that is removed from the table
+     */
+    public void removeCompareItem(MessageFileCompareItem compareItem) {
+
+        if (compareItems == null || compareItem == null) {
+            return;
+        }
+
+        compareItems.values().remove(compareItem);
+    }
+
     public void dispose() {
     }
 
