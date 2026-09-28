@@ -87,6 +87,15 @@
        not contain any file that matches the file filter, not even in one of its sub
        directories. Empty directories that are not part of the comparison are neither
        displayed nor synchronized.
+    <p>When empty directories are compared, a directory that is missing on one side is
+       marked with a check box, which displays the side the directory is created on.
+       Click the check box to deselect the directory; the stream files it contains are
+       deselected, too, because they cannot be copied without the directory. Clicking
+       the check box again selects the directory only, so that you can pick the stream
+       files that are copied with it.
+    <p>When empty directories are not compared, a directory is not synchronized on its
+       own and hence does not get a check box. It is created automatically, as soon as
+       the first stream file is copied into it.
 
     <h3>Selecting Stream Files by Name and Type</h3>
     <p>Stream files can be selected by name and type. Enter the selection mask into
