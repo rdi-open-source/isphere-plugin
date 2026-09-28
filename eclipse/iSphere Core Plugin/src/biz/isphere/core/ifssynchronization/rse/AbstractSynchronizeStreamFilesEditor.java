@@ -402,15 +402,6 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
 
         chkEmptyDirectories = WidgetFactory.createCheckbox(area, Messages.Label_Empty_directories);
         chkEmptyDirectories.setToolTipText(Messages.Tooltip_Empty_directories);
-        chkEmptyDirectories.addSelectionListener(new SelectionListener() {
-
-            public void widgetSelected(SelectionEvent event) {
-                refreshTableFilter();
-            }
-
-            public void widgetDefaultSelected(SelectionEvent event) {
-            }
-        });
     }
 
     private void createFilterOptionsArea(Composite parent) {
