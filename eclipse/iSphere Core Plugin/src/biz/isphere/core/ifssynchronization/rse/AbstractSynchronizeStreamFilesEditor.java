@@ -1241,73 +1241,79 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
         setButtonEnablementAndDisplayCompareStatus();
     }
 
+    /**
+     * Applies the current filter options to the table.
+     * <p>
+     * The filter is updated and the table is refreshed. Removing and adding the
+     * filter again, which required resetting the input of the table viewer, is
+     * intentionally avoided: resetting the input made the content provider
+     * produce a new set of compare items, whereby the items lost the compare
+     * status the user had assigned to them, whenever a filter option was
+     * changed.
+     */
     private void refreshTableFilter() {
 
-        if (tableViewer != null) {
+        if (tableViewer == null) {
+            return;
+        }
 
-            // long startTime = System.currentTimeMillis();
+        // long startTime = System.currentTimeMillis();
 
-            Object input = null;
+        try {
 
-            try {
+            tableViewer.getControl().setRedraw(false);
 
-                tableViewer.getControl().setRedraw(false);
-                input = tableViewer.getInput();
-                tableViewer.setInput(null);
-
-                if (tableFilter != null) {
-                    tableViewer.removeFilter(tableFilter);
-                    clearTableStatistics();
-                }
-
-                if (filterData != null) {
-
-                    filterData.setCopyLeft(btnCopyLeft.getSelection());
-                    filterData.setCopyRight(btnCopyRight.getSelection());
-                    filterData.setEqual(btnEqual.getSelection());
-                    filterData.setNoCopy(btnNoCopy.getSelection());
-                    filterData.setSingles(btnSingles.getSelection());
-                    filterData.setDuplicates(btnDuplicates.getSelection());
-
-                    if (isSynchronizationEnabled()) {
-                        filterData.setErrorsOnly(chkDisplayErrorsOnly.getSelection());
-                    } else {
-                        filterData.setErrorsOnly(false);
-                    }
-
-                    if (tableFilter == null) {
-                        tableFilter = new TableFilter(getTableStatistics());
-                    }
-
-                    clearTableStatistics();
-                    tableFilter.setFilterData(filterData);
-
-                    /*
-                     * Unlike the IFS file filter, which is evaluated by the
-                     * host program, the 'empty directories' option is applied
-                     * by the table filter and hence takes effect immediately.
-                     */
-                    if (sharedValues != null) {
-                        sharedValues.getCompareOptions().setIncludeEmptyDirectories(chkEmptyDirectories.getSelection());
-                        tableFilter.setCompareOptions(sharedValues.getCompareOptions());
-                    }
-
-                    tableViewer.addFilter(tableFilter);
-                }
-
-                storeScreenValues();
-
-            } finally {
-                if (input != null) {
-                    tableViewer.setInput(input);
-                }
-                tableViewer.getControl().setRedraw(true);
-
-                setButtonEnablementAndDisplayCompareStatus();
-
-                // System.out.println("Time in msecs: " +
-                // (System.currentTimeMillis() - startTime));
+            if (tableFilter == null) {
+                tableFilter = new TableFilter(getTableStatistics());
+                tableViewer.addFilter(tableFilter);
             }
+
+            if (filterData != null) {
+
+                filterData.setCopyLeft(btnCopyLeft.getSelection());
+                filterData.setCopyRight(btnCopyRight.getSelection());
+                filterData.setEqual(btnEqual.getSelection());
+                filterData.setNoCopy(btnNoCopy.getSelection());
+                filterData.setSingles(btnSingles.getSelection());
+                filterData.setDuplicates(btnDuplicates.getSelection());
+
+                if (isSynchronizationEnabled()) {
+                    filterData.setErrorsOnly(chkDisplayErrorsOnly.getSelection());
+                } else {
+                    filterData.setErrorsOnly(false);
+                }
+
+                tableFilter.setFilterData(filterData);
+
+                /*
+                 * Unlike the IFS file filter, which is evaluated by the host
+                 * program, the 'empty directories' option is applied by the
+                 * table filter.
+                 */
+                if (sharedValues != null) {
+                    sharedValues.getCompareOptions().setIncludeEmptyDirectories(chkEmptyDirectories.getSelection());
+                    tableFilter.setCompareOptions(sharedValues.getCompareOptions());
+                }
+            }
+
+            /*
+             * The statistics are cleared here, because the table filter
+             * collects them again while filtering, but is not called at all,
+             * when the table is empty.
+             */
+            clearTableStatistics();
+
+            tableViewer.refresh();
+
+            storeScreenValues();
+
+        } finally {
+            tableViewer.getControl().setRedraw(true);
+
+            setButtonEnablementAndDisplayCompareStatus();
+
+            // System.out.println("Time in msecs: " +
+            // (System.currentTimeMillis() - startTime));
         }
     }
 
