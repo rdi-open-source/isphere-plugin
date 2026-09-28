@@ -2239,6 +2239,13 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
                                 ifsFileDescription.setChecksum(ifsFileAttributes.getCheckSum());
                                 parent.clearCompareStatus();
                                 owner.tableViewer.refresh(parent);
+                                /*
+                                 * Redraw the table, because the image of the
+                                 * compare status is painted and not assigned to
+                                 * the cell, see AbstractTableLabelProvider.
+                                 * useCompareStatusImagePainter().
+                                 */
+                                owner.tableViewer.getTable().redraw();
                                 debug("IFS file updated: " + ifsFileDescription.getQualifiedIfsFileName());
                             }
                         }

@@ -60,13 +60,27 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
         this.error = ISpherePlugin.getDefault().getImage(ISpherePlugin.IMAGE_ERROR);
 
         if (useCompareStatusImagePainter()) {
+            tableViewer.getTable().addListener(SWT.MeasureItem, new CompareStatusImageMeasurer());
             tableViewer.getTable().addListener(SWT.PaintItem, new CompareStatusImagePainter(COLUMN_COMPARE_RESULT));
         }
     }
 
+    /**
+     * Returns whether the image of the compare status is painted by
+     * {@link CompareStatusImagePainter}, instead of being assigned to the cell
+     * of the table.
+     * <p>
+     * The painter centers the image in its column. A table cell draws its image
+     * left-aligned, no matter how the column itself is aligned, which is why
+     * the image is painted here.
+     * <p>
+     * Mind that the cell does not carry an image of its own anymore. Changing
+     * the compare status of an item does not change the cell, whereby the table
+     * is not repainted. Every place that changes the compare status of an item
+     * must therefore redraw the table.
+     */
     protected boolean useCompareStatusImagePainter() {
-        // Must be false; otherwise image is not updated properly in TreeViewer.
-        return false;
+        return true;
     }
 
     public void setCompareOptions(CompareOptions compareOptions) {
@@ -216,6 +230,24 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
 
         default:
             return ""; //$NON-NLS-1$
+        }
+    }
+
+    /**
+     * Listener that keeps the rows of the table high enough to display the
+     * image of the compare status. The table does not reserve room for the
+     * image anymore, because the image is painted and not assigned to the cell,
+     * whereby the height of a row is derived from the height of the font only.
+     */
+    protected class CompareStatusImageMeasurer implements Listener {
+
+        public void handleEvent(Event event) {
+
+            if (copyEqual == null || copyEqual.isDisposed()) {
+                return;
+            }
+
+            event.height = Math.max(event.height, copyEqual.getBounds().height);
         }
     }
 
