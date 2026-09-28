@@ -1790,6 +1790,13 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                                 memberDescription.setChecksum(memberAttributes.getCheckSum());
                                 parent.clearCompareStatus();
                                 owner.tableViewer.refresh(parent);
+                                /*
+                                 * Redraw the table, because the image of the
+                                 * compare status is painted and not assigned to
+                                 * the cell, see
+                                 * AbstractTableLabelProvider.useCompareStatusImagePainter().
+                                 */
+                                owner.tableViewer.getTable().redraw();
                                 debug("Member updated: " + memberDescription.getQualifiedMemberName());
                             }
                         }
