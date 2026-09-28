@@ -2481,13 +2481,44 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
                 if (rc == IDialogConstants.YES_ID) {
 
                     if (AbstractSynchronizeStreamFilesEditor.this.performDeleteIfsFile(IfsFileDescription)) {
+
+                        /*
+                         * The item is removed from the statistics, while it is
+                         * still in the state it has been counted in.
+                         */
+                        getTableStatistics().removeElement(selectedItem, filterData);
+
+                        /*
+                         * The description is also removed from the editor
+                         * input, because that is where the table content
+                         * provider rebuilds the compare items from, whenever
+                         * the table filter is refreshed.
+                         */
                         if (side == LEFT) {
                             selectedItem.setLeftIfsFileDescription(null);
+                            getEditorInput().removeLeftIfsFileDescription(IfsFileDescription);
                         } else {
                             selectedItem.setRightIfsFileDescription(null);
+                            getEditorInput().removeRightIfsFileDescription(IfsFileDescription);
                         }
                         selectedItem.clearCompareStatus();
-                        tableViewer.refresh(selectedItem);
+
+                        if (selectedItem.getLeftIfsFileDescription() == null && selectedItem.getRightIfsFileDescription() == null) {
+                            /*
+                             * Neither the left nor the right IFS file does
+                             * exist anymore. Hence there is nothing left to
+                             * display or to synchronize and the item is
+                             * removed from the table.
+                             */
+                            getTableContentProvider().removeCompareItem(selectedItem);
+                            tableViewer.remove(selectedItem);
+                        } else {
+                            tableViewer.refresh(selectedItem);
+                            getTableStatistics().addElement(selectedItem, filterData);
+                        }
+
+                        tableViewer.getTable().redraw();
+                        setButtonEnablementAndDisplayCompareStatus();
                     }
                 } else {
                     break;

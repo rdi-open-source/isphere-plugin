@@ -8,6 +8,10 @@
 
 package biz.isphere.core.ifssynchronization;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
@@ -136,6 +140,41 @@ public class SynchronizeStreamFilesEditorInput implements IEditorInput {
 
     public void setRightIfsFileDescriptions(StreamFileDescription[] rightIfsFileDescriptions) {
         this.rightIfsFileDescriptions = rightIfsFileDescriptions;
+    }
+
+    /**
+     * Removes the description of a deleted IFS file from the left side of the
+     * comparison.
+     * 
+     * @param ifsFileDescription - description of the deleted IFS file
+     */
+    public void removeLeftIfsFileDescription(StreamFileDescription ifsFileDescription) {
+        leftIfsFileDescriptions = removeIfsFileDescription(leftIfsFileDescriptions, ifsFileDescription);
+    }
+
+    /**
+     * Removes the description of a deleted IFS file from the right side of the
+     * comparison.
+     * 
+     * @param ifsFileDescription - description of the deleted IFS file
+     */
+    public void removeRightIfsFileDescription(StreamFileDescription ifsFileDescription) {
+        rightIfsFileDescriptions = removeIfsFileDescription(rightIfsFileDescriptions, ifsFileDescription);
+    }
+
+    private StreamFileDescription[] removeIfsFileDescription(StreamFileDescription[] ifsFileDescriptions,
+        StreamFileDescription ifsFileDescription) {
+
+        if (ifsFileDescriptions == null || ifsFileDescription == null) {
+            return ifsFileDescriptions;
+        }
+
+        List<StreamFileDescription> remainingIfsFileDescriptions = new ArrayList<StreamFileDescription>(Arrays.asList(ifsFileDescriptions));
+        if (!remainingIfsFileDescriptions.remove(ifsFileDescription)) {
+            return ifsFileDescriptions;
+        }
+
+        return remainingIfsFileDescriptions.toArray(new StreamFileDescription[remainingIfsFileDescriptions.size()]);
     }
 
     public String getName() {
