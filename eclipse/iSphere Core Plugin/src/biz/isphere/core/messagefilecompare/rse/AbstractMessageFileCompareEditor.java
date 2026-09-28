@@ -441,7 +441,13 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         });
 
         TableStatistics tableStatistics = new TableStatistics();
-        TableFilter tableFilter = new TableFilter(tableStatistics);
+
+        /*
+         * Assign the filter to the field of the editor. A local variable would
+         * hide the field, whereby the field stayed null and
+         * refreshTableFilter() added a second filter to the table viewer.
+         */
+        tableFilter = new TableFilter(tableStatistics);
 
         tableViewer.setContentProvider(new TableContentProvider(tableStatistics));
         tableViewer.addFilter(tableFilter);
@@ -577,13 +583,27 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         setButtonEnablementAndDisplayCompareStatus();
     }
 
+    /**
+     * Applies the current filter options to the table.
+     * <p>
+     * The filter is updated and the table is refreshed. Removing and adding the
+     * filter again is intentionally avoided: that produced two refreshes, the
+     * first of them without a filter, which made all rows of the table show up
+     * for a moment.
+     */
     private void refreshTableFilter() {
 
-        if (tableViewer != null) {
+        if (tableViewer == null) {
+            return;
+        }
 
-            if (tableFilter != null) {
-                tableViewer.removeFilter(tableFilter);
-                clearTableStatistics();
+        try {
+
+            tableViewer.getControl().setRedraw(false);
+
+            if (tableFilter == null) {
+                tableFilter = new TableFilter(getTableStatistics());
+                tableViewer.addFilter(tableFilter);
             }
 
             if (filterData != null) {
@@ -595,18 +615,23 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 filterData.setSingles(btnSingles.getSelection());
                 filterData.setDuplicates(btnDuplicates.getSelection());
 
-                if (tableFilter == null) {
-                    tableFilter = new TableFilter(getTableStatistics());
-                }
-
-                clearTableStatistics();
                 tableFilter.setFilterData(filterData);
-                tableViewer.addFilter(tableFilter);
             }
 
-            setButtonEnablementAndDisplayCompareStatus();
+            /*
+             * The statistics are cleared before the table is refreshed, because
+             * the table filter collects them again while filtering.
+             */
+            clearTableStatistics();
+
+            tableViewer.refresh();
 
             storeScreenValues();
+
+        } finally {
+            tableViewer.getControl().setRedraw(true);
+
+            setButtonEnablementAndDisplayCompareStatus();
         }
     }
 
