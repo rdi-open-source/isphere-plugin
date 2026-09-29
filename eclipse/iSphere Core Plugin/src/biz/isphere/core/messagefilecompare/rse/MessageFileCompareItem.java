@@ -8,6 +8,7 @@
 
 package biz.isphere.core.messagefilecompare.rse;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.messagefilecompare.TableFilterData;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 
@@ -19,10 +20,19 @@ public class MessageFileCompareItem implements Comparable<MessageFileCompareItem
     public static final int RIGHT_MISSING = 3;
     public static final int LEFT_EQUALS_RIGHT = 4;
     public static final int NOT_EQUAL = 5;
+    public static final int ERROR = 6;
 
     private MessageDescription leftMessageDescription;
     private MessageDescription rightMessageDescription;
     private int overridenCompareStatus;
+
+    /**
+     * Compare status the item had, before the error status has been assigned to
+     * it. It is restored, when the error status is reset.
+     */
+    private int oldOverridenCompareStatus;
+
+    private String errorMessage;
 
     private String messageId;
 
@@ -82,6 +92,23 @@ public class MessageFileCompareItem implements Comparable<MessageFileCompareItem
         return compareMessageDescriptions();
     }
 
+    /**
+     * Returns the compare status the item had, before the error status has been
+     * assigned to it.
+     * <p>
+     * The <i>current</i> status must not be used for collecting the items that
+     * are copied, because that is {@link #ERROR} for all items that failed on a
+     * previous run, whereby they would never be copied again.
+     */
+    public int getOriginalCompareStatus() {
+
+        if (oldOverridenCompareStatus != OVERRIDE_STATUS_NULL) {
+            return oldOverridenCompareStatus;
+        }
+
+        return getCompareStatus();
+    }
+
     public int compareMessageDescriptions() {
 
         if (getLeftMessageDescription() == null && getRightMessageDescription() == null) {
@@ -97,17 +124,73 @@ public class MessageFileCompareItem implements Comparable<MessageFileCompareItem
         }
     }
 
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void resetErrorStatus() {
+        clearErrorStatus();
+    }
+
+    /**
+     * Assigns the error status to the item. The status the item had before is
+     * preserved, so that it can be restored, when the error status is reset,
+     * see {@link #getOriginalCompareStatus()}.
+     */
+    public void setErrorStatus(String errorMessage) {
+
+        if (this.oldOverridenCompareStatus != OVERRIDE_STATUS_NULL) {
+            throw new IllegalArgumentException("Error status not set: overridenCompareStatus <> -1"); //$NON-NLS-1$
+        }
+
+        if (StringHelper.isNullOrEmpty(errorMessage)) {
+            clearErrorStatus();
+        } else {
+            if (overridenCompareStatus != OVERRIDE_STATUS_NULL) {
+                this.oldOverridenCompareStatus = overridenCompareStatus;
+            } else {
+                this.oldOverridenCompareStatus = getCompareStatus();
+            }
+            this.overridenCompareStatus = ERROR;
+            this.errorMessage = errorMessage;
+        }
+    }
+
+    public boolean isError() {
+
+        if (overridenCompareStatus == ERROR) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private void clearErrorStatus() {
+
+        if (overridenCompareStatus != ERROR) {
+            return; // there is no error
+        }
+
+        this.errorMessage = null;
+        this.overridenCompareStatus = oldOverridenCompareStatus;
+        this.oldOverridenCompareStatus = OVERRIDE_STATUS_NULL;
+    }
+
     public void setCompareStatus(int status) {
 
         if (status != LEFT_EQUALS_RIGHT && status != LEFT_MISSING && status != RIGHT_MISSING && status != NO_ACTION) {
             throw new IllegalArgumentException("Illegal status value: " + status); //$NON-NLS-1$
         }
 
+        clearErrorStatus();
+
         this.overridenCompareStatus = checkStatus(status);
     }
 
     public void clearCompareStatus() {
         overridenCompareStatus = OVERRIDE_STATUS_NULL;
+        oldOverridenCompareStatus = OVERRIDE_STATUS_NULL;
+        errorMessage = null;
     }
 
     public boolean isSingle() {
@@ -127,6 +210,14 @@ public class MessageFileCompareItem implements Comparable<MessageFileCompareItem
     public boolean isSelected(TableFilterData filterData) {
 
         int compareStatus = getCompareStatus();
+
+        if (compareStatus == MessageFileCompareItem.ERROR) {
+            return true;
+        }
+
+        if (filterData.isErrorsOnly()) {
+            return false;
+        }
 
         if (isDuplicate() && !filterData.isDuplicates()) {
             return false;
