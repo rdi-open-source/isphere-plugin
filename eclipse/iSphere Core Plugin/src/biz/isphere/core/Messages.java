@@ -1964,6 +1964,26 @@ public class Messages extends NLS {
 
     public static String Could_not_delete_A;
 
+    public static String Copying_message_descriptions;
+
+    public static String Successfully_copied_A_message_descriptions;
+
+    public static String Could_not_copy_A_message_descriptions_due_to_errors;
+
+    public static String A_message_descriptions_copied_B_message_descriptions_not_copied_due_to_errors;
+
+    public static String Do_you_want_to_start_synchronizing_message_descriptions;
+
+    public static String Copy_A_message_descriptions_from_left_to_right;
+
+    public static String Copy_A_message_descriptions_from_right_to_left;
+
+    public static String Label_Existing_message_descriptions_action_colon;
+
+    public static String Label_Replace_existing_message_descriptions;
+
+    public static String Message_description_A_already_exists_in_B;
+
     /*
      * Informational messages
      */

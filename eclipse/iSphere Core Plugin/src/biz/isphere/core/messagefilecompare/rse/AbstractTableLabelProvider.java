@@ -35,6 +35,7 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
     protected Image copyToRight;
     protected Image copyNotEqual;
     protected Image copyEqual;
+    protected Image error;
 
     public AbstractTableLabelProvider(TableViewer tableViewer) {
 
@@ -42,6 +43,7 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
         this.copyToRight = ISpherePlugin.getDefault().getImage(ISpherePlugin.IMAGE_COPY_RIGHT);
         this.copyNotEqual = ISpherePlugin.getDefault().getImage(ISpherePlugin.IMAGE_COPY_NOT_EQUAL);
         this.copyEqual = ISpherePlugin.getDefault().getImage(ISpherePlugin.IMAGE_COPY_EQUAL);
+        this.error = ISpherePlugin.getDefault().getImage(ISpherePlugin.IMAGE_ERROR);
 
         if (useCompareStatusImagePainter()) {
             tableViewer.getTable().addListener(SWT.MeasureItem, new CompareStatusImageMeasurer());
@@ -101,6 +103,8 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
             return copyEqual;
         } else if (compareStatus == MessageFileCompareItem.NOT_EQUAL) {
             return copyNotEqual;
+        } else if (compareStatus == MessageFileCompareItem.ERROR) {
+            return error;
         } else {
             return null;
         }

@@ -24,8 +24,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -47,6 +49,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -70,17 +73,27 @@ import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.MessageDescriptionHelper;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.Size;
+import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.api.retrievemessagedescription.IQMHRTVM;
+import biz.isphere.core.messagefilecompare.CopyMessageDescriptionItem;
+import biz.isphere.core.messagefilecompare.ICopyItemMessageListener;
+import biz.isphere.core.messagefilecompare.MessageDescriptionCopyError;
 import biz.isphere.core.messagefilecompare.MessageFileCompareEditorInput;
+import biz.isphere.core.messagefilecompare.SynchronizationResult;
+import biz.isphere.core.messagefilecompare.SynchronizeMessageFilesAction;
+import biz.isphere.core.messagefilecompare.SynchronizeMessageFilesJob;
 import biz.isphere.core.messagefilecompare.TableContentProvider;
 import biz.isphere.core.messagefilecompare.TableFilter;
 import biz.isphere.core.messagefilecompare.TableFilterData;
 import biz.isphere.core.messagefilecompare.TableStatistics;
+import biz.isphere.core.messagefilecompare.jobs.ICancelableJob;
+import biz.isphere.core.messagefilecompare.jobs.ISynchronizeMessageFilesPostRun;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 import biz.isphere.core.messagefileeditor.MessageDescriptionDetailDialog;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
-public abstract class AbstractMessageFileCompareEditor extends EditorPart {
+public abstract class AbstractMessageFileCompareEditor extends EditorPart
+    implements ISynchronizeMessageFilesPostRun, ICopyItemMessageListener {
 
     public static final String ID = "biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditor"; //$NON-NLS-1$
 
@@ -104,7 +117,8 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private Button btnSynchronize;
     private Button btnCancel;
     private Button chkCompareAfterSync;
-    private IProgressMonitor jobToCancel;
+    private Button chkDisplayErrorsOnly;
+    private ICancelableJob jobToCancel;
 
     private DialogSettingsManager dialogSettingsManager;
 
@@ -120,6 +134,10 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private Button btnDuplicates;
     private Button btnSingles;
 
+    private Group existingMessageDescriptionsActionGroup;
+    private Button chkBoxError;
+    private Button chkBoxReplace;
+
     private Shell shell;
 
     private Composite headerArea;
@@ -127,6 +145,8 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
     private boolean isComparing;
     private boolean isSynchronizing;
+
+    private SynchronizationResult synchronizationResult;
 
     private StatusLine statusLine;
     private String statusMessage;
@@ -234,12 +254,24 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private void createOptionsArea(Composite parent) {
 
         optionsArea = new Composite(parent, SWT.NONE);
-        optionsArea.setLayout(createGridLayoutNoBorder(3, false));
-        optionsArea.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        optionsArea.setLayout(createGridLayoutNoBorder(5, false));
+        optionsArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        int verticalSpan = 3;
-        btnCompare = WidgetFactory.createPushButton(optionsArea);
-        btnCompare.setLayoutData(createButtonLayoutData(verticalSpan));
+        createCompareControlsArea(optionsArea);
+        createFilterOptionsArea(optionsArea);
+        new Composite(optionsArea, SWT.NONE).setLayoutData(new GridData(GridData.FILL_BOTH));
+        createExistingMessageDescriptionsActionArea(optionsArea);
+        createSynchronizeControlsArea(optionsArea);
+    }
+
+    private void createCompareControlsArea(Composite parent) {
+
+        Composite area = new Composite(parent, SWT.NONE);
+        area.setLayout(createGridLayoutNoBorder(1, false));
+        area.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, true));
+
+        btnCompare = WidgetFactory.createPushButton(area);
+        btnCompare.setLayoutData(createButtonLayoutData(1));
         btnCompare.setText(Messages.Compare);
         btnCompare.setToolTipText(Messages.Tooltip_start_compare);
         btnCompare.addSelectionListener(new SelectionListener() {
@@ -251,11 +283,35 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             public void widgetDefaultSelected(SelectionEvent event) {
             }
         });
+    }
 
-        createFilterOptionsArea(optionsArea, verticalSpan);
+    private void createExistingMessageDescriptionsActionArea(Composite parent) {
 
         if (isSynchronizationEnabled()) {
-            btnSynchronize = WidgetFactory.createPushButton(optionsArea);
+
+            existingMessageDescriptionsActionGroup = new Group(parent, SWT.NONE);
+            existingMessageDescriptionsActionGroup.setLayout(new GridLayout(1, false));
+            existingMessageDescriptionsActionGroup.setLayoutData(new GridData(GridData.END, GridData.FILL, false, true));
+            existingMessageDescriptionsActionGroup.setText(Messages.Label_Existing_message_descriptions_action_colon);
+
+            chkBoxError = WidgetFactory.createRadioButton(existingMessageDescriptionsActionGroup, Messages.Label_Error);
+            chkBoxError.setLayoutData(new GridData(GridData.BEGINNING));
+
+            chkBoxReplace = WidgetFactory.createRadioButton(existingMessageDescriptionsActionGroup,
+                Messages.Label_Replace_existing_message_descriptions);
+            chkBoxReplace.setLayoutData(new GridData(GridData.BEGINNING));
+        }
+    }
+
+    private void createSynchronizeControlsArea(Composite parent) {
+
+        Composite area = new Composite(parent, SWT.NONE);
+        area.setLayout(createGridLayoutNoBorder(1, false));
+        area.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, true));
+
+        if (isSynchronizationEnabled()) {
+
+            btnSynchronize = WidgetFactory.createPushButton(area);
             btnSynchronize.setLayoutData(createButtonLayoutData(1, SWT.RIGHT));
             btnSynchronize.setText(Messages.Synchronize);
             btnSynchronize.setToolTipText(Messages.Tooltip_start_synchronize);
@@ -269,7 +325,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             });
         }
 
-        btnCancel = WidgetFactory.createPushButton(optionsArea);
+        btnCancel = WidgetFactory.createPushButton(area);
         btnCancel.setLayoutData(createButtonLayoutData(1, SWT.RIGHT));
         btnCancel.setText(Messages.Cancel);
         btnCancel.setToolTipText(Messages.Tooltip_cancel_operation);
@@ -283,7 +339,8 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         });
 
         if (isSynchronizationEnabled()) {
-            chkCompareAfterSync = WidgetFactory.createCheckbox(optionsArea);
+
+            chkCompareAfterSync = WidgetFactory.createCheckbox(area);
             chkCompareAfterSync.setText(Messages.Compare_after_synchronization);
             chkCompareAfterSync.setToolTipText(Messages.Tooltip_Compare_after_synchronization);
             chkCompareAfterSync.addSelectionListener(new SelectionListener() {
@@ -295,13 +352,24 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 }
             });
         }
+
+        chkDisplayErrorsOnly = WidgetFactory.createCheckbox(area, Messages.Errors_only);
+        chkDisplayErrorsOnly.setLayoutData(createButtonLayoutData(1, SWT.LEFT));
+        chkDisplayErrorsOnly.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                refreshTableFilter();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+            }
+        });
     }
 
-    private void createFilterOptionsArea(Composite parent, int verticalSpan) {
+    private void createFilterOptionsArea(Composite parent) {
 
         Group filterOptionsGroup = new Group(parent, SWT.NONE);
         filterOptionsGroup.setLayout(createGridLayoutNoBorder(5, false));
-        filterOptionsGroup.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, verticalSpan));
+        filterOptionsGroup.setLayoutData(new GridData(GridData.BEGINNING, GridData.FILL, false, true));
         filterOptionsGroup.setText(Messages.Display);
 
         filterData = new TableFilterData();
@@ -460,6 +528,24 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         tableAutoSizeAdapter.addResizableColumn(tblClmnLeftMessageText, 1);
         tableAutoSizeAdapter.addResizableColumn(tblClmnRightMessageText, 1);
         tableViewer.getTable().addControlListener(tableAutoSizeAdapter);
+
+        tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+            public void selectionChanged(SelectionChangedEvent event) {
+                String errorMessage = null;
+                Object source = event.getSource();
+                if (source instanceof TableViewer) {
+                    TableViewer tableViewer = (TableViewer)source;
+                    int countSelected = tableViewer.getTable().getSelectionCount();
+                    if (countSelected == 1) {
+                        TableItem tableItem = tableViewer.getTable().getItem(tableViewer.getTable().getSelectionIndex());
+                        MessageFileCompareItem item = (MessageFileCompareItem)tableItem.getData();
+                        errorMessage = item.getErrorMessage();
+                    }
+                }
+                displayCompareStatus(errorMessage);
+            }
+        });
     }
 
     private void createrFooterArea(Composite parent) {
@@ -615,6 +701,12 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 filterData.setSingles(btnSingles.getSelection());
                 filterData.setDuplicates(btnDuplicates.getSelection());
 
+                if (isSynchronizationEnabled()) {
+                    filterData.setErrorsOnly(chkDisplayErrorsOnly.getSelection());
+                } else {
+                    filterData.setErrorsOnly(false);
+                }
+
                 tableFilter.setFilterData(filterData);
             }
 
@@ -709,13 +801,33 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         IMessageFileCompareEditorConfiguration config = getEditorInput().getConfiguration();
 
-        if (btnSynchronize != null && chkCompareAfterSync != null) {
-            if (config.isLeftEditorEnabled() || config.isRightEditorEnabled()) {
-                btnSynchronize.setEnabled(isSynchronizeEnabled);
-                chkCompareAfterSync.setEnabled(isSynchronizeEnabled);
+        if (existingMessageDescriptionsActionGroup != null) {
+            if (isWorking()) {
+                chkBoxError.setEnabled(false);
+                chkBoxReplace.setEnabled(false);
             } else {
+                if (isSynchronizationEnabled()) {
+                    chkBoxError.setEnabled(isSynchronizeEnabled);
+                    chkBoxReplace.setEnabled(isSynchronizeEnabled);
+                } else {
+                    chkBoxError.setEnabled(false);
+                    chkBoxReplace.setEnabled(false);
+                }
+            }
+        }
+
+        if (btnSynchronize != null && chkCompareAfterSync != null) {
+            if (isWorking()) {
                 btnSynchronize.setEnabled(false);
                 chkCompareAfterSync.setEnabled(false);
+            } else {
+                if (isSynchronizationEnabled()) {
+                    btnSynchronize.setEnabled(isSynchronizeEnabled);
+                    chkCompareAfterSync.setEnabled(isSynchronizeEnabled);
+                } else {
+                    btnSynchronize.setEnabled(false);
+                    chkCompareAfterSync.setEnabled(false);
+                }
             }
         }
 
@@ -757,6 +869,10 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     }
 
     private void displayCompareStatus() {
+        displayCompareStatus(null);
+    }
+
+    private void displayCompareStatus(String errorMessage) {
 
         if (isWorking()) {
             statusMessage = Messages.Working;
@@ -769,11 +885,22 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             numFilteredItems = 0;// $NON-NLS-1$
         } else {
             TableStatistics tableStatistics = getTableStatistics();
-            statusMessage = tableStatistics.toString();
+
+            if (StringHelper.isNullOrEmpty(errorMessage)) {
+                statusMessage = tableStatistics.toString();
+            } else {
+                statusMessage = errorMessage;
+            }
+
             numFilteredItems = tableStatistics.getFilteredElements();
         }
 
         updateStatusLine();
+    }
+
+    private void setDisplayErrorsOnly(boolean enabled) {
+        chkDisplayErrorsOnly.setSelection(enabled);
+        refreshTableFilter();
     }
 
     /**
@@ -787,8 +914,14 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         btnNoCopy.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_NO_COPY, true));
         btnSingles.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_SINGLES, true));
         btnDuplicates.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_DUPLICATES, true));
+
         if (isSynchronizationEnabled()) {
             chkCompareAfterSync.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_COMPARE_AFTER_SYNC, true));
+            setDisplayErrorsOnly(false);
+        }
+
+        if (chkBoxError != null) {
+            chkBoxError.setSelection(true);
         }
     }
 
@@ -842,6 +975,16 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         final MessageFileCompareEditorInput editorInput = getEditorInput();
 
+        if (editorInput.getLeftMessageFile() == null) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Please_select_the_missing_message_file_then_press_Compare_to_start);
+            return;
+        }
+
+        if (editorInput.getRightMessageFile() == null) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Please_select_the_missing_message_file_then_press_Compare_to_start);
+            return;
+        }
+
         if (editorInput.getLeftMessageFileName().equals(editorInput.getRightMessageFileName())) {
             MessageDialog dialog = new MessageDialog(getShell(), Messages.Warning, null, Messages.Warning_Both_sides_show_the_same_message_file,
                 MessageDialog.WARNING, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
@@ -852,167 +995,108 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         tableViewer.setInput(getEditorInput().clearAll());
 
+        if (isSynchronizationEnabled()) {
+            setDisplayErrorsOnly(false);
+        }
+
         setIsComparing(true);
         setButtonEnablementAndDisplayCompareStatus();
 
-        Job job = new Job(Messages.Loading_message_descriptions) {
-
-            @Override
-            protected IStatus run(IProgressMonitor monitor) {
-
-                try {
-
-                    jobToCancel = monitor;
-                    UIJob job = new UIJob("") {
-                        @Override
-                        public IStatus runInUIThread(IProgressMonitor monitor) {
-                            setButtonEnablementAndDisplayCompareStatus();
-                            return Status.OK_STATUS;
-                        }
-                    };
-                    job.schedule();
-
-                    monitor.beginTask("", 2);
-
-                    MessageDescription[] leftMessageDescriptions = getMessageDescriptions(editorInput.getLeftMessageFile(), monitor);
-                    getEditorInput().setLeftMessageDescriptions(leftMessageDescriptions);
-                    monitor.worked(1);
-
-                    if (monitor.isCanceled()) {
-                        return cancelOperation();
-                    }
-
-                    MessageDescription[] rightMessageDescriptions = getMessageDescriptions(editorInput.getRightMessageFile(), monitor);
-                    getEditorInput().setRightMessageDescriptions(rightMessageDescriptions);
-                    monitor.worked(2);
-
-                    if (monitor.isCanceled()) {
-                        return cancelOperation();
-                    }
-
-                } finally {
-                    monitor.done();
-
-                    UIJob job = new UIJob("") {
-                        @Override
-                        public IStatus runInUIThread(IProgressMonitor monitor) {
-                            if (tableViewer.getTable().isDisposed()) {
-                                return Status.OK_STATUS;
-                            }
-                            jobToCancel = null;
-                            tableViewer.setInput(getEditorInput());
-                            selectionChanged = false;
-                            setIsComparing(false);
-                            setButtonEnablementAndDisplayCompareStatus();
-                            return Status.OK_STATUS;
-                        }
-                    };
-                    job.schedule();
-                }
-
-                return Status.OK_STATUS;
-            }
-
-            private IStatus cancelOperation() {
-
-                getEditorInput().setLeftMessageDescriptions(new MessageDescription[0]);
-                getEditorInput().setRightMessageDescriptions(new MessageDescription[0]);
-
-                return Status.OK_STATUS;
-            }
-
-            private MessageDescription[] getMessageDescriptions(RemoteObject messageFile, IProgressMonitor monitor) {
-
-                String connectionName = messageFile.getConnectionName();
-                AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-
-                IQMHRTVM iqmhrtvm = new IQMHRTVM(system, connectionName);
-                iqmhrtvm.setMessageFile(messageFile.getName(), messageFile.getLibrary());
-
-                return iqmhrtvm.retrieveAllMessageDescriptions(monitor);
-            }
-        };
-        job.schedule();
+        new LoadMessageDescriptionsJob(editorInput).schedule();
     }
 
     private void performSynchronizeMessageFiles() {
 
-        setIsSynchronizing(true);
+        synchronizationResult = new SynchronizationResult();
 
-        try {
+        RemoteObject leftMessageFile = getEditorInput().getLeftMessageFile();
+        RemoteObject rightMessageFile = getEditorInput().getRightMessageFile();
 
-            setButtonEnablementAndDisplayCompareStatus();
+        SynchronizeMessageFilesJob synchronizeMessageFilesJob = new SynchronizeMessageFilesJob(leftMessageFile, rightMessageFile, this);
+        synchronizeMessageFilesJob.setCopyItemErrorListener(this);
 
-            RemoteObject leftMessageFile = getEditorInput().getLeftMessageFile();
-            RemoteObject rightMessageFile = getEditorInput().getRightMessageFile();
+        if (chkBoxReplace.getSelection()) {
+            synchronizeMessageFilesJob.setExistingMessageDescriptionAction(ExistingMessageDescriptionAction.REPLACE);
+        } else {
+            synchronizeMessageFilesJob.setExistingMessageDescriptionAction(ExistingMessageDescriptionAction.ERROR);
+        }
 
-            for (int i = 0; i < tableViewer.getTable().getItemCount(); i++) {
-                MessageFileCompareItem compareItem = (MessageFileCompareItem)tableViewer.getElementAt(i);
-
-                getTableStatistics().removeElement(compareItem, filterData);
-                if (compareItem.getCompareStatus() == MessageFileCompareItem.LEFT_MISSING) {
-                    performCopyToLeft(compareItem, leftMessageFile);
-                } else if (compareItem.getCompareStatus() == MessageFileCompareItem.RIGHT_MISSING) {
-                    performCopyToRight(compareItem, rightMessageFile);
-                }
-                getTableStatistics().addElement(compareItem, filterData);
+        for (int i = 0; i < tableViewer.getTable().getItemCount(); i++) {
+            MessageFileCompareItem compareItem = (MessageFileCompareItem)tableViewer.getTable().getItem(i).getData();
+            if (compareItem.getOriginalCompareStatus() == MessageFileCompareItem.LEFT_MISSING) {
+                synchronizeMessageFilesJob.addCopyRightToLeftMessageDescription(compareItem);
+            } else if (compareItem.getOriginalCompareStatus() == MessageFileCompareItem.RIGHT_MISSING) {
+                synchronizeMessageFilesJob.addCopyLeftToRightMessageDescription(compareItem);
             }
+        }
 
-            if (isSynchronizationEnabled()) {
-                if (chkCompareAfterSync.getSelection()) {
-                    performCompareMessageFiles();
-                }
-            }
+        if (synchronizeMessageFilesJob.getNumCopyLeftToRight() == 0 && synchronizeMessageFilesJob.getNumCopyRightToLeft() == 0) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.No_items_selected_for_processing);
+            return;
+        }
 
-        } finally {
+        String leftToRight = Messages.bind(Messages.Copy_A_message_descriptions_from_left_to_right,
+            synchronizeMessageFilesJob.getNumCopyLeftToRight());
+        String rightToLeft = Messages.bind(Messages.Copy_A_message_descriptions_from_right_to_left,
+            synchronizeMessageFilesJob.getNumCopyRightToLeft());
 
-            setIsSynchronizing(false);
-            tableViewer.getTable().redraw();
+        if (MessageDialog.openConfirm(getShell(), Messages.Confirmation,
+            Messages.Do_you_want_to_start_synchronizing_message_descriptions + "\n\n" + leftToRight + "\n" + rightToLeft)) { //$NON-NLS-1$ //$NON-NLS-2$
+            setIsSynchronizing(true);
+            jobToCancel = synchronizeMessageFilesJob;
             setButtonEnablementAndDisplayCompareStatus();
-
+            synchronizeMessageFilesJob.schedule();
         }
     }
 
-    private void performCopyToLeft(MessageFileCompareItem compareItem, RemoteObject toMessageFile) {
+    /**
+     * Message description callback of {@link SynchronizeMessageFilesJob}.
+     * <p>
+     * {@inheritDoc}
+     */
+    public SynchronizeMessageFilesAction reportCopyMessageDescriptionMessage(MessageDescriptionCopyError errorId, CopyMessageDescriptionItem item,
+        String errorMessage) {
 
-        try {
-
-            String errorMessage = MessageDescriptionHelper.mergeMessageDescription(getShell(), compareItem.getRightMessageDescription(),
-                toMessageFile.getConnectionName(), toMessageFile.getName(), toMessageFile.getLibrary());
-            if (errorMessage == null) {
-                compareItem.setLeftMessageDescription(MessageDescriptionHelper.retrieveMessageDescription(toMessageFile.getConnectionName(),
-                    toMessageFile.getName(), toMessageFile.getLibrary(), compareItem.getMessageId()));
-                compareItem.clearCompareStatus();
-            } else {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, errorMessage);
-            }
-
-            tableViewer.update(compareItem, null);
-
-        } catch (Exception e) {
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
+        // Message file or connection error.
+        if (item == null) {
+            return errorId.getDefaultAction();
         }
+
+        final MessageFileCompareItem compareItem = (MessageFileCompareItem)item.getData();
+
+        compareItem.resetErrorStatus();
+
+        // Update copy status...
+        if (MessageDescriptionCopyError.ERROR_NONE == errorId) {
+            if (compareItem.getCompareStatus() == MessageFileCompareItem.LEFT_MISSING) {
+                compareItem.setLeftMessageDescription(item.getCopiedMessageDescription());
+            } else if (compareItem.getCompareStatus() == MessageFileCompareItem.RIGHT_MISSING) {
+                compareItem.setRightMessageDescription(item.getCopiedMessageDescription());
+            }
+            compareItem.clearCompareStatus();
+        } else {
+            compareItem.setErrorStatus(errorMessage);
+            synchronizationResult.addErrorMessage(errorMessage);
+        }
+
+        synchronizationResult.addDirtyMessageDescription(compareItem);
+
+        return errorId.getDefaultAction();
     }
 
-    private void performCopyToRight(MessageFileCompareItem compareItem, RemoteObject toMessageFile) {
+    /**
+     * PostRun of {@link SynchronizeMessageFilesJob}.
+     * <p>
+     * {@inheritDoc}
+     */
+    public void synchronizeMessageFilesPostRun(String status, int countCopied, int countErrors, String message) {
 
-        try {
+        synchronizationResult.setStatus(status);
+        synchronizationResult.setCountCopied(countCopied);
+        synchronizationResult.setCountErrors(countErrors);
+        synchronizationResult.setJobFinishedMessage(message);
 
-            String errorMessage = MessageDescriptionHelper.mergeMessageDescription(getShell(), compareItem.getLeftMessageDescription(),
-                toMessageFile.getConnectionName(), toMessageFile.getName(), toMessageFile.getLibrary());
-            if (errorMessage == null) {
-                compareItem.setRightMessageDescription(MessageDescriptionHelper.retrieveMessageDescription(toMessageFile.getConnectionName(),
-                    toMessageFile.getName(), toMessageFile.getLibrary(), compareItem.getMessageId()));
-                compareItem.clearCompareStatus();
-            } else {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, errorMessage);
-            }
-
-            tableViewer.update(compareItem, null);
-
-        } catch (Exception e) {
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
-        }
+        new EndSynchronisationUIJob(synchronizationResult).schedule();
     }
 
     protected void performCompareMessageDescriptions(MessageFileCompareItem compareItem) {
@@ -1038,7 +1122,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private void performCancelOperation() {
 
         if (jobToCancel != null) {
-            jobToCancel.setCanceled(true);
+            jobToCancel.cancelOperation();
         }
     }
 
@@ -1046,7 +1130,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     public void dispose() {
 
         if (jobToCancel != null) {
-            jobToCancel.setCanceled(true);
+            jobToCancel.cancelOperation();
         }
 
         super.dispose();
@@ -1062,6 +1146,172 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     protected abstract RemoteObject performSelectRemoteObject(String connectionName, String libraryName, String objectName);
 
     protected abstract LabelProvider getTableLabelProvider(TableViewer tableViewer);
+
+    /**
+     * Job that loads the message descriptions of both message files.
+     * <p>
+     * The job implements {@link ICancelableJob}, so that the editor cancels the
+     * compare job and the synchronization job the same way.
+     */
+    private class LoadMessageDescriptionsJob extends Job implements ICancelableJob {
+
+        private MessageFileCompareEditorInput editorInput;
+        private IProgressMonitor monitor;
+
+        public LoadMessageDescriptionsJob(MessageFileCompareEditorInput editorInput) {
+            super(Messages.Loading_message_descriptions);
+
+            this.editorInput = editorInput;
+        }
+
+        @Override
+        protected IStatus run(IProgressMonitor monitor) {
+
+            this.monitor = monitor;
+
+            try {
+
+                jobToCancel = this;
+                UIJob job = new UIJob("") { //$NON-NLS-1$
+                    @Override
+                    public IStatus runInUIThread(IProgressMonitor monitor) {
+                        setButtonEnablementAndDisplayCompareStatus();
+                        return Status.OK_STATUS;
+                    }
+                };
+                job.schedule();
+
+                monitor.beginTask("", 2); //$NON-NLS-1$
+
+                MessageDescription[] leftMessageDescriptions = getMessageDescriptions(editorInput.getLeftMessageFile(), monitor);
+                editorInput.setLeftMessageDescriptions(leftMessageDescriptions);
+                monitor.worked(1);
+
+                if (monitor.isCanceled()) {
+                    return clearMessageDescriptions();
+                }
+
+                MessageDescription[] rightMessageDescriptions = getMessageDescriptions(editorInput.getRightMessageFile(), monitor);
+                editorInput.setRightMessageDescriptions(rightMessageDescriptions);
+                monitor.worked(2);
+
+                if (monitor.isCanceled()) {
+                    return clearMessageDescriptions();
+                }
+
+            } finally {
+                monitor.done();
+
+                UIJob job = new UIJob("") { //$NON-NLS-1$
+                    @Override
+                    public IStatus runInUIThread(IProgressMonitor monitor) {
+                        if (tableViewer.getTable().isDisposed()) {
+                            return Status.OK_STATUS;
+                        }
+                        jobToCancel = null;
+                        tableViewer.setInput(getEditorInput());
+                        selectionChanged = false;
+                        setIsComparing(false);
+                        setButtonEnablementAndDisplayCompareStatus();
+                        return Status.OK_STATUS;
+                    }
+                };
+                job.schedule();
+            }
+
+            return Status.OK_STATUS;
+        }
+
+        private IStatus clearMessageDescriptions() {
+
+            editorInput.setLeftMessageDescriptions(new MessageDescription[0]);
+            editorInput.setRightMessageDescriptions(new MessageDescription[0]);
+
+            return Status.OK_STATUS;
+        }
+
+        private MessageDescription[] getMessageDescriptions(RemoteObject messageFile, IProgressMonitor monitor) {
+
+            String connectionName = messageFile.getConnectionName();
+            AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+
+            IQMHRTVM iqmhrtvm = new IQMHRTVM(system, connectionName);
+            iqmhrtvm.setMessageFile(messageFile.getName(), messageFile.getLibrary());
+
+            return iqmhrtvm.retrieveAllMessageDescriptions(monitor);
+        }
+
+        public void cancelOperation() {
+
+            if (monitor != null) {
+                monitor.setCanceled(true);
+            }
+        }
+    }
+
+    /**
+     * Job that finishes the synchronization in the UI thread.
+     */
+    private class EndSynchronisationUIJob extends UIJob {
+
+        private SynchronizationResult result;
+
+        public EndSynchronisationUIJob(SynchronizationResult result) {
+            super(Messages.EMPTY);
+
+            this.result = result;
+        }
+
+        @Override
+        public IStatus runInUIThread(IProgressMonitor monitor) {
+
+            if (!ISynchronizeMessageFilesPostRun.OK.equals(result.getStatus())) {
+                MessageDialogAsync.displayNonBlockingError(getShell(), result.getJobFinishedMessage());
+            } else {
+                MessageDialogAsync.displayNonBlockingInformation(getShell(), result.getJobFinishedMessage());
+            }
+
+            if (tableViewer.getTable().isDisposed()) {
+                return Status.OK_STATUS;
+            }
+
+            jobToCancel = null;
+            setIsSynchronizing(false);
+            setButtonEnablementAndDisplayCompareStatus();
+
+            if (isSynchronizationEnabled()) {
+
+                if (result.getCountErrors() == 0 && chkCompareAfterSync.getSelection()) {
+                    performCompareMessageFiles();
+                } else {
+                    /*
+                     * The statistics are rebuilt completely, because the
+                     * synchronization has changed the compare status of the
+                     * copied items, but could not maintain the statistics from
+                     * the job thread.
+                     */
+                    try {
+                        tableViewer.getTable().setRedraw(false);
+                        clearTableStatistics();
+                        tableViewer.refresh();
+                    } finally {
+                        tableViewer.getTable().setRedraw(true);
+                    }
+
+                    /*
+                     * Redraw the table, because the image of the compare status
+                     * is painted and not assigned to the cell, see
+                     * AbstractTableLabelProvider.useCompareStatusImagePainter().
+                     */
+                    tableViewer.getTable().redraw();
+                }
+            }
+
+            synchronizationResult = null;
+
+            return Status.OK_STATUS;
+        }
+    }
 
     /**
      * Class that implements the context menu for the table rows.
