@@ -1472,6 +1472,11 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
      */
     public SynchronizeMembersAction reportValidateMemberMessage(MemberCopyError errorId, CopyMemberItem item, String errorMessage) {
 
+        // File or library error.
+        if (item == null) {
+            return errorId.getDefaultAction();
+        }
+
         debug("ValidateMembersJob -> Validation error: " + item.getFromMember() + " - " + errorMessage);
 
         final MemberCompareItem compareItem = (MemberCompareItem)item.getData();
@@ -1504,9 +1509,9 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         }
 
         if (MemberCopyError.ERROR_NONE == errorId) {
-            debug("CopyMembersJob -> Copy error: " + item.getFromFile() + "." + item.getFromMember() + " - " + errorMessage);
-        } else {
             debug("CopyMembersJob -> Copied: " + item.getFromFile() + "." + item.getFromMember());
+        } else {
+            debug("CopyMembersJob -> Copy error: " + item.getFromFile() + "." + item.getFromMember() + " - " + errorMessage);
         }
 
         final MemberCompareItem compareItem = (MemberCompareItem)item.getData();
