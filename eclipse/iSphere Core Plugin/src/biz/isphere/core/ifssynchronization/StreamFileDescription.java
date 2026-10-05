@@ -42,14 +42,21 @@ public class StreamFileDescription implements Serializable, Comparable<StreamFil
     private Long checksum;
 
     /**
+     * The size in bytes of this file, set by the job that loads the compare
+     * data. Intentionally excluded from {@link #equals(Object)},
+     * {@link #hashCode()} and {@link #compareTo(StreamFileDescription)},
+     * because a description is compared by its content and not by its size.
+     */
+    private Long sizeInBytes;
+
+    /**
      * The directory description this file or directory was found in, set by the
      * job that loads the compare data. Intentionally excluded from
      * {@link #equals(Object)}, {@link #hashCode()} and
-     * {@link #compareTo(StreamFileDescription)} (identity/navigation only, not
-     * part of the value) and marked transient, since it is not meant to survive
-     * serialization.
+     * {@link #compareTo(StreamFileDescription)}, because it describes where an
+     * item was found and not what it contains.
      */
-    private transient StreamFileDescription parentDirectory;
+    private StreamFileDescription parentDirectory;
 
     /**
      * Indicates that this directory description <i>directly</i> contains stream
@@ -59,11 +66,10 @@ public class StreamFileDescription implements Serializable, Comparable<StreamFil
      * that sets the compare status of all items below it.
      * <p>
      * Intentionally excluded from {@link #equals(Object)}, {@link #hashCode()}
-     * and {@link #compareTo(StreamFileDescription)} (structure only, not part
-     * of the value) and marked transient, since it is not meant to survive
-     * serialization.
+     * and {@link #compareTo(StreamFileDescription)}, because it describes the
+     * structure of the directory tree and not the item itself.
      */
-    private transient boolean hasFiles;
+    private boolean hasFiles;
 
     /**
      * Indicates that the directory tree below this directory description
@@ -74,11 +80,10 @@ public class StreamFileDescription implements Serializable, Comparable<StreamFil
      * has, because there is nothing below it that could be synchronized.
      * <p>
      * Intentionally excluded from {@link #equals(Object)}, {@link #hashCode()}
-     * and {@link #compareTo(StreamFileDescription)} (structure only, not part
-     * of the value) and marked transient, since it is not meant to survive
-     * serialization.
+     * and {@link #compareTo(StreamFileDescription)}, because it describes the
+     * structure of the directory tree and not the item itself.
      */
-    private transient boolean hasFilesInSubtree;
+    private boolean hasFilesInSubtree;
 
     public static StreamFileDescription newFileDescription() {
         return new StreamFileDescription("F");
@@ -224,9 +229,8 @@ public class StreamFileDescription implements Serializable, Comparable<StreamFil
     }
 
     /**
-     * Compares this IFS file description with another IFS file description. The
-     * <i>root directory</i> is intentionally not compared, because the left and
-     * the right root directory of a compared directory tree differ by design.
+     * Compares this IFS file description with another IFS file description by
+     * the attributes that form its value, see {@link #equals(Object)}.
      */
     public int compareTo(StreamFileDescription other) {
 
@@ -282,8 +286,8 @@ public class StreamFileDescription implements Serializable, Comparable<StreamFil
     }
 
     /**
-     * Produces the hash code of this IFS file description. The <i>root
-     * directory</i> is intentionally not included.
+     * Produces the hash code of this IFS file description from the attributes
+     * that form its value, see {@link #equals(Object)}.
      */
     @Override
     public int hashCode() {
@@ -297,7 +301,14 @@ public class StreamFileDescription implements Serializable, Comparable<StreamFil
 
     /**
      * Tests whether this IFS file description equals another IFS file
-     * description. The <i>root directory</i> is intentionally not compared.
+     * description. Two descriptions are equal, when their <i>relative path</i>,
+     * their <i>checksum</i> and their <i>last changed date</i> are equal.
+     * Everything else describes where an item was found or how the directory
+     * tree is structured, which is not part of its value.
+     * <p>
+     * The <i>root directory</i> is intentionally not compared, because the left
+     * and the right root directory of a compared directory tree differ by
+     * design.
      */
     @Override
     public boolean equals(Object obj) {
