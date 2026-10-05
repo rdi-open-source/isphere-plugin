@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.TableItem;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.core.objectsynchronization.CompareOptions;
+import biz.isphere.core.objectsynchronization.MemberDescription;
 
 /**
  * Class the provides the content for the cells of the table.
@@ -174,7 +175,7 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
 
         case COLUMN_LEFT_LAST_CHANGES:
             if (compareItem.getLeftMemberDescription() != null) {
-                return DateTimeHelper.getTimestampFormatted(compareItem.getLeftMemberDescription().getLastChangedDate());
+                return getLastChangedUI(compareItem.getLeftMemberDescription());
             } else {
                 return ""; //$NON-NLS-1$
             }
@@ -216,7 +217,7 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
 
         case COLUMN_RIGHT_LAST_CHANGES:
             if (compareItem.getRightMemberDescription() != null) {
-                return DateTimeHelper.getTimestampFormatted(compareItem.getRightMemberDescription().getLastChangedDate());
+                return getLastChangedUI(compareItem.getRightMemberDescription());
             } else {
                 return ""; //$NON-NLS-1$
             }
@@ -231,6 +232,23 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
         default:
             return ""; //$NON-NLS-1$
         }
+    }
+
+    /**
+     * Returns the last changed date of a given member, formatted according to
+     * the preferences of the user.
+     * <p>
+     * The date is blank, as long as it has not yet been loaded from the host,
+     * because a member that is displayed without its date is preferred over a
+     * table that cannot be painted at all.
+     */
+    protected String getLastChangedUI(MemberDescription memberDescription) {
+
+        if (memberDescription.getLastChangedDate() == null) {
+            return ""; //$NON-NLS-1$
+        }
+
+        return DateTimeHelper.getTimestampFormatted(memberDescription.getLastChangedDate());
     }
 
     /**
