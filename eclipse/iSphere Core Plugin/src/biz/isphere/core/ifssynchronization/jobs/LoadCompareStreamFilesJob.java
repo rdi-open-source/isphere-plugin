@@ -26,8 +26,8 @@ import biz.isphere.base.internal.SqlHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.core.ifssynchronization.StreamFileDescription;
 import biz.isphere.core.ifssynchronization.SYNCIFS_getNumberOfCompareElements;
+import biz.isphere.core.ifssynchronization.StreamFileDescription;
 
 /**
  * This class loads the IFS files that are compared from file SYNCIFSW.
@@ -126,17 +126,20 @@ public class LoadCompareStreamFilesJob extends AbstractCompareStreamFilesJob {
             final int TYPE = 3;
             final int ITEM = 4;
             final int LAST_CHANGED = 5;
-            final int CHECKSUM = 6;
+            final int SIZE_IN_BYTES = 6;
+            final int CHECKSUM = 7;
 
             if (SyncIfsFileMode.LEFT_SYSTEM.equals(mode)) {
-                preparedStatementSelect = jdbcConnection.prepareStatement("SELECT XWID, XWPARENT, XWTYPE, XWITEM, XWLEFTLCHG, XWLEFTCRC FROM " //$NON-NLS-1$
-                    + sqlHelper.getObjectName(getISphereLibrary(), "SYNCIFSW") //$NON-NLS-1$
-                    + " WHERE XWHDL = ? ORDER BY XWTYPE, XWHDL, XWID, XWITEM", //$NON-NLS-1$
+                preparedStatementSelect = jdbcConnection.prepareStatement(
+                    "SELECT XWID, XWPARENT, XWTYPE, XWITEM, XWLEFTLCHG, XWLEFTSIZE, XWLEFTCRC FROM " //$NON-NLS-1$
+                        + sqlHelper.getObjectName(getISphereLibrary(), "SYNCIFSW") //$NON-NLS-1$
+                        + " WHERE XWHDL = ? ORDER BY XWTYPE, XWHDL, XWID, XWITEM", //$NON-NLS-1$
                     ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             } else if (SyncIfsFileMode.RIGHT_SYSTEM.equals(mode)) {
-                preparedStatementSelect = jdbcConnection.prepareStatement("SELECT XWID, XWPARENT, XWTYPE, XWITEM, XWRGHTLCHG, XWRGHTCRC FROM " //$NON-NLS-1$
-                    + sqlHelper.getObjectName(getISphereLibrary(), "SYNCIFSW") //$NON-NLS-1$
-                    + " WHERE XWHDL = ? ORDER BY XWTYPE, XWHDL, XWID, XWITEM", //$NON-NLS-1$
+                preparedStatementSelect = jdbcConnection.prepareStatement(
+                    "SELECT XWID, XWPARENT, XWTYPE, XWITEM, XWRGHTLCHG, XWRGHTSIZE, XWRGHTCRC FROM " //$NON-NLS-1$
+                        + sqlHelper.getObjectName(getISphereLibrary(), "SYNCIFSW") //$NON-NLS-1$
+                        + " WHERE XWHDL = ? ORDER BY XWTYPE, XWHDL, XWID, XWITEM", //$NON-NLS-1$
                     ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             } else {
                 throw new IllegalArgumentException("Incorrect mode: " + mode.mode()); //$NON-NLS-1$
@@ -150,6 +153,7 @@ public class LoadCompareStreamFilesJob extends AbstractCompareStreamFilesJob {
             String type;
             String item;
             Timestamp lastChanged;
+            long sizeInBytes;
             long checksum;
 
             String relativePath;
@@ -180,6 +184,7 @@ public class LoadCompareStreamFilesJob extends AbstractCompareStreamFilesJob {
                 type = resultSet.getString(TYPE).trim();
                 item = resultSet.getString(ITEM).trim();
                 lastChanged = resultSet.getTimestamp(LAST_CHANGED);
+                sizeInBytes = resultSet.getLong(SIZE_IN_BYTES);
                 checksum = resultSet.getLong(CHECKSUM);
 
                 StreamFileDescription ifsFileDescription;
@@ -210,6 +215,7 @@ public class LoadCompareStreamFilesJob extends AbstractCompareStreamFilesJob {
                 ifsFileDescription.setRelativePath(relativePath);
 
                 ifsFileDescription.setLastChangedDate(lastChanged);
+                ifsFileDescription.setSize(sizeInBytes);
                 ifsFileDescription.setChecksum(checksum);
                 arrayListSearchResults.add(ifsFileDescription);
 

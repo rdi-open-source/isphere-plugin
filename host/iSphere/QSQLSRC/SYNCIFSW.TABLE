@@ -29,8 +29,10 @@ CREATE TABLE SYNCIFSW
  XWTYPE     CHAR(1)                    NOT NULL WITH DEFAULT,
  XWITEM     VARCHAR(5000) ALLOCATE(64) NOT NULL WITH DEFAULT,
  XWLEFTLCHG TIMESTAMP  NOT NULL WITH DEFAULT '0001-01-01-00.00.00.000000',
+ XWLEFTSIZE BIGINT                     NOT NULL WITH DEFAULT 0,
  XWLEFTCRC  BIGINT                     NOT NULL WITH DEFAULT 0,
  XWRGHTLCHG TIMESTAMP  NOT NULL WITH DEFAULT '0001-01-01-00.00.00.000000',
+ XWRGHTSIZE BIGINT                     NOT NULL WITH DEFAULT 0,
  XWRGHTCRC  BIGINT                     NOT NULL WITH DEFAULT 0,
  XWRESULT   INTEGER                    NOT NULL WITH DEFAULT
 );
@@ -46,8 +48,10 @@ LABEL ON COLUMN SYNCIFSW
  XWTYPE     IS 'Item type',
  XWITEM     IS 'Member',
  XWLEFTLCHG IS 'Left Last Changed',
+ XWLEFTSIZE IS 'Left Size',
  XWLEFTCRC  IS 'Left Checksum',
  XWRGHTLCHG IS 'Right Last Changed',
+ XWRGHTSIZE IS 'Right Size',
  XWRGHTCRC  IS 'Right Checksum',
  XWRESULT   IS 'Compare Result      0=Equal, 1=Type     2=Date, 4=CRC, 8=NF '
 );
@@ -60,8 +64,10 @@ LABEL ON COLUMN SYNCIFSW
  XWTYPE     TEXT IS 'Item type (F=File, D=Directory)',
  XWITEM     TEXT IS 'Member',
  XWLEFTLCHG TEXT IS 'Left Last Changed',
+ XWLEFTSIZE TEXT IS 'Left Size in bytes',
  XWLEFTCRC  TEXT IS 'Left Checksum',
  XWRGHTLCHG TEXT IS 'Right Last Changed',
+ XWRGHTSIZE TEXT IS 'Right Size in bytes',
  XWRGHTCRC  TEXT IS 'Right Checksum',
  XWRESULT   TEXT IS 'Compare Result'
 );

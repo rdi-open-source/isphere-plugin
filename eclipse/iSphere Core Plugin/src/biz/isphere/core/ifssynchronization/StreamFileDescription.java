@@ -154,6 +154,14 @@ public class StreamFileDescription implements Serializable, Comparable<StreamFil
         this.lastChangedDate = lastChangedDate;
     }
 
+    public Long getSize() {
+        return sizeInBytes;
+    }
+
+    public void setSize(Long sizeInBytes) {
+        this.sizeInBytes = sizeInBytes;
+    }
+
     public Long getChecksum() {
         return checksum;
     }

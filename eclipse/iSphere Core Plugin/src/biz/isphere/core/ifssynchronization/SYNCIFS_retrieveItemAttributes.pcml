@@ -13,12 +13,13 @@
    <struct name="itemAttrs_t">
      <data name="name"        type="struct"    struct="ifsItem_t"             usage="inherit"/>
      <data name="type"        type="char"      length="1"                     usage="inherit"/>
+     <data name="sizeInBytes" type="int"       length="8"                     usage="inherit"/>
      <data name="lastChanged" type="timestamp"                                usage="inherit"/>
      <data name="checkSum"    type="int"       length="8"     precision="63"  usage="inherit"/>
    </struct>
    <program name="SYNCIFS_retrieveItemAttributes" path="/QSYS.LIB/%LIBL%.LIB/W006006.PGM">
       <data name="path"      type="struct" struct="ifsItem_t"   usage="input" />
-      <data name="itemAttrs" type="struct" struct="itemAttrs_t" usage="output" outputsize="1061" />
+      <data name="itemAttrs" type="struct" struct="itemAttrs_t" usage="output" outputsize="1069" />
    </program>
 </pcml>
 

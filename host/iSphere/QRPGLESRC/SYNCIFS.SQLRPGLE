@@ -59,6 +59,38 @@ ctl-opt ccsid(*char: *jobrun);
 /include QCPYSRC,QMHSNDPM    // Send Program Message (QMHSNDPM) API
 /include QCPYSRC,ERRC0100    // Format ERRC0100
 
+// Global prototypes
+dcl-pr stat64 int(10) extproc('stat64');
+  path pointer value options(*string);
+  buf  pointer value;
+end-pr;
+
+dcl-ds stat64_t qualified template;
+  st_mode       uns(10);
+  st_ino        uns(10);
+  st_uid        uns(10);
+  st_gid        uns(10);
+  st_size       int(20);
+  st_atime      int(10);
+  st_mtime      int(10);
+  st_ctime      int(10);
+  st_dev        uns(10);
+  st_blksize    uns(10);
+  st_nlink      uns(5);
+  st_codepage   uns(5);
+  st_alctize    uns(20);
+  st_ino_gen_id uns(10);
+  st_objtype    char(11);
+  reserved_2    char(5);
+  st_rdev       uns(10);
+  st_rdev64     uns(20);
+  st_dev64      uns(20);
+  st_nlink32    uns(10);
+  st_vfs        uns(10);
+  reserved_1    char(22);
+  st_ccsid      uns(5);
+end-ds;
+
 // Global type definitions
 
 dcl-s pattern_t varchar(1024) template;
@@ -318,7 +350,11 @@ dcl-proc SYNCIFS_resolveGenericFiles export;
           XWTYPE = :type,
           XWITEM = :dirPath,
           /* left item */
-          XWLEFTCRC =  CASE WHEN :i_mode = :MODE_LEFT
+          XWLEFTSIZE = CASE WHEN :i_mode = :MODE_LEFT
+                            THEN :itemAttrs.sizeInBytes
+                            ELSE XWLEFTSIZE
+                            END,
+          XWLEFTCRC  = CASE WHEN :i_mode = :MODE_LEFT
                             THEN :itemAttrs.checksum
                             ELSE XWLEFTCRC
                             END,
@@ -327,7 +363,11 @@ dcl-proc SYNCIFS_resolveGenericFiles export;
                             ELSE XWLEFTLCHG
                             END,
           /* right item */
-          XWRGHTCRC =  CASE WHEN :i_mode = :MODE_RIGHT
+          XWRGHTSIZE = CASE WHEN :i_mode = :MODE_RIGHT
+                            THEN :itemAttrs.sizeInBytes
+                            ELSE XWRGHTSIZE
+                            END,
+          XWRGHTCRC  = CASE WHEN :i_mode = :MODE_RIGHT
                             THEN :itemAttrs.checksum
                             ELSE XWRGHTCRC
                             END,
@@ -464,12 +504,12 @@ dcl-proc SYNCIFS_retrieveItemAttributes export;
   end-pi;
 
   dcl-s path like(ifsItem_t);
-  dcl-ds statAttrs likeds(statds) inz;
+  dcl-ds st_stat likeds(stat64_t) inz;
   dcl-s rc int(10);
 
   dcl-s errNbr int(10);
   dcl-s errText varchar(128);
-  dcl-s objType like(statAttrs.st_objType);
+  dcl-s objType like(st_stat.st_objType);
 
   // Return value
   dcl-ds itemAttrs likeds(itemAttrs_t);
@@ -478,24 +518,26 @@ dcl-proc SYNCIFS_retrieveItemAttributes export;
 
   clear itemAttrs;
 
-  rc = stat(i_path: %addr(statAttrs));
+  rc = stat64(i_path: %addr(st_stat));
   if (rc = 0);
 
-    objType = %str(%addr(statAttrs.st_objType): %size(objType));
+    objType = %str(%addr(st_stat.st_objType): %size(objType));
 
     if (objType = '*STMF' or objType = '*DOC');
       itemAttrs.type = TYPE_FILE;
       itemAttrs.name = i_path;
+      itemAttrs.sizeInBytes = st_stat.st_size;
       itemAttrs.checkSum = calculateChecksum(i_path);
     elseif (objType = '*DIR' or objType = '*FLR');
       itemAttrs.type = TYPE_DIRECTORY;
       itemAttrs.name = i_path;
+      itemAttrs.sizeInBytes = 0;
       itemAttrs.checkSum = 0;
     else;
       kill('Unexpected type ' + objType + ' (' + path + ')');
     endif;
 
-    itemAttrs.lastChanged = cvtEpochTimeToRpg(statAttrs.st_mtime);
+    itemAttrs.lastChanged = cvtEpochTimeToRpg(st_stat.st_mtime);
 
   else;
     errNbr = errorNumber();
@@ -695,6 +737,7 @@ dcl-proc addDirectoryToWorkFile;
           XWTYPE,
           XWITEM,
           XWLEFTLCHG,
+          XWLEFTSIZE,
           XWLEFTCRC
           )
       VALUES
@@ -704,8 +747,9 @@ dcl-proc addDirectoryToWorkFile;
         :i_parentID,
         :type,
         :i_fileName,              -- IFS File Name
-        :i_itemAttrs.lastChanged, -- Left File Last Changed
-        :i_itemAttrs.checkSum     -- Left File Checksum
+        :i_itemAttrs.lastChanged, -- Last Changed
+        :i_itemAttrs.sizeInBytes, -- Size In Bytes
+        :i_itemAttrs.checkSum     -- Checksum
         );
 
   when (i_mode = MODE_RIGHT);
@@ -719,6 +763,7 @@ dcl-proc addDirectoryToWorkFile;
           XWTYPE,
           XWITEM,
           XWRGHTLCHG,
+          XWRGHTSIZE,
           XWRGHTCRC
           )
       VALUES
@@ -728,8 +773,9 @@ dcl-proc addDirectoryToWorkFile;
         :i_parentID,
         :type,
         :i_fileName,              -- IFS File Name
-        :i_itemAttrs.lastChanged, -- Left File Last Changed
-        :i_itemAttrs.checkSum     -- Left File Checksum
+        :i_itemAttrs.lastChanged, -- Last Changed
+        :i_itemAttrs.sizeInBytes, -- Size In Bytes
+        :i_itemAttrs.checkSum     -- Checksum
         );
 
   other;
@@ -773,6 +819,7 @@ dcl-proc addFileToWorkFile;
           XWTYPE,
           XWITEM,
           XWLEFTLCHG,
+          XWLEFTSIZE,
           XWLEFTCRC
           )
       VALUES
@@ -782,8 +829,9 @@ dcl-proc addFileToWorkFile;
         :i_parentID,
         :type,
         :i_fileName,              -- IFS File Name
-        :i_itemAttrs.lastChanged, -- Left File Last Changed
-        :i_itemAttrs.checkSum     -- Left File Checksum
+        :i_itemAttrs.lastChanged, -- Last Changed
+        :i_itemAttrs.sizeInBytes, -- Size In Bytes
+        :i_itemAttrs.checkSum     -- Checksum
         );
 
   when (i_mode = MODE_RIGHT);
@@ -797,6 +845,7 @@ dcl-proc addFileToWorkFile;
           XWTYPE,
           XWITEM,
           XWRGHTLCHG,
+          XWRGHTSIZE,
           XWRGHTCRC
           )
       VALUES
@@ -806,8 +855,9 @@ dcl-proc addFileToWorkFile;
         :i_parentID,
         :type,
         :i_fileName,              -- IFS File Name
-        :i_itemAttrs.lastChanged, -- Left File Last Changed
-        :i_itemAttrs.checkSum     -- Left File Checksum
+        :i_itemAttrs.lastChanged, -- Last Changed
+        :i_itemAttrs.sizeInBytes, -- Size In Bytes
+        :i_itemAttrs.checkSum     -- Checksum
         );
 
   other;

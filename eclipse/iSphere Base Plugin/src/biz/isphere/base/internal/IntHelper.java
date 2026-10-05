@@ -8,7 +8,9 @@
 
 package biz.isphere.base.internal;
 
+import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.Locale;
 
 public final class IntHelper {
 
@@ -184,6 +186,35 @@ public final class IntHelper {
         }
 
         return -1;
+    }
+
+    /**
+     * Formats an integer value as a String with thousand separators using the
+     * current locale formatting rules by default (e.g., 1.000.000).
+     *
+     * @param number the integer number to format (accepts {@code long} to cover
+     *        {@code int} values as well)
+     * @return the formatted string representation with thousand separators
+     */
+    public static String formatWithThousandSeparators(long number) {
+        NumberFormat formatter = NumberFormat.getInstance(Locale.getDefault());
+        return formatter.format(number);
+    }
+
+    /**
+     * Formats an integer value as a String with thousand separators using the
+     * specified {@link Locale}.
+     *
+     * @param number the integer number to format
+     * @param locale the {@link Locale} that determines the formatting rules
+     *        (e.g., {@code Locale.GERMANY} or {@code Locale.US}); falls back to
+     *        system default if {@code null}
+     * @return the formatted string representation with locale-specific thousand
+     *         separators
+     */
+    public static String formatWithThousandSeparators(long number, Locale locale) {
+        NumberFormat formatter = NumberFormat.getInstance(locale != null ? locale : Locale.getDefault());
+        return formatter.format(number);
     }
 
     public static int[] toIntArray(String arrayOfInt) {

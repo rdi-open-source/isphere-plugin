@@ -28,6 +28,7 @@ dcl-s ifsItem_t varchar(1024) template;
 dcl-ds itemAttrs_t qualified template;
   name        like(ifsItem_t);
   type        char(1);
+  sizeInBytes int(20);
   lastChanged timestamp;
   checkSum    int(20);
 end-ds;
