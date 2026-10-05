@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableItem;
 
+import biz.isphere.base.internal.IntHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ifssynchronization.CompareOptions;
 import biz.isphere.core.ifssynchronization.StreamFileDescription;
@@ -31,10 +32,12 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
 
     protected static final int COLUMN_DUMMY = 0;
     protected static final int COLUMN_LEFT_FILE = 1;
-    protected static final int COLUMN_LEFT_LAST_CHANGES = 2;
-    protected static final int COLUMN_COMPARE_RESULT = 3;
-    protected static final int COLUMN_RIGHT_FILE = 4;
-    protected static final int COLUMN_RIGHT_LAST_CHANGES = 5;
+    protected static final int COLUMN_LEFT_SIZE_IN_BYTES = 2;
+    protected static final int COLUMN_LEFT_LAST_CHANGES = 3;
+    protected static final int COLUMN_COMPARE_RESULT = 4;
+    protected static final int COLUMN_RIGHT_FILE = 5;
+    protected static final int COLUMN_RIGHT_SIZE_IN_BYTES = 6;
+    protected static final int COLUMN_RIGHT_LAST_CHANGES = 7;
 
     protected Image copyToLeft;
     protected Image copyToRight;
@@ -170,9 +173,16 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
                 return ""; //$NON-NLS-1$
             }
 
+        case COLUMN_LEFT_SIZE_IN_BYTES:
+            if (compareItem.getLeftIfsFileDescription() != null && !compareItem.isDirectory()) {
+                return getSizeUI(compareItem.getLeftIfsFileDescription());
+            } else {
+                return ""; //$NON-NLS-1$
+            }
+
         case COLUMN_LEFT_LAST_CHANGES:
             if (compareItem.getLeftIfsFileDescription() != null && !compareItem.isDirectory()) {
-                return DateTimeHelper.getTimestampFormatted(compareItem.getLeftIfsFileDescription().getLastChangedDate());
+                return getLastChangedUI(compareItem.getLeftIfsFileDescription());
             } else {
                 return ""; //$NON-NLS-1$
             }
@@ -184,9 +194,16 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
                 return ""; //$NON-NLS-1$
             }
 
+        case COLUMN_RIGHT_SIZE_IN_BYTES:
+            if (compareItem.getRightIfsFileDescription() != null && !compareItem.isDirectory()) {
+                return getSizeUI(compareItem.getRightIfsFileDescription());
+            } else {
+                return ""; //$NON-NLS-1$
+            }
+
         case COLUMN_RIGHT_LAST_CHANGES:
             if (compareItem.getRightIfsFileDescription() != null && !compareItem.isDirectory()) {
-                return DateTimeHelper.getTimestampFormatted(compareItem.getRightIfsFileDescription().getLastChangedDate());
+                return getLastChangedUI(compareItem.getRightIfsFileDescription());
             } else {
                 return ""; //$NON-NLS-1$
             }
@@ -208,6 +225,38 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
         }
 
         return new File(ifsFileDescription.getRelativePath()).getName();
+    }
+
+    /**
+     * Returns the size of a given item, formatted with thousand separators.
+     * <p>
+     * The size is blank, as long as it has not yet been loaded from the host,
+     * because an item that is displayed without its size is preferred over a
+     * table that cannot be painted at all.
+     */
+    protected String getSizeUI(StreamFileDescription ifsFileDescription) {
+
+        if (ifsFileDescription.getSize() == null) {
+            return ""; //$NON-NLS-1$
+        }
+
+        return IntHelper.formatWithThousandSeparators(ifsFileDescription.getSize());
+    }
+
+    /**
+     * Returns the last changed date of a given item, formatted according to the
+     * preferences of the user.
+     * <p>
+     * The date is blank, as long as it has not yet been loaded from the host,
+     * see {@link #getSizeUI(StreamFileDescription)}.
+     */
+    protected String getLastChangedUI(StreamFileDescription ifsFileDescription) {
+
+        if (ifsFileDescription.getLastChangedDate() == null) {
+            return ""; //$NON-NLS-1$
+        }
+
+        return DateTimeHelper.getTimestampFormatted(ifsFileDescription.getLastChangedDate());
     }
 
     /**

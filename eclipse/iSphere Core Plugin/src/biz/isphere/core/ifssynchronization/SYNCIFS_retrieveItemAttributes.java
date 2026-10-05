@@ -53,6 +53,7 @@ public class SYNCIFS_retrieveItemAttributes {
                 ifsFileAttributes = new IfsFileAttributes();
                 ifsFileAttributes.setName(getVaryingLengthValue(pcml, "SYNCIFS_retrieveItemAttributes.itemAttrs.name")); //$NON-NLS-1$
                 ifsFileAttributes.setType(pcml.getStringValue("SYNCIFS_retrieveItemAttributes.itemAttrs.type")); //$NON-NLS-1$
+                ifsFileAttributes.setSize((Long)pcml.getValue("SYNCIFS_retrieveItemAttributes.itemAttrs.sizeInBytes")); //$NON-NLS-1$
                 ifsFileAttributes.setLastChanged((Timestamp)pcml.getValue("SYNCIFS_retrieveItemAttributes.itemAttrs.lastChanged")); //$NON-NLS-1$
                 ifsFileAttributes.setCheckSum((Long)pcml.getValue("SYNCIFS_retrieveItemAttributes.itemAttrs.checkSum")); //$NON-NLS-1$
 
@@ -95,6 +96,7 @@ public class SYNCIFS_retrieveItemAttributes {
 
         private String name;
         private String type;
+        private long sizeInBytes;
         private Timestamp lastChanged;
         private long checkSum;
 
@@ -130,6 +132,14 @@ public class SYNCIFS_retrieveItemAttributes {
 
         public void setLastChanged(Timestamp lastChanged) {
             this.lastChanged = lastChanged;
+        }
+
+        public long getSize() {
+            return sizeInBytes;
+        }
+
+        public void setSize(long sizeInBytes) {
+            this.sizeInBytes = sizeInBytes;
         }
 
         public long getCheckSum() {

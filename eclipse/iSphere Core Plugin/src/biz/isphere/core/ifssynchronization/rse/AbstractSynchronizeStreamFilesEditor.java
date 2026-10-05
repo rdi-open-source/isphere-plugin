@@ -75,6 +75,7 @@ import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IFSFileHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.internal.UIHelper;
+import biz.isphere.base.swt.events.RightAlignColumnPainter;
 import biz.isphere.base.swt.events.TableAutoSizeControlListener;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -586,6 +587,8 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
         table.setLinesVisible(true);
         table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
+        RightAlignColumnPainter rightAlignColumnPainter = new RightAlignColumnPainter(table);
+
         /* First column is always RIGHT aligned, see bug 151342 */
         TableColumn tblClmnDummy = new TableColumn(tableViewer.getTable(), SWT.NONE);
         tblClmnDummy.setResizable(true);
@@ -595,6 +598,12 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
         tblClmnLeftFile.setText(Messages.File);
         tblClmnLeftFile.setResizable(true);
         tblClmnLeftFile.setWidth(Size.getSize(80));
+
+        final TableColumn tblClmnLeftSizeInBytes = new TableColumn(tableViewer.getTable(), SWT.LEFT);
+        tblClmnLeftSizeInBytes.setText(Messages.Size);
+        tblClmnLeftSizeInBytes.setResizable(true);
+        tblClmnLeftSizeInBytes.setWidth(Size.getSize(65));
+        rightAlignColumnPainter.addRightAlignedColumn(tblClmnLeftSizeInBytes);
 
         final TableColumn tblClmnLeftLastChanges = new TableColumn(tableViewer.getTable(), SWT.LEFT);
         tblClmnLeftLastChanges.setText(Messages.Last_changed);
@@ -609,6 +618,12 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
         tblClmnRightFile.setText(Messages.File);
         tblClmnRightFile.setResizable(tblClmnLeftFile.getResizable());
         tblClmnRightFile.setWidth(tblClmnLeftFile.getWidth());
+
+        final TableColumn tblClmnRightSizeInBytes = new TableColumn(tableViewer.getTable(), SWT.LEFT);
+        tblClmnRightSizeInBytes.setText(Messages.Size);
+        tblClmnRightSizeInBytes.setResizable(tblClmnLeftSizeInBytes.getResizable());
+        tblClmnRightSizeInBytes.setWidth(tblClmnLeftSizeInBytes.getWidth());
+        rightAlignColumnPainter.addRightAlignedColumn(tblClmnRightSizeInBytes);
 
         final TableColumn tblClmnRightLastChanges = new TableColumn(tableViewer.getTable(), SWT.LEFT);
         tblClmnRightLastChanges.setText(Messages.Last_changed);
@@ -1993,6 +2008,7 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
         toIfsFileDescription.setRootDirectory(toObject.getName());
         toIfsFileDescription.setRelativePath(compareItem.getIfsFileName());
         toIfsFileDescription.setLastChangedDate(fromIfsFileDescription.getLastChangedDate());
+        toIfsFileDescription.setSize(fromIfsFileDescription.getSize());
         toIfsFileDescription.setChecksum(fromIfsFileDescription.getChecksum());
 
         return toIfsFileDescription;
@@ -2226,6 +2242,7 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
                             String file = ifsFileDescription.getAbsolutePath();
                             IfsFileAttributes ifsFileAttributes = new SYNCIFS_retrieveItemAttributes().run(system, file);
                             if (ifsFileAttributes != null) {
+                                ifsFileDescription.setSize(ifsFileAttributes.getSize());
                                 ifsFileDescription.setLastChangedDate(ifsFileAttributes.getLastChanged());
                                 ifsFileDescription.setChecksum(ifsFileAttributes.getCheckSum());
                                 parent.clearCompareStatus();
