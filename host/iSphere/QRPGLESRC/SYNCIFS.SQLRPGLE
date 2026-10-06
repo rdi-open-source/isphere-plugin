@@ -893,7 +893,7 @@ dcl-proc calculateChecksum;
   dcl-s errNbr int(10);
   dcl-s errText varchar(128);
 
-  dcl-c BUFFER_SIZE 16384;
+  dcl-c BUFFER_SIZE 1048576;
 
   // ----------------------------------------------------------------------------------------
 
