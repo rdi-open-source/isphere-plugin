@@ -8,6 +8,8 @@ Changelog: iSphere 6.1.4.r
  • Fix problem that members where not selected in the iSphere
    Synchronize Members editor, if the mask filter is a 1-filter
    negated-mask.
+ • Fixed 'NumberFormatException' when exporting journal entries
+   with incomplete entry specific data to Excel.
 
 Changelog: iSphere 6.1.3.r
 --------------------------
