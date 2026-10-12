@@ -1,4 +1,9 @@
 
+Changelog: iSphere 6.2.0.r
+--------------------------
+ • Added option 'iSphere Synchronize Stream Files' editor.
+ • Change FTP to use passive mode for fixing firewall problems.
+
 Changelog: iSphere 6.1.4.r
 --------------------------
  • Fixed 'IllegalArgumentException' on disposed images in 'iSphere
@@ -8,7 +13,8 @@ Changelog: iSphere 6.1.4.r
  • Fix problem that members where not selected in the iSphere
    Synchronize Members editor, if the mask filter is a 1-filter
    negated-mask.
- • Change FTP to use passive mode for fixing firewall problems.
+ • Fixed 'NumberFormatException' when exporting journal entries
+   with incomplete entry specific data to Excel.
 
 Changelog: iSphere 6.1.3.r
 --------------------------

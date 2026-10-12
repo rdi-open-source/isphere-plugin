@@ -21,18 +21,16 @@ import biz.isphere.base.internal.FileHelper;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 import biz.isphere.journalexplorer.core.Messages;
-import biz.isphere.journalexplorer.core.internals.JoesdParser;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
+import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
-
-import com.ibm.as400.access.Record;
 
 public class ExcelExporter {
 
@@ -99,7 +97,6 @@ public class ExcelExporter {
         for (JournalEntry journalEntry : journalEntries) {
 
             MetaTable metatable = MetaDataCache.getInstance().retrieveMetaData(journalEntry);
-            Record parsedJOESD = new JoesdParser(metatable).execute(journalEntry);
 
             col = 0;
             for (JournalEntryColumn column : columns) {
@@ -114,16 +111,20 @@ public class ExcelExporter {
                 }
             }
 
-            for (MetaColumn column : metatable.getColumns()) {
-                JOESDProperty property = new JOESDProperty(JournalEntryColumnUI.JOESD, journalEntry);
-                property.executeParsing();
-                if (journalEntry.isRecordEntryType()) {
-                    sheet.addCell(new jxl.write.Label(col, line, parsedJOESD.getField(column.getName()).toString()));
-                } else {
+            if (metatable != null && metatable.hasColumns()) {
+                if (!journalEntry.isRecordEntryType()) {
                     sheet.addCell(new jxl.write.Label(col, line, Messages.Error_No_record_level_operation));
-                    break;
+                } else {
+                    JOESDProperty property = new JOESDProperty(JournalEntryColumnUI.JOESD, journalEntry);
+                    if (property.isErrorParsing()) {
+                        sheet.addCell(new jxl.write.Label(col, line, String.valueOf(property.value)));
+                    } else {
+                        for (JournalProperty field : property.toPropertyArray()) {
+                            sheet.addCell(new jxl.write.Label(col, line, String.valueOf(field.value)));
+                            col++;
+                        }
+                    }
                 }
-                col++;
             }
 
             line++;
