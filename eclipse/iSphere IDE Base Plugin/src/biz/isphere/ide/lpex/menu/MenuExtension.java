@@ -36,6 +36,8 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
     private static final String PROPERTY_LPEX_USER_KEY_ACTIONS = "default.updateProfile.userKeyActions"; //$NON-NLS-1$
     private static final String MENU_NAME = LpexPlugin.getResourceLpexString(LpexMenu.SOURCE);
     private static final String MARK_ID = "biz.iSphere.Core"; //$NON-NLS-1$
+    private static final String OWNED_CLASS_PREFIX = "biz.isphere.ide.lpex.actions."; //$NON-NLS-1$
+    private static final String OWNED_ACTION_ID_PREFIX = "iSphere.Core."; //$NON-NLS-1$
 
     public MenuExtension() {
         super(BOTTOM);
@@ -46,7 +48,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
         super.initializeLpexEditor(plugin);
     }
 
-    protected UserAction[] getUserActionsInternal(boolean allActions) {
+    protected UserAction[] getUserActionsInternal(boolean enabled) {
 
         List<UserAction> actions = new LinkedList<UserAction>();
         actions.add(new UserAction(CompareEditorLpexAction.ID, CompareEditorLpexAction.class.getName()));
@@ -69,6 +71,16 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
     protected String getMarkId() {
         return MARK_ID;
+    }
+
+    @Override
+    protected String[] getOwnedClassPrefixes() {
+        return new String[] { OWNED_CLASS_PREFIX };
+    }
+
+    @Override
+    protected String[] getOwnedActionIdPrefixes() {
+        return new String[] { OWNED_ACTION_ID_PREFIX };
     }
 
     protected UserKeyAction[] getUserKeyActions() {

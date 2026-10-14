@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2012-2026 iSphere Project Owners
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
@@ -13,19 +13,25 @@ import org.eclipse.swt.widgets.Shell;
 import com.ibm.lpex.core.LpexView;
 import com.ibm.lpex.core.LpexWindow;
 
+import biz.isphere.ide.lpex.menu.logic.ILpexProfile;
+import biz.isphere.ide.lpex.menu.logic.LpexParameter;
+import biz.isphere.ide.lpex.menu.platform.LpexProfile;
+
 public final class LpexHelper {
+
+    private static final ILpexProfile PROFILE = new LpexProfile();
 
     private LpexHelper() {
     }
 
     /**
      * Returns the current Lpex user actions.
-     * 
+     *
      * @return Current Lpex user actions.
      */
     public static String getUserActions() {
 
-        String lpexUserActions = LpexView.globalQuery("current.updateProfile.userActions");
+        String lpexUserActions = PROFILE.getCurrent(LpexParameter.USER_ACTIONS);
         if (lpexUserActions == null) {
             lpexUserActions = "";
         }
@@ -35,12 +41,12 @@ public final class LpexHelper {
 
     /**
      * Returns the current popup menu of the Lpex view.
-     * 
+     *
      * @return Current Lpex popup menu.
      */
     public static String getPopMenu() {
 
-        String lpexPopupMenu = LpexView.globalQuery("current.popup");
+        String lpexPopupMenu = PROFILE.getCurrent(LpexParameter.POPUP);
         if (lpexPopupMenu == null) {
             lpexPopupMenu = "";
         }
@@ -50,16 +56,16 @@ public final class LpexHelper {
 
     /**
      * Sets the Lpex user actions.
-     * 
+     *
      * @param userActions - String defining the Lpex user actions.
      */
     public static void setUserActions(String userActions) {
-        LpexView.doGlobalCommand("set default.updateProfile.userActions " + userActions);
+        PROFILE.setDefault(LpexParameter.USER_ACTIONS, userActions);
     }
 
     /**
      * Returns the file name that is loaded into the view.
-     * 
+     *
      * @param aLpexView - LpexView that contains the source code.
      * @return Name of the file loaded into the view.
      */
@@ -72,7 +78,7 @@ public final class LpexHelper {
 
     /**
      * Returns the current mode of the view.
-     * 
+     *
      * @param aLpexView - LpexView that contains the source code.
      * @return <code>true</code> if the view is in read-only mode, otherwise
      *         <code>false</code>.
@@ -97,7 +103,7 @@ public final class LpexHelper {
      * status line is empty. The procedure name is displayed on the first
      * left-click in the editor.
      * <p>
-     * 
+     *
      * @param aLpexView - LpexView that contains the source code.
      * @param message - Message that is displayed.
      */
@@ -107,7 +113,7 @@ public final class LpexHelper {
 
     /**
      * Returns the current cursor position within the source line.
-     * 
+     *
      * @param aLpexView - LpexView that contains the source code.
      * @return Cursor column.
      */
@@ -120,7 +126,7 @@ public final class LpexHelper {
 
     /**
      * Returns the line number the current cursor position.
-     * 
+     *
      * @param aLpexView - LpexView that contains the source code.
      * @return Cursor row.
      */
@@ -133,7 +139,7 @@ public final class LpexHelper {
 
     /**
      * Returns the total number of source lines.
-     * 
+     *
      * @param aLpexView - LpexView that contains the source code.
      * @return total number of source lines.
      */
@@ -146,7 +152,7 @@ public final class LpexHelper {
 
     /**
      * Positions the cursor on a given source line and position.
-     * 
+     *
      * @param aLpexView - LpexView that contains the source code.
      * @param lineIndex - Number of the source line the cursor is positioned to.
      * @param linePosition - Position within the source line the cursor is
@@ -159,7 +165,7 @@ public final class LpexHelper {
     /**
      * Returns the source line text of the source line identified by the
      * specified line number.
-     * 
+     *
      * @param aLpexView - LpexView that contains the source code.
      * @param aLineNumber - Number of the source line whose text is returned..
      * @return Source line text.
@@ -174,7 +180,7 @@ public final class LpexHelper {
     /**
      * Sets the source line text of the source line identified by the specified
      * line number.
-     * 
+     *
      * @param aLpexView - LpexView that contains the source code.
      * @param aLineNumber - Number of the source line that is changed.
      * @param aText - Source line text.
@@ -187,7 +193,7 @@ public final class LpexHelper {
     /**
      * Returns <code>true</code> if the source line identified by the specified
      * line number is a source line and not a compiler message.
-     * 
+     *
      * @param aLpexView - LpexView that contains the source code.
      * @param aLineNumber - Number of the source line that is checked.
      * @return <code>true</code> for a source line, otherwise
@@ -202,7 +208,7 @@ public final class LpexHelper {
 
     /**
      * Returns the shell of a given Lpex view.
-     * 
+     *
      * @param aLpexView - View whose shell is returned.
      * @return Shell of the view.
      */
@@ -219,57 +225,57 @@ public final class LpexHelper {
 
     /**
      * Returns the user actions of the LPEX editor.
-     * 
+     *
      * @return LPEX editor uUser actions.
      */
     public static String getLpexUserActions() {
-        return LpexView.globalQuery("current.updateProfile.userActions");
+        return PROFILE.getCurrent(LpexParameter.USER_ACTIONS);
     }
 
     /**
      * Sets the user actions of the LPEX editor.
-     * 
+     *
      * @param userActions - String value defining the user actions of the LPEX
      *        editor.
      */
     public static void setLpexViewUserActions(String userActions) {
-        LpexView.doGlobalCommand("set default.updateProfile.userActions " + userActions);
+        PROFILE.setDefault(LpexParameter.USER_ACTIONS, userActions);
     }
 
     /**
      * Returns the user key actions (shortcuts) of the LPEX editor.
-     * 
+     *
      * @return LPEX editor user key actions (shortcuts).
      */
     public static String getLpexUserKeyActions() {
-        return LpexView.globalQuery("current.updateProfile.userKeyActions");
+        return PROFILE.getCurrent(LpexParameter.USER_KEY_ACTIONS);
     }
 
     /**
      * Sets the user key actions (shortcuts) of the LPEX editor.
-     * 
+     *
      * @param userKeyActions - String value defining the user key actions
      *        (shortcuts) of the LPEX editor.
      */
     public static void setLpexViewUserKeyActions(String userKeyActions) {
-        LpexView.doGlobalCommand("set default.updateProfile.userKeyActions " + userKeyActions); //$NON-NLS-1$
+        PROFILE.setDefault(LpexParameter.USER_KEY_ACTIONS, userKeyActions);
     }
 
     /**
      * Returns the popup menu of the LPEX editor.
-     * 
+     *
      * @return LPEX editor popup menu.
      */
     public static String getLpexPopupMenu() {
-        return LpexView.globalQuery("current.popup"); //$NON-NLS-1$
+        return PROFILE.getCurrent(LpexParameter.POPUP);
     }
 
     /**
      * Sets the popup menu of the Lpex view.
-     * 
+     *
      * @param popupMenu - String defining the popup menu of the Lpex view.
      */
     public static void setLpexViewPopup(String popupMenu) {
-        LpexView.doGlobalCommand("set default.popup " + popupMenu); //$NON-NLS-1$
+        PROFILE.setDefault(LpexParameter.POPUP, popupMenu);
     }
 }
