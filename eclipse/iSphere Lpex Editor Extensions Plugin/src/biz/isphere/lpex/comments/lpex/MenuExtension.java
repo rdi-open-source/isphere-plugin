@@ -19,9 +19,9 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 import com.ibm.lpex.alef.LpexPlugin;
 
-import biz.isphere.ide.lpex.helper.LpexHelper;
 import biz.isphere.ide.lpex.menu.AbstractLpexMenuExtension;
 import biz.isphere.ide.lpex.menu.LpexMenuExtensionPlugin;
+import biz.isphere.ide.lpex.menu.model.MenuMarkers;
 import biz.isphere.ide.lpex.menu.model.UserAction;
 import biz.isphere.ide.lpex.menu.model.UserKeyAction;
 import biz.isphere.lpex.comments.lpex.action.AbstractLpexAction;
@@ -46,6 +46,8 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
     private static final String PROPERTY_LPEX_USER_KEY_ACTIONS = "default.updateProfile.userKeyActions"; //$NON-NLS-1$
     private static final String MENU_NAME = LpexPlugin.getResourceLpexString(LpexMenu.SOURCE);
     private static final String MARK_ID = "biz.iSphere.LPEX"; //$NON-NLS-1$
+    private static final String OWNED_CLASS_PREFIX = "biz.isphere.lpex.comments."; //$NON-NLS-1$
+    private static final String OWNED_ACTION_ID_PREFIX = "iSphere.Lpex."; //$NON-NLS-1$
 
     public MenuExtension() {
         super(BOTTOM);
@@ -53,23 +55,27 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
     @Override
     public void initializeLpexEditor(LpexMenuExtensionPlugin plugin) {
-
-        removeOldPopupMenu();
         super.initializeLpexEditor(plugin);
     }
 
+    /**
+     * Returns the user actions.
+     *
+     * @param enabled - <code>true</code> to return only the actions of enabled
+     *        functions, <code>false</code> to return all actions
+     */
     @Override
-    protected UserAction[] getUserActionsInternal(boolean allActions) {
+    protected UserAction[] getUserActionsInternal(boolean enabled) {
 
         List<UserAction> actions = new LinkedList<UserAction>();
 
-        if (allActions || isCommentsEnabled()) {
+        if (!enabled || isCommentsEnabled()) {
             checkAndAddUserAction(actions, CommentAction.ID, CommentAction.class.getName());
             checkAndAddUserAction(actions, UnCommentAction.ID, UnCommentAction.class.getName());
             checkAndAddUserAction(actions, ToggleCommentAction.ID, ToggleCommentAction.class.getName());
         }
 
-        if (allActions || isIndentingEnabled()) {
+        if (!enabled || isIndentingEnabled()) {
             checkAndAddUserAction(actions, IndentAction.ID, IndentAction.class.getName());
             checkAndAddUserAction(actions, UnIndentAction.ID, UnIndentAction.class.getName());
         }
@@ -87,6 +93,26 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
     @Override
     protected String getMarkId() {
         return MARK_ID;
+    }
+
+    @Override
+    protected String[] getOwnedClassPrefixes() {
+        return new String[] { OWNED_CLASS_PREFIX };
+    }
+
+    @Override
+    protected String[] getOwnedActionIdPrefixes() {
+        return new String[] { OWNED_ACTION_ID_PREFIX };
+    }
+
+    /**
+     * Returns the markers of the menu blocks that versions before 2019 stored
+     * in the LPEX popup menu.
+     */
+    @Override
+    protected MenuMarkers[] getLegacyMarkers() {
+        return new MenuMarkers[] { new MenuMarkers("MARK-Source.Start", "MARK-Source.End"), //$NON-NLS-1$ //$NON-NLS-2$
+            new MenuMarkers("MARK-Quelle.Start", "MARK-Quelle.End") }; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override
@@ -220,36 +246,5 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
         }
 
         Preferences.getInstance().setUserKeyActions(buffer.toString());
-    }
-
-    /*
-     * TODO: remove start of start of 2019
-     */
-    private void removeOldPopupMenu() {
-
-        String popupMenu = LpexHelper.getLpexPopupMenu();
-
-        // MARK-Source.Start / MARK-Source.End
-        popupMenu = removeMenuItems(popupMenu, "MARK-Source.Start", "MARK-Source.End"); //$NON-NLS-1$ //$NON-NLS-2$
-
-        // MARK-Quelle.Start / MARK-Quelle.End
-        popupMenu = removeMenuItems(popupMenu, "MARK-Quelle.Start", "MARK-Quelle.End"); //$NON-NLS-1$ //$NON-NLS-2$
-
-        LpexHelper.setLpexViewPopup(popupMenu);
-    }
-
-    @Override
-    protected void removeUserActions() {
-        super.removeUserActions();
-    }
-
-    @Override
-    protected void removeUserKeyActions() {
-        super.removeUserKeyActions();
-    }
-
-    @Override
-    protected void removePopupMenu() {
-        super.removePopupMenu();
     }
 }

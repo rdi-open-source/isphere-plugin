@@ -42,6 +42,8 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
     private static final String PROPERTY_LPEX_USER_KEY_ACTIONS = "default.updateProfile.userKeyActions"; //$NON-NLS-1$
     private static final String MENU_NAME = "STRPREPRC"; //$NON-NLS-1$
     private static final String MARK_ID = "biz.iSphere.STRPREPRC"; //$NON-NLS-1$
+    private static final String OWNED_CLASS_PREFIX = "biz.isphere.strpreprc."; //$NON-NLS-1$
+    private static final String OWNED_ACTION_ID_PREFIX = "SprPrePrc."; //$NON-NLS-1$
 
     public MenuExtension() {
         super(TOP);
@@ -54,7 +56,7 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
         super.initializeLpexEditor(plugin);
     }
 
-    protected UserAction[] getUserActionsInternal(boolean allActions) {
+    protected UserAction[] getUserActionsInternal(boolean enabled) {
 
         List<UserAction> actions = new LinkedList<UserAction>();
         actions.add(new UserAction(EditHeaderAction.ID, EditHeaderAction.class.getName()));
@@ -73,6 +75,16 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
 
     protected String getMarkId() {
         return MARK_ID;
+    }
+
+    @Override
+    protected String[] getOwnedClassPrefixes() {
+        return new String[] { OWNED_CLASS_PREFIX };
+    }
+
+    @Override
+    protected String[] getOwnedActionIdPrefixes() {
+        return new String[] { OWNED_ACTION_ID_PREFIX };
     }
 
     protected UserKeyAction[] getUserKeyActions() {
@@ -156,6 +168,9 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
         final String subMenu = "STRPREPRC"; //$NON-NLS-1$
 
         String popupMenu = LpexHelper.getLpexPopupMenu();
+        if (popupMenu == null) {
+            return;
+        }
 
         // beginSubmenu "STRPREPRC"
         String startMenu = BEGIN_SUB_MENU + SPACE + DOUBLE_QUOTES + subMenu + DOUBLE_QUOTES;
@@ -163,8 +178,12 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
         // endSubmenu separator
         String endMenu = END_SUB_MENU + SPACE + SEPARATOR + SPACE;
 
-        popupMenu = removeMenuItems(popupMenu, startMenu, endMenu);
+        String newPopupMenu = removeMenuItems(popupMenu, startMenu, endMenu);
 
-        LpexHelper.setLpexViewPopup(popupMenu);
+        // Write only if something was removed. Otherwise the popup menu would be
+        // stored explicitly and frozen.
+        if (!newPopupMenu.equals(popupMenu)) {
+            LpexHelper.setLpexViewPopup(newPopupMenu);
+        }
     }
 }
