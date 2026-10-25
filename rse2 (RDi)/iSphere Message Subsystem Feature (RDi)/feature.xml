@@ -6,12 +6,12 @@
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
-   <description url="https://github.com/rdi-open-source/isphere/">
+   <description url="https://rdi-open-source.github.io/isphere/">
       iSphere Message Subsystem for RDi 9.6.0.13+
 The &quot;iSphere Message Subsystem for RDi 9.6.0.13+&quot; features adds a message subsystem to the RSE tree.
    </description>
 
-   <copyright url="https://github.com/rdi-open-source/isphere/">
+   <copyright url="https://rdi-open-source.github.io/isphere/">
       Copyright (c) 2012-2023 iSphere Project Team. All rights reserved.
    </copyright>
 

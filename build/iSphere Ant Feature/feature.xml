@@ -5,11 +5,11 @@
       version="1.0.0.b019"
       provider-name="iSphere Project Team">
 
-   <description url="https://sourceforge.net/projects/isphere/">
+   <description url="https://rdi-open-source.github.io/isphere/">
       iSphere Ant contributions that are required to build the iSphere project.
    </description>
 
-   <copyright url="https://sourceforge.net/projects/isphere/">
+   <copyright url="https://rdi-open-source.github.io/isphere/">
       Copyright (c) 2012-2016 iSphere Project Team. All rights reserved.
    </copyright>
 
