@@ -7,18 +7,14 @@
       plugin="biz.isphere.core">
 
    <description url="https://rdi-open-source.github.io/isphere/">
-      iSphere Journal Explorer for RDi 9.6.0.13+
+      iSphere Job Trace Explorer for RDi 9.6.0.13+
 The &quot;iSphere Job Trace Explorer Feature (RDi)&quot; provides a set
-of views for exploring job traces recored with the STRTRC command.
+of views for exploring job traces recorded with the STRTRC command.
 It can be started from menu &apos;Window -&gt; Show View&apos;.
    </description>
 
    <copyright url="https://rdi-open-source.github.io/isphere/">
-      iSphere Journal Explorer for RDi 8.0+
-The &quot;iSphere Journal Explorer Feature (RDi)&quot; provides a set of
-view
-for exploring journals. It can be started from menu
-&apos;Window -&gt; Show View&apos;.
+      Copyright (c) 2012-2023 iSphere Project Team. All rights reserved.
    </copyright>
 
    <license url="http://www.eclipse.org/legal/cpl-v10.html">
