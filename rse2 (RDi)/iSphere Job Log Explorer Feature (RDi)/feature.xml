@@ -24,6 +24,10 @@ under the terms of the Common Public License v1.0 which accompanies
 this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html.
    </license>
 
+   <url>
+      <update label="iSphere - Remote Update Site" url="https://rdi-open-source.github.io/isphere/update-site/eclipse/rdi8.0/"/>
+   </url>
+
    <requires>
       <import feature="biz.isphere.core" version="6.2.0.b002" match="perfect"/>
       <import feature="biz.isphere.rse" version="6.2.0.b002" match="perfect"/>
