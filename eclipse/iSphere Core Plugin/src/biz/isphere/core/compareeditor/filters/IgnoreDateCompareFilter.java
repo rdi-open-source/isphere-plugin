@@ -16,6 +16,7 @@ import org.eclipse.jface.text.IRegion;
 
 import biz.isphere.base.internal.BooleanHelper;
 import biz.isphere.base.internal.FileHelper;
+import biz.isphere.core.compareeditor.CompareNode;
 import biz.isphere.core.preferences.Preferences;
 
 public class IgnoreDateCompareFilter implements ICompareFilter {
@@ -52,18 +53,32 @@ public class IgnoreDateCompareFilter implements ICompareFilter {
 
     public void setInput(Object input, Object ancestor, Object left, Object right) {
 
-        String ancestorExt = getFileExtension(ancestor);
-        String leftExt = getFileExtension(left);
-        String rightExt = getFileExtension(right);
-
-        if ((ancestorExt == null || isSupportedFileExtension(ancestorExt)) && isSupportedFileExtension(leftExt)
-            && isSupportedFileExtension(rightExt)) {
+        if ((ancestor == null || isSourceMemberWithDate(ancestor)) && isSourceMemberWithDate(left) && isSourceMemberWithDate(right)) {
             isEnabled = true;
         } else {
             isEnabled = false;
         }
 
         return;
+    }
+
+    /**
+     * The filter is registered for all text files. But only the source members
+     * of the iSphere compare editor start with the date column. Other compare
+     * editors, e.g. the compare editor of the Git Staging view, show stream
+     * files, where the first 6 characters are part of the source code.
+     */
+    private boolean isSourceMemberWithDate(Object node) {
+
+        if (!(node instanceof CompareNode)) {
+            return false;
+        }
+
+        if (!((CompareNode)node).hasDate()) {
+            return false;
+        }
+
+        return isSupportedFileExtension(getFileExtension(node));
     }
 
     private boolean isSupportedFileExtension(String fileExtension) {

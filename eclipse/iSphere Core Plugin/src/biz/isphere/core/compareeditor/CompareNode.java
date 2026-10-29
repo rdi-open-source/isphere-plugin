@@ -88,6 +88,16 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
         return CompareUI.getImage(fResource);
     }
 
+    /**
+     * Returns true if the lines start with the date column of the source
+     * member.
+     *
+     * @return true if the lines start with the date column, else false
+     */
+    public boolean hasDate() {
+        return hasDate;
+    }
+
     public boolean isEditable() {
         return true;
     }
