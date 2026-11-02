@@ -14,7 +14,6 @@
     <setAttribute key="deselected_workspace_bundles">
         <setEntry value="biz.isphere.comparefilters"/>
         <setEntry value="biz.isphere.development"/>
-        <setEntry value="de.tools400.lpex.irpgformatter.core"/>
     </setAttribute>
     <booleanAttribute key="includeOptional" value="true"/>
     <stringAttribute key="location" value="${workspace_loc}/../runtime-isphere-de"/>
@@ -53,7 +52,6 @@
         <setEntry value="com.ibm.cic.licensing.lum.nl1@default:false"/>
         <setEntry value="com.ibm.cic.licensing.lum.win32@default:false"/>
         <setEntry value="com.ibm.cic.licensing.lum@default:default"/>
-        <setEntry value="com.ibm.commoncomponents.branding@default:default"/>
         <setEntry value="com.ibm.commoncomponents.ccaas.core@default:default"/>
         <setEntry value="com.ibm.commoncomponents.codecoverage.core.exporters@default:default"/>
         <setEntry value="com.ibm.debug.daemon.core@default:default"/>
@@ -838,6 +836,8 @@
         <setEntry value="org.w3c.dom.svg@default:default"/>
     </setAttribute>
     <setAttribute key="selected_workspace_bundles">
+        <setEntry value="OpenClosedProjects@default:default"/>
+        <setEntry value="OpenClosedProjectsExtension@default:default"/>
         <setEntry value="biz.isphere.adapter@default:default"/>
         <setEntry value="biz.isphere.antcontrib@default:default"/>
         <setEntry value="biz.isphere.base.help@default:default"/>
@@ -879,6 +879,11 @@
         <setEntry value="com.jcrcmds.base.rse@default:default"/>
         <setEntry value="com.jcrcmds.base@default:default"/>
         <setEntry value="com.jcrcmds.core@default:default"/>
+        <setEntry value="de.tools400.ifsprojects.core.plugin@default:default"/>
+        <setEntry value="de.tools400.ifsprojects.junit@default:false"/>
+        <setEntry value="de.tools400.java.scoped.variables.core@default:default"/>
+        <setEntry value="de.tools400.lpex.irpgformatter.core.plugin@default:default"/>
+        <setEntry value="de.tools400.lpex.menuextension.plugin@default:default"/>
         <setEntry value="de.tools400.rpgunit.cmone@default:default"/>
         <setEntry value="de.tools400.rpgunit.core.help@default:default"/>
         <setEntry value="de.tools400.rpgunit.core@default:default"/>
