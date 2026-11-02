@@ -19,9 +19,13 @@ iSphere Development Workspace
 
    File - Import - General - Existing Projects into Workspace
 
+   Of the projects "iSphere Launches (RDi 9.6)", "iSphere Launches (RDi 9.8)" and
+   "iSphere Launches (RDi 9.9)" import only the one of your RDi version. They contain
+   the launch configurations, which depend on the RDi version.
+
 4) Open perspective "Plug-in Development".
 
-   You should find 61 items. Some of them will have errors.
+   You should find 62 items. Some of them will have errors.
    Optionally delete the "iSphere JUnit (RDi)" project.
 
 5) Select "Window - Preferences - Java - Installed JREs".
