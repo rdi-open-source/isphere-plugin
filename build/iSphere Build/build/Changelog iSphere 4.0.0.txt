@@ -1,4 +1,9 @@
 
+Changelog: iSphere 6.2.0.r
+--------------------------
+ • Ant build: Change FTP to use passive mode for fixing firewall
+   problems.
+
 Changelog: iSphere 6.1.4.r
 --------------------------
  • Fixed 'IllegalArgumentException' on disposed images in 'iSphere
