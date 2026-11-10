@@ -1,5 +1,5 @@
      /* **************************************************************************** */
-     /* *** Program name:?CVTSPLFC                             Date:?2005-08-09  *** */
+     /* *** Program name: CVTSPLFC                             Date: 2005-08-09  *** */
      /* **************************************************************************** */
      /* ***  Copyright - Free RPG/i5 Tools                                       *** */
      /* ***     E-Mail - Utilities@FreeRPGTools.com                              *** */
@@ -8,35 +8,35 @@
      /* ***    Maintenance History: (Most recent is listed first)                *** */
      /* ***                                                                      *** */
      /* ***    Project  Date of      Pgmr                                        *** */
-     /* ***     Id.   Last Change Initials Description of Changes            *** */
-     /* ***   xxxxxxx  2007-05-29   FRT       Solve problem with submitting     *** */
-     /* ***                                   to batch.  MarkKey & MarkPos      *** */
-     /* ***                                   are not being submitted. Still    *** */
-     /* ***                                   needs to be addressed.            *** */
-     /* ***   xxxxxxx  2006-12-05   FRT       Initial Creation                  *** */
-     /* ***                                                                     *** */
+     /* ***      Id.    Last Change  Initials  Description of Changes            *** */
+     /* ***    xxxxxxx  2007-05-29   FRT       Solve problem with submitting     *** */
+     /* ***                                    to batch.  MarkKey & MarkPos      *** */
+     /* ***                                    are not being submitted. Still    *** */
+     /* ***                                    needs to be addressed.            *** */
+     /* ***    xxxxxxx  2006-12-05   FRT       Initial Creation                  *** */
+     /* ***                                                                      *** */
      /* **************************************************************************** */
-     /* ***?                         Indicator Usage                             *** */
-     /* *** XX    Description                                                 *** */
-     /* ***                                                                     *** */
+     /* ***                          Indicator Usage                             *** */
+     /* ***  XX      Description                                                 *** */
+     /* ***                                                                      *** */
      /* **************************************************************************** */
-     /* ***?                          Creation Keywords                          *** */
-     /* *** Keyword      Keyword Data                                          *** */
-     /* *** *NONE         No Keywords used for this program                     *** */
-     /* ***                                                                     *** */
+     /* ***                           Creation Keywords                          *** */
+     /* ***  Keyword       Keyword Data                                          *** */
+     /* ***  *NONE         No Keywords used for this program                     *** */
+     /* ***                                                                      *** */
      /* **************************************************************************** */
-     /* ***?                     Required Programs/Commands                      *** */
-     /* *** Program Name Description                                           *** */
-     /* *** *NONE         No Commands/Programs are required for this Program    *** */
-     /* ***                                                                     *** */
+     /* ***                      Required Programs/Commands                      *** */
+     /* ***  Program Name  Description                                           *** */
+     /* ***  *NONE         No Commands/Programs are required for this Program    *** */
+     /* ***                                                                      *** */
      /* **************************************************************************** */
-     /* ***?                               Overrides                             *** */
-     /* *** DB-File      Override                                              *** */
-     /* *** *NONE         No Commands/Programs are required for this Program    *** */
-     /* ***                                                                     *** */
+     /* ***                                Overrides                             *** */
+     /* ***  DB-File       Override                                              *** */
+     /* ***  *NONE         No Commands/Programs are required for this Program    *** */
+     /* ***                                                                      *** */
      /* **************************************************************************** */
-     /* ***?                           Parameters                                *** */
-     /* *** Field     Length Usage Description                              *** */
+     /* ***                            Parameters                                *** */
+     /* ***  Field       Length  Usage  Description                              *** */
      /* ***                                                                      *** */
      /* **************************************************************************** */
      /* *** STRPREPRC Compile Options:                                           *** */
@@ -59,7 +59,7 @@
              COPYRIGHT  TEXT('Copyright (c) Free RPG/i5 Tools - http:\\www.FreeRPGTools.com')
 
 /* ********************************************************************************* */
-/* ***Custom Program Variables                                                  *** */
+/* *** Custom Program Variables                                                  *** */
 /* ********************************************************************************* */
              DCL        VAR(&FromFile  ) TYPE(*CHAR) LEN( 10   )
              DCL        VAR(&ToFile    ) TYPE(*CHAR) LEN(  10  )
@@ -71,8 +71,8 @@
              DCL        VAR(&Job       ) TYPE(*CHAR) LEN(  10  )
              DCL        VAR(&User      ) TYPE(*CHAR) LEN(  10  )
              DCL        VAR(&JobNbr    ) TYPE(*CHAR) LEN(   6  )
-             DCL        VAR(&SplID     ) TYPE(*DEC ) LEN(   4 0)
-             DCL        VAR(&HexSplID  ) TYPE(*CHAR) LEN(   4  )
+             DCL        VAR(&SplID     ) TYPE(*INT ) LEN(   4  )
+             DCL        VAR(&ApiSplID  ) TYPE(*INT ) LEN(   4  )
              DCL        VAR(&ToFmt     ) TYPE(*CHAR) LEN(   5  )
              DCL        VAR(&StmfOpt   ) TYPE(*CHAR) LEN(   8  )
              DCL        VAR(&StmfCodPag) TYPE(*DEC ) LEN(   5 0)
@@ -83,7 +83,7 @@
              DCL        Var(&SplInfo   ) TYPE(*CHAR) LEN(1133  )
              DCL        Var(&InfoLen   ) TYPE(*CHAR) LEN(   4  )
              DCL        Var(&PageLen   ) TYPE(*CHAR) LEN(   4  )
-             DCL        Var(&SplNbr    ) TYPE(*CHAR) LEN(   5  )
+             DCL        Var(&SplNbr    ) TYPE(*CHAR) LEN(   7  )
              DCL        Var(&Path      ) TYPE(*CHAR) LEN(1024  )
              DCL        Var(&Rpyle     ) TYPE(*LGL ) LEN(      )
              DCL        Var(&RpyleSeq  ) TYPE(*DEC ) LEN(   4 0)
@@ -106,7 +106,7 @@
 /* ********************************************************************************* */
 
 /* ********************************************************************************* */
-/* ***Standard Program Variables                                                *** */
+/* *** Standard Program Variables                                                *** */
 /* ********************************************************************************* */
              DCL        VAR(&MsgData) TYPE(*CHAR) LEN(256)
              DCL        VAR(&MsgID) TYPE(*CHAR) LEN(7)
@@ -117,14 +117,14 @@
 /* ********************************************************************************* */
 
 /* ********************************************************************************* */
-/* ***Global message monitor to trap any unmonitored errors                     *** */
+/* *** Global message monitor to trap any unmonitored errors                     *** */
 /* ********************************************************************************* */
              MONMSG     (CPF9999 CPF0000 MCH0000) EXEC(GOTO ERROR)
 
 /* ********************************************************************************* */
 
 /* ********************************************************************************* */
-/* ***Mainline Processes                                                        *** */
+/* *** Mainline Processes                                                        *** */
 /* ********************************************************************************* */
 
 /* (A) Extract job name from qualified Job name  */
@@ -205,12 +205,12 @@
 
 /* (K) Call API to get spooled file info */
 
-             CHGVAR     %bin(&HexSplID) &SplID
-             IF         (&SplNbr *EQ '*ONLY') (CHGVAR %bin(&HexSplID) 0)
-             IF         (&SplNbr *EQ '*LAST') (CHGVAR %bin(&HexSplID) -1)
+             CHGVAR     &ApiSplID &SplID
+             IF         (&SplNbr *EQ '*ONLY') (CHGVAR &ApiSplID 0)
+             IF         (&SplNbr *EQ '*LAST') (CHGVAR &ApiSplID -1)
              CHGVAR     %bin(&InfoLen) 1133
              CALL       PGM(QUSRSPLA) PARM(&SplInfo &InfoLen 'SPLA0100' &QualJob &IntJob +
-                          &IntSplID &FromFile &HexSplID                  )
+                          &IntSplID &FromFile &ApiSplID                  )
              CHGVAR     &PageLen %sst(&SplInfo 425 4)
 
 /* (L) Convert spooled file data to Text format                          */

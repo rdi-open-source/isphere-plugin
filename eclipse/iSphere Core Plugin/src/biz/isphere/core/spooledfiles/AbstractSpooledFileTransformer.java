@@ -161,6 +161,14 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
         return cpi.floatValue();
     }
 
+    /**
+     * Returns <code>null</code>, because the target file is a binary file by
+     * default. Transformers that produce text files must override this method.
+     */
+    public String getCharset() {
+        return null;
+    }
+
     public boolean transformSpooledFile(String target) throws Exception {
 
         BufferedReader reader = null;

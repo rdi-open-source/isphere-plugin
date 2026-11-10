@@ -3,6 +3,16 @@ Changelog: iSphere 6.2.0.r
 --------------------------
  • Ant build: Change FTP to use passive mode for fixing firewall
    problems.
+ • Fixed 'Unsupported encoding when reading file.' when opening a
+   spooled file with an unsupported workspace encoding, such as
+   'COMPAT' of -Dfile.encoding=COMPAT in RDi 9.9.
+ • Spooled files converted to HTML with 'Transform' specify their
+   character set.
+ • Fixed 'Could not create stream file for spooled file on host.'
+   for spooled file numbers greater than 9999. Command CVTSPLF
+   accepts spooled file numbers up to 999999.
+ • The error message of a failed spooled file conversion on the
+   host shows the messages of the conversion command.
 
 Changelog: iSphere 6.1.4.r
 --------------------------

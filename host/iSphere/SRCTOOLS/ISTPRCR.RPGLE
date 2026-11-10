@@ -1,24 +1,24 @@
       /Eject
       /Title System Procedures
       **********************************************************************************
-      *****                                                      Date:?2005-05-18  *****
+      *****                                                      Date: 2005-05-18  *****
       **********************************************************************************
       *****  Copyright - Free RPG/i5 Tools                                         *****
       *****     E-Mail - Utilities@FreeRPGTools.com                                *****
       *****     Purpose: Service Program for Free RPG/i5 Tools Software.           *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2010-06-22   FRT       Add NOGRP Option                               *****
       *****  2007-03-15   FRT       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
-      ***?                             Creation Keywords                             ***
-      *** Keyword      Keyword Data                                                ***
-      *** BNDDIR        ISTBDIR QC2LE                                               ***
-      ***                                                                           ***
+      ***                              Creation Keywords                             ***
+      ***  Keyword       Keyword Data                                                ***
+      ***  BNDDIR        ISTBDIR QC2LE                                               ***
+      ***                                                                            ***
       **********************************************************************************
-     /If Not Defined(Prototypes)
+      /If Not Defined(Prototypes)
       **********************************************************************************
       *** STRPREPRC Compile Options:                                                 ***
       ***   >>PRE-COMPILER<<                                                         ***
@@ -39,27 +39,27 @@
      H TIMFMT(*ISO.)
      H TRUNCNBR(*YES)
      H BNDDIR('QC2LE':'ISPHERE')
-     /If Defined(FRT_Header)
+      /If Defined(FRT_Header)
      H DFTACTGRP(*NO)
-     /If Defined(NEWGRP)
+      /If Defined(NEWGRP)
      H ACTGRP(*NEW)
-     /EOF
-     /EndIf
-     /If Defined(NOGRP)
-     /EOF
-     /EndIf
+      /EOF
+      /EndIf
+      /If Defined(NOGRP)
+      /EOF
+      /EndIf
      H ACTGRP(*CALLER)
-     /EOF
-     /Endif
+      /EOF
+      /Endif
      H NoMain
-     /Endif
+      /Endif
 
-      ***?QCMDEXC Program Parameters
+      *** QCMDEXC Program Parameters
      DCmdExec          PR                  ExtPgm('QCMDEXC')
      D CommandData                         Like(Command)
      D CommandLength                       Like(Length)
 
-      ***?Retrieve Operational Descriptor Information
+      *** Retrieve Operational Descriptor Information
      D CEEDOD          pr
      D                               10i 0 Const
      D                               10i 0
@@ -69,20 +69,20 @@
      D                               10i 0
      D                               12a   Options(*Omit)
 
-      ***?Center Text Procedure
+      *** Center Text Procedure
      DCenter           PR         32767A   Varying
      D                                     OPDESC
      D                            32767A   CONST
      D                                     OPTIONS(*varsize)
 
 
-      ***?Retrieve Object Description
+      *** Retrieve Object Description
      DObjText          PR            50A
      D                               10A   CONST
      D                               10A   CONST
      D                               10A   CONST
 
-      ***?Variable Lookup Function
+      *** Variable Lookup Function
      DIn               PR             1A
      D                              128A   CONST
      D                              128A   CONST OPTIONS(*NOPASS)
@@ -111,38 +111,38 @@
      D                              128A   CONST OPTIONS(*NOPASS)
      D                              128A   CONST OPTIONS(*NOPASS)
 
-      ***?Convert to Lower Case
+      *** Convert to Lower Case
      DLCase            PR         32767A   Varying
      D                                     OPDESC
      D                            32767A   CONST
      D                                     OPTIONS(*varsize)
 
-      ***?Convert to Upper Case
+      *** Convert to Upper Case
      DUCase            PR         32767A   Varying
      D                                     OPDESC
      D                            32767A   CONST
      D                                     OPTIONS(*varsize)
 
-      ***?Execute Command
+      *** Execute Command
      DExecuteCommand   PR            67A
      D                                     OPDESC
      D                            32767A   CONST
      D                                     OPTIONS(*varsize)
      D                                 N   OPTIONS(*NOPASS) CONST
 
-      ***?Check Command
+      *** Check Command
      DCheckCommand     PR         32767A   Varying
      D                                     OPDESC
      D                            32767A   CONST
      D                                     OPTIONS(*varsize)
      D                                 N   OPTIONS(*NOPASS) CONST
 
-      ***?Retrieve System Value
+      *** Retrieve System Value
      DSystemValue      PR         32767A   Varying
      D                                     OPDESC
      D                               10A   CONST
 
-      ***?Send Program Message
+      *** Send Program Message
      DSndPgmMsg        PR
      D                                7A   CONST
      D                               10A   CONST
@@ -152,7 +152,7 @@
      D                               10A   CONST
      D                                5S 0 CONST
 
-      ***?Send User Message
+      *** Send User Message
      DSndUsrMsg        PR
      D                                7A   CONST
      D                               10A   CONST
@@ -168,34 +168,34 @@
      D                               10A   CONST
      D                               10A   CONST
 
-      ***?Retrieve System Name Procedure
+      *** Retrieve System Name Procedure
      D RtvSysName      PR            10I 0
      D   SystemName                   8A
 
-      ***?Retrieve File Information
+      *** Retrieve File Information
      DFileInfo         PR            50A
      D                               10A   CONST                                Library Name
      D                               10A   CONST                                File Name
      D                               10A   CONST                                Member Name
 
-      ***?Retrieve File Format Name
+      *** Retrieve File Format Name
      DFileFormatName   PR            10A
      D                               10A   CONST                                Library Name
      D                               10A   CONST                                File Name
 
-      ***?Check for Interactive Job
+      *** Check for Interactive Job
      DInteractiveJob   PR              N
 
-     /If Defined(Prototypes)
-     /Eof
-     /Endif
+      /If Defined(Prototypes)
+      /Eof
+      /Endif
 
       /Title  Data Definition Section
-      ***?Define Global Variables
+      *** Define Global Variables
      DCommand          S            512A                                        QCMDEXC Command
      DLength           S             15P 5 Inz(%Size(Command))                  QCMDEXC Length
 
-      ***?Standard API Error Data Structure
+      *** Standard API Error Data Structure
      D apiError        DS                  Inz
      D  apiLen                       10I 0 Inz(%size(apiError))
      D  apiRLen                      10I 0
@@ -204,14 +204,14 @@
      D  apiErrData                   50A
 
       **********************************************************************************
-      *****  Procedure:?Center                                   Date:?2003-11-11  *****
+      *****  Procedure: Center                                   Date: 2003-11-11  *****
       **********************************************************************************
       *****     Purpose: Center Text.                                              *****
       *****       Input : Text to Center                                           *****
       *****     Returns : Centered Text                                            *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-11   ISP                                                      *****
       *****                                                                        *****
       **********************************************************************************
@@ -224,7 +224,7 @@
      D                                     OPTIONS(*varsize)
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      DText             S          32767A   Varying                              Centering Text
      DSaveText         S                   Like(Input)                          Centering Text
      DTxtLength        S                   Like(Length)                         Centering Text
@@ -236,13 +236,13 @@
      D Length          s             10i 0
 
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
       /FREE
-         // **?Get Length of Data
+         // ** Get Length of Data
        ceedod( 1
              : DescType
              : DataType
@@ -252,7 +252,7 @@
              : *omit
              );
 
-         // **?Center Data in Field
+         // ** Center Data in Field
        SaveText = %SubSt(Input:1:Length);
        TxtLength = %Len(%Trim(SaveText)) / 2;
        Eval(h) TextLen = Length / 2;
@@ -269,10 +269,10 @@
      P                 E
       **********************************************************************************
 
-     ?/Eject
+      /Eject
       /Title  Procedure - IN
       **********************************************************************************
-      *****  Procedure:?IN                                       Date:?2005-05-01  *****
+      *****  Procedure: IN                                       Date: 2005-05-01  *****
       **********************************************************************************
       *****     Purpose: Lookup Function                                           *****
       *****       Input : Search Argument                                          *****
@@ -280,7 +280,7 @@
       *****     Returns : True or False                                            *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2005-05-18   ISP       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -316,7 +316,7 @@
      D  $Element25                  128A   CONST OPTIONS(*NOPASS)
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      DFound            S               N
      DIdx              S              5S 0
      DSearch           S            128A
@@ -349,7 +349,7 @@
      D Element25                    128A   Overlay(Elements:*Next)
      D ElementsA                    128A   Dim(25) Overlay(Elements:1)
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
@@ -367,7 +367,7 @@
       /End-Free
       **********************************************************************************
 
-     ?/Eject
+      /Eject
       /Title Set Array Elements
       **********************************************************************************
       *****  Subroutine : SetElements                                              *****
@@ -377,12 +377,12 @@
 
      C                   Eval      Elements = *Blanks
 
-      ***?Set Search Field
+      *** Set Search Field
      C                   If        %addr($Search)<>*null
      C                   Eval      Search = $Search
      C                   Endif
 
-      ***?Set Elements
+      *** Set Elements
      C                   If        %addr($Element01)<>*null and %Parms > 1
      C                   Eval      Element01 = $Element01
      C                   Endif
@@ -493,10 +493,10 @@
      P                 E
       **********************************************************************************
 
-     ?/Eject
+      /Eject
       /Title  Procedure - ObjText
       **********************************************************************************
-      *****  Procedure:?ObjText                                  Date:?2005-05-02  *****
+      *****  Procedure: ObjText                                  Date: 2005-05-02  *****
       **********************************************************************************
       *****     Purpose: Retrieve Object Description.                              *****
       *****       Input : Object Library                                           *****
@@ -505,7 +505,7 @@
       *****     Returns : Object Text                                              *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2005-05-18   ISP       Initial creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -518,19 +518,19 @@
      D  $ObjType                     10A   CONST
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      DText             S             50A                                        Centering Text
      DLength           S             10I 0 Inz(%Size(OBJD0200))
      DFormat           S              8A   Inz('OBJD0200')
      DObjType          S             10A
 
-      ***?Default Field Overlay Data Structure
+      *** Default Field Overlay Data Structure
      DOverlays         DS
      D Object                        20A
      D  FileName                     10A   Overlay(Object:01)
      D  Library                      10A   Overlay(Object:11)
 
-      ***?Type Definition for the OBJL0300 format.
+      *** Type Definition for the OBJL0300 format.
      DOBJD0200         DS                                                       Qus OBJD0200
      D BytesRet                      10I 0                                      Bytes Returned
      D BytesAval                     10I 0                                      Bytes Available
@@ -549,7 +549,7 @@
      D SourceLib                     10A                                        Source Library
      D SourceMbr                     10A                                        Source Member
 
-      ***?Standard API Error Data Structure
+      *** Standard API Error Data Structure
      D apiError        DS                  Inz
      D  apiLen                       10I 0 Inz(%size(apiError))
      D  apiRLen                      10I 0
@@ -557,17 +557,17 @@
      D  apiResv1                      1A   Inz(X'00')
      D  apiErrData                   10A
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
-      ***?Initialize Variables
+      *** Initialize Variables
      C                   Eval      Library = $Library
      C                   Eval      FileName = $FileName
      C                   Eval      ObjType = $ObjType
 
-      ***?Call Retrieve Object Description API (QUSROBJD)
+      *** Call Retrieve Object Description API (QUSROBJD)
      C                   Call(E)   'QUSROBJD'
      C                   Parm                    OBJD0200
      C                   Parm                    Length
@@ -587,10 +587,10 @@
      P                 E
       **********************************************************************************
 
-     ?/Eject
+      /Eject
       /Title  Procedure - CheckCommand
       **********************************************************************************
-      *****  Procedure:?CheckCommand                             Date:?2005-04-29  *****
+      *****  Procedure: CheckCommand                             Date: 2005-04-29  *****
       **********************************************************************************
       *****     Purpose: Check Command Syntax.                                     *****
       *****       Input : Command                                                  *****
@@ -600,14 +600,14 @@
       *****                                                                        *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-03-17  FRT       Initial Creation                                *****
       *****                                                                        *****
       **********************************************************************************
      P CheckCommand    B                   Export
 
       /Title Proto-Type definition section
-      ***?Check/Format Command Process
+      *** Check/Format Command Process
      D CheckCommand    PI                  Like(ReturnCommand)
      D                                     OPDESC
      D  $CommandToExecute...
@@ -616,7 +616,7 @@
      D  $PromptCommand...
      D                                 N   OPTIONS(*NOPASS) CONST
 
-      ***?Process Command ProtoType
+      *** Process Command ProtoType
      D ProcessCommand  PR                  ExtPgm('QCAPCMD')
      D  #CmdExecute                        Like($Command)
      D  #Length                            Like(Length)
@@ -629,7 +629,7 @@
      D  #apiError                          Like(apiError)
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      DReturnCommand    S          32767A   Varying
      D$Command         S          32000A
      DControlBlock     S                   Like(CPOP0100)                       Optn Control Blk
@@ -646,12 +646,12 @@
      D Length          s             10i 0
      DPromptCommand    S               N                                        Prompt Command
 
-      ***?Command Check Procedure Return Parameters
+      *** Command Check Procedure Return Parameters
      DReturnParm       DS
      D NewCommand                          Like($Command)
      D ErrorCode                           Like(apiError)
 
-      ***?The Process Commands API Data Structure
+      *** The Process Commands API Data Structure
      DCPOP0100         DS
      D CMDPRTYPE                     10I 0 Inz(8)                               Command Process Type
      D DBCSHandle                     1A   Inz('0')                             DBCS Data Handling
@@ -660,7 +660,7 @@
      D MessageKey                     4A   Inz(*ALLX'00')                       Message Key
      D Reserved                       9A   Inz(*ALLX'00')                       Reserved
 
-      ***?Standard API Error Data Structure
+      *** Standard API Error Data Structure
      D apiError        DS                  Inz
      D  apiLen                       10I 0 Inz(%size(apiError))
      D  apiRLen                      10I 0
@@ -668,7 +668,7 @@
      D  apiResv1                      1A   Inz(X'00')
      D  apiErrData                   50A
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
@@ -683,7 +683,7 @@
           PromptCommand = *OFF;
         EndIf;
 
-         // **?Get Length of Data
+         // ** Get Length of Data
        ceedod( 1
              : DescType
              : DataType
@@ -697,7 +697,7 @@
          Prompter = PromptCommand;
          $Command = %Trim(%SubSt($CommandToExecute:1:Length));
          ControlBlock = CPOP0100;
-         // **?Call Process Commands API
+         // ** Call Process Commands API
          CallP(E) ProcessCommand($Command:
                                  Length:
                                  ControlBlock:
@@ -733,30 +733,30 @@
      P                 E
       **********************************************************************************
 
-     ?/Eject
+      /Eject
       /Title  Procedure - LCase
       **********************************************************************************
-      *****  Procedure:?LCase                                    Date:?2006-01-10  *****
+      *****  Procedure: LCase                                    Date: 2006-01-10  *****
       **********************************************************************************
       *****     Purpose: Convert Text to Lower Case.                               *****
       *****       Input : Text Data                                                *****
       *****     Returns : Lower Case Text Data                                     *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-10  FRT        Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
      P LCase           B                   Export
 
       /Title Proto-Type definition section
-      ***?Check/Format Command Process
+      *** Check/Format Command Process
      D LCase           PI                  Like(ReturnText)
      D                                     OPDESC
      D  $InputText                32767A   CONST
      D                                     OPTIONS(*varsize)
 
-      ***?Convert Case Prototype
+      *** Convert Case Prototype
      D ConvertCase     PR                  ExtProc( 'QlgConvertCase' )
      D  $ControlBlock                      Const Like(ControlBlock)
      D                            32767    Options( *VarSize )
@@ -765,7 +765,7 @@
      D  $ErrorCode                         Like(apiError)
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      DInputText        S          32767A   Varying
      DReturnText       S          32767A   Varying
      DInputString      S          32767A
@@ -776,14 +776,14 @@
      D DescInfo2       s             10i 0
      D Length          s             10i 0
 
-      ***?Request Control Block
+      *** Request Control Block
      D ControlBlock    DS                  Inz
      D  RequestType                  10I 0
      D  InputData                    10I 0
      D  CaseRequest                  10I 0
      D  CDRReserved                  10A   Inz (*AllX'00')
 
-      ***?Standard API Error Data Structure
+      *** Standard API Error Data Structure
      D apiError        DS                  Inz
      D  apiLen                       10I 0 Inz(%size(apiError))
      D  apiRLen                      10I 0
@@ -791,13 +791,13 @@
      D  apiResv1                      1A   Inz(X'00')
      D  apiErrData                   50A
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
       /FREE
-         // **?Get Length of Data
+         // ** Get Length of Data
        ceedod( 1
              : DescType
              : DataType
@@ -815,14 +815,14 @@
         InputData = 0;
         CaseRequest = 1;
 
-         // **?Convert Text to Lower Case
+         // ** Convert Text to Lower Case
         CallP(E) ConvertCase(ControlBlock:
                              InputString:
                              ReturnString:
                              Length:
                              apiError);
 
-         // **?Return Text to Program
+         // ** Return Text to Program
         ReturnText = %SubSt(ReturnString:1:Length);
         Return ReturnText;
 
@@ -830,30 +830,30 @@
      P                 E
       **********************************************************************************
 
-     ?/Eject
+      /Eject
       /Title  Procedure - UCase
       **********************************************************************************
-      *****  Procedure:?UCase                                    Date:?2006-01-10  *****
+      *****  Procedure: UCase                                    Date: 2006-01-10  *****
       **********************************************************************************
       *****     Purpose: Convert Text to Upper Case.                               *****
       *****       Input : Text Data                                                *****
       *****     Returns : Upper Case Text Data                                     *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-10  FRT        Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
      P UCase           B                   Export
 
       /Title Proto-Type definition section
-      ***?Check/Format Command Process
+      *** Check/Format Command Process
      D UCase           PI                  Like(ReturnText)
      D                                     OPDESC
      D  $InputText                32767A   CONST
      D                                     OPTIONS(*varsize)
 
-      ***?Convert Case Prototype
+      *** Convert Case Prototype
      D ConvertCase     PR                  ExtProc( 'QlgConvertCase' )
      D  $ControlBlock                      Const Like(ControlBlock)
      D                            32767    Options( *VarSize )
@@ -862,7 +862,7 @@
      D  $ErrorCode                         Like(apiError)
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      DInputText        S          32767A   Varying
      DReturnText       S          32767A   Varying
      DInputString      S          32767A
@@ -873,14 +873,14 @@
      D DescInfo2       s             10i 0
      D Length          s             10i 0
 
-      ***?Request Control Block
+      *** Request Control Block
      D ControlBlock    DS                  Inz
      D  RequestType                  10I 0
      D  InputData                    10I 0
      D  CaseRequest                  10I 0
      D  CDRReserved                  10A   Inz (*AllX'00')
 
-      ***?Standard API Error Data Structure
+      *** Standard API Error Data Structure
      D apiError        DS                  Inz
      D  apiLen                       10I 0 Inz(%size(apiError))
      D  apiRLen                      10I 0
@@ -888,13 +888,13 @@
      D  apiResv1                      1A   Inz(X'00')
      D  apiErrData                   50A
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
       /FREE
-         // **?Get Length of Data
+         // ** Get Length of Data
        ceedod( 1
              : DescType
              : DataType
@@ -912,14 +912,14 @@
         InputData = 0;
         CaseRequest = 0;
 
-         // **?Convert Text to Upper Case
+         // ** Convert Text to Upper Case
         CallP(E) ConvertCase(ControlBlock:
                              InputString:
                              ReturnString:
                              Length:
                              apiError);
 
-         // **?Return Text to Program
+         // ** Return Text to Program
         ReturnText = %SubSt(ReturnString:1:Length);
         Return ReturnText;
 
@@ -927,24 +927,24 @@
      P                 E
       **********************************************************************************
 
-     ?/Eject
+      /Eject
       /Title  Procedure - ExecuteCommand
       **********************************************************************************
-      *****  Procedure:?ExecuteCommand                           Date:?2006-03-16  *****
+      *****  Procedure: ExecuteCommand                           Date: 2006-03-16  *****
       **********************************************************************************
       *****     Purpose: Execute Command                                           *****
       *****       Input : Command                                                  *****
       *****     Returns : Error Code                                               *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-03-16  FRT        Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
      P ExecuteCommand  B                   Export
 
       /Title Proto-Type definition section
-      ***?Retrieve System Value
+      *** Retrieve System Value
      D ExecuteCommand  PI                  Like(apiError)
      D                                     OPDESC
      D  $CommandToExecute...
@@ -953,7 +953,7 @@
      D  $PromptCommand...
      D                                 N   OPTIONS(*NOPASS) CONST
 
-      ***?Process Command ProtoType
+      *** Process Command ProtoType
      D ProcessCommand  PR                  ExtPgm('QCAPCMD')
      D  #CmdExecute                        Like(CommandExecute)
      D  #Length                            Like(Length)
@@ -966,7 +966,7 @@
      D  #apiError                          Like(apiError)
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      DCommandExecute...
      D                 S          32702A
      DError            S               N
@@ -985,7 +985,7 @@
      DTick             S              1A   Inz(X'7D')
      DPromptCommand    S               N                                        Prompt Command
 
-      ***?The Process Commands API Data Structure
+      *** The Process Commands API Data Structure
      DCPOP0100         DS
      D CMDPRTYPE                     10I 0 Inz(0)                               Command Process Type
      D DBCSHandle                     1A   Inz('0')                             DBCS Data Handling
@@ -994,7 +994,7 @@
      D MessageKey                     4A   Inz(*ALLX'00')                       Message Key
      D Reserved                       9A   Inz(*ALLX'00')                       Reserved
 
-      ***?Standard API Error Data Structure
+      *** Standard API Error Data Structure
      D apiError        DS                  Inz
      D  apiLen                       10I 0 Inz(%size(apiError))
      D  apiRLen                      10I 0
@@ -1003,7 +1003,7 @@
      D  apiErrData                   50A
      D  apiErrorInd                    N
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
@@ -1018,7 +1018,7 @@
           PromptCommand = *OFF;
         EndIf;
 
-         // **?Get Length of Data
+         // ** Get Length of Data
        ceedod( 1
              : DescType
              : DataType
@@ -1031,7 +1031,7 @@
        If %addr($CommandToExecute)<>*null;
          CommandExecute = %Trim(%SubSt($CommandToExecute:1:Length));
 
-         // **?Validate Command Syntax
+         // ** Validate Command Syntax
          CMDPRTYPE = 1;
          ControlBlock = CPOP0100;
          CallP(E) ProcessCommand(CommandExecute:
@@ -1045,7 +1045,7 @@
                                  apiError);
 
          If apiMsgID = *Blanks and Not %Error;
-         // **?Call Process Commands API
+         // ** Call Process Commands API
            Prompter = PromptCommand;
            CMDPRTYPE = 0;
            ControlBlock = CPOP0100;
@@ -1081,30 +1081,30 @@
      P                 E
       **********************************************************************************
 
-     ?/Eject
+      /Eject
       /Title  Procedure - SystemValue
       **********************************************************************************
-      *****  Procedure:?SystemValue                              Date:?2006-01-10  *****
+      *****  Procedure: SystemValue                              Date: 2006-01-10  *****
       **********************************************************************************
       *****     Purpose: Retrieve System Value.                                    *****
       *****       Input : Value Name                                               *****
       *****     Returns : Value Data                                               *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-13  FRT        Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
      P SystemValue     B                   Export
 
       /Title Proto-Type definition section
-      ***?Retrieve System Value
+      *** Retrieve System Value
      D SystemValue     PI                  Like($Value)
      D                                     OPDESC
      D  $ValueName                   10A   CONST
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      D$Value           S          32767A   Varying
      D DescType        s             10i 0
      D DataType        s             10i 0
@@ -1115,13 +1115,13 @@
      DResultLen        S             10I 0 Inz(%Size(Result))                   Result Field Length
      DNumberVals       S             10I 0 INZ(1)                               Number of Values
 
-      ***?Result field
+      *** Result field
      DResult           DS
      D NbrValRet                     10I 0 Inz(1)                               # of Values Returned
      D RetOffSet                     10I 0 Inz(10)                              Return Value Offset
      D ReturnValue                32767A                                        Return Value
 
-      ***?Get System Value
+      *** Get System Value
      D GetSystemValue  PR                  ExtPgm('QWCRSVAL')
      D  $Result                            Const Like(Result)
      D                               10I 0 Const
@@ -1129,7 +1129,7 @@
      D                               10A   Const
      D  $ErrorCode                         Like(apiError)
 
-      ***?Standard API Error Data Structure
+      *** Standard API Error Data Structure
      D apiError        DS                  Inz
      D  apiLen                       10I 0 Inz(%size(apiError))
      D  apiRLen                      10I 0
@@ -1137,13 +1137,13 @@
      D  apiResv1                      1A   Inz(X'00')
      D  apiErrData                   50A
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
       /FREE
-         // **?Get System Value
+         // ** Get System Value
        CallP(E) GetSystemValue(Result:
                                ResultLen:
                                1:
@@ -1161,10 +1161,10 @@
      P                 E
       **********************************************************************************
 
-     ?/Eject
+      /Eject
       /Title  Send Program Message Function
       **********************************************************************************
-      *****  Procedure:?SndPgmMsg                                Date:?2005-12-14  *****
+      *****  Procedure: SndPgmMsg                                Date: 2005-12-14  *****
       **********************************************************************************
       *****     Purpose: Send Program Message                                      *****
       *****       Input : Message ID                                               *****
@@ -1177,7 +1177,7 @@
       *****     Returns : None                                                     *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2005-12-14   ISP                                                      *****
       *****                                                                        *****
       **********************************************************************************
@@ -1205,14 +1205,14 @@
      D   MessageError                      CONST Like(ApiError)                 Error Data Structure
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
 
-      ***?Message File Name Data Structure
+      *** Message File Name Data Structure
      D MessageName     DS
      D  MessageFile                  10A   Overlay(MessageName:1)
      D  MessageLib                   10A   Overlay(MessageName:11)
 
-      ***?Standard API Error Data Structure
+      *** Standard API Error Data Structure
      D apiError        DS                  Inz
      D  apiLen                       10I 0 Inz(%size(apiError))
      D  apiRLen                      10I 0
@@ -1220,13 +1220,13 @@
      D  apiResv1                      1A   Inz(X'00')
      D  apiErrData                   10A
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
       /FREE
-         // **?Send Program Message
+         // ** Send Program Message
        MessageFile = $MessageFile;
        MessageLib = $MessageLib;
 
@@ -1246,10 +1246,10 @@
      P                 E
       **********************************************************************************
 
-     ?/Eject
+      /Eject
       /Title  Send User Message Function
       **********************************************************************************
-      *****  Procedure:?SndUsrMsg                                Date:?2005-12-15  *****
+      *****  Procedure: SndUsrMsg                                Date: 2005-12-15  *****
       **********************************************************************************
       *****     Purpose: Send Program Message                                      *****
       *****       Input : Message ID                                               *****
@@ -1262,7 +1262,7 @@
       *****     Returns : None                                                     *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2005-12-15   ISP                                                      *****
       *****                                                                        *****
       **********************************************************************************
@@ -1294,22 +1294,22 @@
      D   MessageError                      CONST Like(ApiError)                 Error Data Structure
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
 
-      ***?Message File Name Data-Structure
+      *** Message File Name Data-Structure
      D MessageName     DS
      D  MessageFile                  10A   Overlay(MessageName:1)
      D  MessageLibrary...
      D                               10A   Overlay(MessageName:11)
 
-      ***?Message Queue Name Data-Structure
+      *** Message Queue Name Data-Structure
      D MessageQueue    DS
      D  MessageQueueName...
      D                               10A   Overlay(MessageQueue:1)
      D  MessageQueueLibrary...
      D                               10A   Overlay(MessageQueue:11)
 
-      ***?Standard API Error Data Structure
+      *** Standard API Error Data Structure
      D apiError        DS                  Inz
      D  apiLen                       10I 0 Inz(%size(apiError))
      D  apiRLen                      10I 0
@@ -1317,13 +1317,13 @@
      D  apiResv1                      1A   Inz(X'00')
      D  apiErrData                   10A
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
       /FREE
-         // **?Send User Message
+         // ** Send User Message
        MessageFile = $MessageFile;
        MessageLibrary = $MessageLibrary;
        MessageQueueName = $MessageQueueName;
@@ -1345,10 +1345,10 @@
      P                 E
       **********************************************************************************
 
-     ?/Eject
+      /Eject
       /Title  Procedure - MbrText
       **********************************************************************************
-      *****  Procedure:?MbrText                                  Date:?2005-05-02  *****
+      *****  Procedure: MbrText                                  Date: 2005-05-02  *****
       **********************************************************************************
       *****     Purpose: Retrieve Member Description.                              *****
       *****       Input : Source File Library                                      *****
@@ -1357,7 +1357,7 @@
       *****     Returns : Member Text                                              *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2005-05-18   ISP       Initial creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -1370,20 +1370,20 @@
      D  $MbrName                     10A   CONST
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      DText             S             50A                                        Centering Text
      DLength           S             10I 0 Inz(%Size(QUSM0200))
      DFormat           S              8A   Inz('MBRD0200')
      DMbrName          S                   Like($MbrName)
      DOverride         S              1A
 
-      ***?Default Field Overlay Data Structure
+      *** Default Field Overlay Data Structure
      DOverlays         DS
      D SourceFile                    20A
      D  FileName                     10A   Overlay(SourceFile:01)
      D  Library                      10A   Overlay(SourceFile:11)
 
-      ***?Record structure for QUSRMBRD MBRD0200 format
+      *** Record structure for QUSRMBRD MBRD0200 format
      DQUSM0200         DS                                                       Qdb Mbrd0200
      D QUSBRTN03               1      4B 0                                      Bytes Returned
      D QUSBAVL04               5      8B 0                                      Bytes Available
@@ -1424,7 +1424,7 @@
      D QUSNDRU               257    260U 0                                      Num Dlt Rec U
      D QUSRSV203             261    266                                         Reserved2
 
-      ***?Standard API Error Data Structure
+      *** Standard API Error Data Structure
      D apiError        DS                  Inz
      D  apiLen                       10I 0 Inz(%size(apiError))
      D  apiRLen                      10I 0
@@ -1432,17 +1432,17 @@
      D  apiResv1                      1A   Inz(X'00')
      D  apiErrData                   10A
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
-      ***?Initialize Variables
+      *** Initialize Variables
      C                   Eval      Library = $Library
      C                   Eval      FileName = $FileName
      C                   Eval      MbrName = $MbrName
 
-      ***?Call Retrieve Member Description API (QUSRMBRD)
+      *** Call Retrieve Member Description API (QUSRMBRD)
      C                   Call(E)   'QUSRMBRD'
      C                   Parm                    QUSM0200
      C                   Parm                    Length
@@ -1465,7 +1465,7 @@
 
       /Title  Procedure - RtvSysName
       **********************************************************************************
-      *****  Procedure:?RtvSysName                               Date:?2004-07-20  *****
+      *****  Procedure: RtvSysName                               Date: 2004-07-20  *****
       **********************************************************************************
       *****     Purpose : Retrieve System Name procedure.                          *****
       *****       Input : SysName = name of system returned.                       *****
@@ -1474,7 +1474,7 @@
       *****               r a list of possible negative values.                    *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2005-05-20   ISP                                                      *****
       *****                                                                        *****
       **********************************************************************************
@@ -1489,7 +1489,7 @@
      D   AttrNames                   10A   const
      D   ErrorCode                  256A
 
-      ***?Error code structure
+      *** Error code structure
      D EC              DS
      D  EC_BytesP              1      4B 0 INZ(256)                             Bytes Provided
      D  EC_BytesA              5      8B 0 INZ(0)                               Bytes Available
@@ -1497,13 +1497,13 @@
      D  EC_Reserve            16     16                                         Reserved
      D  EC_MsgDta             17    256                                         Msg Data of Error
 
-      ***?Receiver variable for QWCRNETA with only one attribute
+      *** Receiver variable for QWCRNETA with only one attribute
      D RV              ds
      D   RV_Attrs                    10I 0                                      Number of Attrs ret
      D   RV_Offset                   10I 0                                      Offset to first att
      D   RV_Data                      1A   DIM(1000)                            Add'l data returned
 
-      ***?Network attribute structure
+      *** Network attribute structure
      D p_NA            S               *
      D NA              ds                  based(p_NA)
      D   NA_Attr                     10A                                        Attribute Name
@@ -1513,45 +1513,45 @@
      D   NA_DataChr                1000A                                        Actual Data(Char)
      D   NA_DataInt                  10I 0 overlay(NA_DataChr:1)                Actual Data(Bin)
 
-      ***?Call API to get system name - -1 = API returned an error
+      *** Call API to get system name - -1 = API returned an error
      C                   CallP     QWCRNETA(RV: %size(RV): 1: 'SYSNAME': EC)
      C                   If        EC_BytesA > 0
      C                   Return    -1
      C                   EndIf
 
-      ***?-2 = RcvVar contained data that we dont understand :(
+      *** -2 = RcvVar contained data that we dont understand :(
      C                   If        RV_Attrs <> 1
      C                               or RV_Offset < 8
      C                               or RV_Offset > 1000
      C                   Return    -2
      C                   EndIf
 
-      ***?Attach NetAttr structure
+      *** Attach NetAttr structure
      C                   Eval      RV_Offset = RV_Offset - 7
      C                   Eval      p_NA = %addr(RV_Data(RV_Offset))
 
-      ***?-3 = NetAttr structure had data that we don't understand :(
+      *** -3 = NetAttr structure had data that we don't understand :(
      C                   If        NA_Attr <> 'SYSNAME'
      C                               or NA_Length < 1
      C                               or NA_Length > 8
      C                   Return    -3
      C                   EndIf
 
-      ***?-4 = Network attributes are locked
+      *** -4 = Network attributes are locked
      C                   If        NA_Status = 'L'
      C                   Return    -4
      C                   EndIf
 
-      ***?Successful
+      *** Successful
      C                   Eval      SysName = %subst(NA_DataChr:1:NA_Length)
      C                   Return    0
      P                 E
       **********************************************************************************
 
-     ?/Eject
+      /Eject
       /Title  Procedure - FileInfo
       **********************************************************************************
-      *****  Procedure:?FileInfo                                 Date:?2005-09-19  *****
+      *****  Procedure: FileInfo                                 Date: 2005-09-19  *****
       **********************************************************************************
       *****     Purpose: Retrieve File Information.                                *****
       *****       Input : File Library                                             *****
@@ -1563,7 +1563,7 @@
       *****               Deleted Records                                          *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-06-07   FRT       Initial creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -1576,18 +1576,18 @@
      D  $MemberName                  10A   CONST
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      DLength           S             10I 0 Inz(%Size(MBRD0200))
      DFormat           S              8A   Inz('MBRD0200')
      DOverride         S              1A
 
-      ***?Default Field Overlay Data Structure
+      *** Default Field Overlay Data Structure
      DOverlays         DS
      D File                          20A
      D  FileName                     10A   Overlay(File:01)
      D  Library                      10A   Overlay(File:11)
 
-      ***?Type Definition for the OBJL0300 format.
+      *** Type Definition for the OBJL0300 format.
      DMBRD0200         DS                                                       Qus MBRD0200
      D BytesRet                      10I 0                                      Bytes Returned
      D BytesAval                     10I 0                                      Bytes Available
@@ -1627,7 +1627,7 @@
      D ExtDeleted                    10I 0                                      Deleted Records
      D Reserved4                      6A                                        Reserved
 
-      ***?Return Value Data Structure
+      *** Return Value Data Structure
      D Return          DS
      D  ReturnValue                  50A
      D   Records                     10S 0 Overlay(ReturnValue:1)               Number of Records
@@ -1635,7 +1635,7 @@
      D   DataSize                    10S 0 Overlay(ReturnValue:*Next)           Size of Data
      D   IndexSize                   10S 0 Overlay(ReturnValue:*Next)           Size of Index
 
-      ***?Standard API Error Data Structure
+      *** Standard API Error Data Structure
      D apiError        DS                  Inz
      D  apiLen                       10I 0 Inz(%size(apiError))
      D  apiRLen                      10I 0
@@ -1643,17 +1643,17 @@
      D  apiResv1                      1A   Inz(X'00')
      D  apiErrData                   50A
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
-      ***?Initialize Variables
+      *** Initialize Variables
      C                   Eval      Library = $Library
      C                   Eval      FileName = $FileName
      C                   Eval      MemberName = $MemberName
 
-      ***?Call Retrieve Object Description API (QUSROBJD)
+      *** Call Retrieve Object Description API (QUSROBJD)
      C                   Call(E)   'QUSRMBRD'
      C                   Parm                    MBRD0200
      C                   Parm                    Length
@@ -1680,10 +1680,10 @@
      P                 E
       **********************************************************************************
 
-     ?/Eject
+      /Eject
       /Title  Procedure - Retrieve File Format Name
       **********************************************************************************
-      *****  Procedure:?FileFormatName                           Date:?2007-03-06  *****
+      *****  Procedure: FileFormatName                           Date: 2007-03-06  *****
       **********************************************************************************
       *****     Purpose: Retrieve File Format Name                                 *****
       *****       Input : File Library                                             *****
@@ -1691,7 +1691,7 @@
       *****     Returns : Format Name                                              *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2007-03-06   FRT       Initial creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -1712,18 +1712,18 @@
      D  $apiError                          Like(apiError)
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      DLength           S             10I 0 Inz(%Size(MBRD0300))
      DFormat           S              8A   Inz('MBRD0300')
      DOverride         S              1A
 
-      ***?Default Field Overlay Data Structure
+      *** Default Field Overlay Data Structure
      DOverlays         DS
      D File                          20A
      D  FileName                     10A   Overlay(File:01)
      D  Library                      10A   Overlay(File:11)
 
-      ***?Type Definition for the MBRD0300 format.
+      *** Type Definition for the MBRD0300 format.
      DMBRD0300         DS                                                       Qus MBRD0300
      D BytesRet                      10I 0                                      Bytes Returned
      D BytesAval                     10I 0                                      Bytes Available
@@ -1786,7 +1786,7 @@
      D BasedOnFile                  112A                                        Based On File Data
      D ConstraintAry                320A                                        Constraint Indx Info
 
-      ***?Based on File Data
+      *** Based on File Data
      D PhysicalFile    DS
      D  PFFileName                   10A                                        Physical File Name
      D  PFLibrary                    10A                                        Library Name
@@ -1809,7 +1809,7 @@
      D  DltRecords                   10I 0                                      Dlt # of Records
      D  Reserved9                     8A                                        Reserved
 
-      ***?Standard API Error Data Structure
+      *** Standard API Error Data Structure
      D apiError        DS                  Inz
      D  apiLen                       10I 0 Inz(%size(apiError))
      D  apiRLen                      10I 0
@@ -1817,17 +1817,17 @@
      D  apiResv1                      1A   Inz(X'00')
      D  apiErrData                   50A
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
       /Free
-         // **?Initialize Variables
+         // ** Initialize Variables
           Library = $Library;
           FileName = $FileName;
 
-         // **?Call Retrieve Object Description API (QUSROBJD)
+         // ** Call Retrieve Object Description API (QUSROBJD)
           GetFormatName(MBRD0300:Length:Format:File:'*FIRST':'0':apiError);
 
           If apiMsgID = *Blanks;
@@ -1844,24 +1844,24 @@
       **********************************************************************************
 
       **********************************************************************************
-      *****  Procedure:?InteractiveJob                           Date:?2007-01-01  *****
+      *****  Procedure: InteractiveJob                           Date: 2007-01-01  *****
       **********************************************************************************
       *****     Purpose: Check if job is running interactive                       *****
       *****       Input : None                                                     *****
       *****     Returns : True or False (1/0)                                      *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2007-01-01   ISP       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
      PInteractiveJob   B                   Export
 
       /Title  Proto-Type definition section
-      ***?Check if job is running interactive
+      *** Check if job is running interactive
      DInteractiveJob   PI              N
 
-      ***?Retrieve Job Information (QUSRJOBI) API
+      *** Retrieve Job Information (QUSRJOBI) API
      DRetrieveJobInfo...
      D                 PR                  EXTPGM('QUSRJOBI')
      D $Receive                            Like(JobStatus)
@@ -1872,12 +1872,12 @@
      D $ErrCode                            Like(apiError)
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      DInteractive      S               N
      DJobLength        S             10I 0 Inz(%Size(JobStatus))
      DJobFormat        S              8A   Inz('JOBI0100')
 
-      ***?Job Status Data-Structure
+      *** Job Status Data-Structure
      DJobStatus        DS
      D JobBytesRtn                   10I 0 Overlay(JobStatus:*Next)
      D JobBytesAvl                   10I 0 Overlay(JobStatus:*Next)
@@ -1894,13 +1894,13 @@
      D JobDefaultWait                10I 0 Overlay(JobStatus:*Next)
      D JobPurge                      10A   Overlay(JobStatus:*Next)
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
       /FREE
-         // **?Center Data in Field
+         // ** Center Data in Field
 
        CallP RetrieveJobInfo(JobStatus:JobLength:JobFormat:
                              '*':' ':apiError);

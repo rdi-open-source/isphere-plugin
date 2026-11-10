@@ -1,6 +1,6 @@
       /Title Convert Spool File to HTML or PDF
       **********************************************************************************
-      *** Program name:?CVTSPLFRP                                  Date:?2005-08-09  ***
+      *** Program name: CVTSPLFRP                                  Date: 2005-08-09  ***
       **********************************************************************************
       ***    Copyright - Free RPG/i5 Tools                                           ***
       ***       E-Mail - Utilities@FreeRPGTools.com                                  ***
@@ -9,25 +9,25 @@
       ***    Maintenance History: (Most recent is listed first)                      ***
       ***                                                                            ***
       ***    Project  Date of      Pgmr                                              ***
-      ***     Id.   Last Change Initials Description of Changes                  ***
-      ***   xxxxxxx  2008-04-08   FRT       Globalize idx Field                     ***
-      ***   xxxxxxx  2006-01-10   FRT       Initial Creation                        ***
-      ***                                                                           ***
+      ***      Id.    Last Change  Initials  Description of Changes                  ***
+      ***    xxxxxxx  2008-04-08   FRT       Globalize idx Field                     ***
+      ***    xxxxxxx  2006-01-10   FRT       Initial Creation                        ***
+      ***                                                                            ***
       **********************************************************************************
-      ***?                             Creation Keywords                             ***
-      *** Keyword      Keyword Data                                                ***
-      *** *NONE         No special keywords are required                            ***
-      ***                                                                           ***
+      ***                              Creation Keywords                             ***
+      ***  Keyword       Keyword Data                                                ***
+      ***  *NONE         No special keywords are required                            ***
+      ***                                                                            ***
       **********************************************************************************
-      ***?                                 Overrides                                 ***
-      *** DB-File      Override                                                    ***
-      *** *NONE         No Overrides are used for this program                      ***
-      ***                                                                           ***
+      ***                                  Overrides                                 ***
+      ***  DB-File       Override                                                    ***
+      ***  *NONE         No Overrides are used for this program                      ***
+      ***                                                                            ***
       **********************************************************************************
-      ***?                           Indicator Usage                                 ***
-      *** XX    Description                                                       ***
-      *** LR      Last Record Processed Indicator                                   ***
-      ***                                                                           ***
+      ***                            Indicator Usage                                 ***
+      ***  XX      Description                                                       ***
+      ***  LR      Last Record Processed Indicator                                   ***
+      ***                                                                            ***
       **********************************************************************************
       *** STRPREPRC Compile Options:                                                 ***
       ***   >>PRE-COMPILER<<                                                         ***
@@ -45,9 +45,9 @@
       **********************************************************************************
       /Title  Control Specifications
      H BNDDIR('ISPHERE')
-     /Define FRT_Header
-     /COPY SRCTOOLS,ISTPRCR
-     /Undefine FRT_Header
+      /Define FRT_Header
+      /COPY SRCTOOLS,ISTPRCR
+      /Undefine FRT_Header
 
       /Title  File definition section
      Fcvtwork02 IF   F  382        DISK
@@ -55,7 +55,7 @@
      Fcvtwork01 UF A F  378        DISK
 
       /Title  Proto-Type definition section
-      ***?Program Entry Parameters
+      *** Program Entry Parameters
      DConvertPDF       PR                  ExtPgm('CVTSPLFRP')
      D paTitle                       50A                                        Report Title
      D SpoolInfo                           Like(SplInfo)                        Spool Information
@@ -63,7 +63,7 @@
      D BookMarkPos                         Like(BMarkPos)                       BookMark POS Option
      D BookMarkKey                         Like(BMarkKey)                       BookMark KEY Option
 
-      ***?Program Interface Parameters
+      *** Program Interface Parameters
      DConvertPDF       PI
      D paTitle                       50A                                        Report Title
      D SpoolInfo                           Like(SplInfo)                        Spool Information
@@ -92,12 +92,12 @@
 
      D NewObject       PR
 
-     /Define Prototypes
-     /COPY SRCTOOLS,ISTPRCR
-     /Undefine Prototypes
+      /Define Prototypes
+      /COPY SRCTOOLS,ISTPRCR
+      /Undefine Prototypes
 
       /Title  Data definition section
-      ***?Define Program Standalone Fields
+      *** Define Program Standalone Fields
      DCurrDate         S               D   INZ(*JOB)
      DCurrTime         S               T   INZ(*SYS)
      DCommand          S           1024A                                        QCMDEXC Command
@@ -115,12 +115,12 @@
      D waBookmark      S            378A                                        Bookmark Text
      D wiOccurs        S              5I 0                                      Occr of BkMark Key
 
-      ***?Compile-Time Arrays
+      *** Compile-Time Arrays
 
-      ***?Default Field Overlay Data Structure
+      *** Default Field Overlay Data Structure
      DOverlays         DS
 
-      ***?spooled file information returned by API
+      *** spooled file information returned by API
      D SplInfo         DS
      D  zaReturned                   10I 0
      D  zaAvailabl                   10I 0
@@ -237,14 +237,14 @@
      D  zaOrigId                      8A
      D  zaCreator                    10A
 
-      ***?Bookmark *POS option parameters
+      *** Bookmark *POS option parameters
      D BMarkPos        DS
      D   ziPosCount                   5I 0
      D   znPosLine                    3P 0
      D   znPosChar                    3P 0
      D   znPosLen                     3P 0
 
-      ***?Bookmark *KEY option parameters
+      *** Bookmark *KEY option parameters
      D BMarkKey        DS
      D   ziKeyCount                   5I 0
      D   ziLen                        5I 0
@@ -253,7 +253,7 @@
      D   znKeyOff                     3P 0
      D   znKeyLen                     3P 0
 
-      ***?Input spooled file data including control characters
+      *** Input spooled file data including control characters
      D InputData       DS
      D   zaSkipLine                   3A
      D   zzSkipLine                   3S 0 OVERLAY(zaSkipLine:1)
@@ -261,11 +261,11 @@
      D   zzSpceLine                   1S 0 OVERLAY(zaSpceLine:1)
      D   zaInput                    378A
 
-      ***?Output PDF-format data
+      *** Output PDF-format data
      D OutputData      DS
      D   zaOutput                   378A
 
-      ***?Program Status Data Structure
+      *** Program Status Data Structure
      DProgramStatus   SDS
      D Program                       10A   Overlay(ProgramStatus:1)             Current Program
      D MsgId                          7A   Overlay(ProgramStatus:40)
@@ -274,7 +274,7 @@
      D JobNumber                      6S 0 Overlay(ProgramStatus:264)           Job Number
      D CurrUser                      10A   Overlay(ProgramStatus:358)           Current User
 
-      ***?Standard API Error Code Data-Structure
+      *** Standard API Error Code Data-Structure
      D apiError        DS                  Inz
      D  apiLen                       10I 0 Inz(0)
      D  apiRLen                      10I 0
@@ -282,26 +282,26 @@
      D  apiResv1                      1A   Inz(X'00')
      D  apiErrText                   24A
 
-     ?/Eject
+      /Eject
       /Title  M A I N  L I N E
       **********************************************************************************
       *****                            M A I N  L I N E                            *****
       **********************************************************************************
      C/Free
-       // ***?Output a PDF header
+       // *** Output a PDF header
        PDFHeader();
 
-       // ***?Create PDF page 'objects'
+       // *** Create PDF page 'objects'
        PDFPages();
 
-       // ***?Output a PDF trailer
+       // *** Output a PDF trailer
        PDFTrailer();
 
-       // ***?Exit program
+       // *** Exit program
         Exsr EndProgram;
        // **********************************************************************************
 
-     ?/Eject
+      /Eject
       /Title  Controlled Program has Been Requested
        // **********************************************************************************
        // *****  Subroutine : EndProgram                                               *****
@@ -313,14 +313,14 @@
         BookMarkPos = BMarkPos;
         BookMarkKey = BMarkKey;
 
-       // ***?Exit program
+       // *** Exit program
         *INLR = *ON;
         Return;
 
         EndSR;
        // **********************************************************************************
 
-     ?/Eject
+      /Eject
       /Title  Process all one time functions
        // **********************************************************************************
        // *****  Subroutine : *INZSR                                                   *****
@@ -338,14 +338,14 @@
       /End-free
 
       **********************************************************************************
-      *****  Procedure:?PDFHeader                                Date:?2006-01-05  *****
+      *****  Procedure: PDFHeader                                Date: 2006-01-05  *****
       **********************************************************************************
       *****     Purpose: Create a PDF 'header'                                     *****
       *****       Input : None                                                     *****
       *****     Returns : None                                                     *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-06   FRT       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -355,17 +355,17 @@
      D PDFHeader       PI
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      D liPage          S             10I 0
      D liPageObj       S             10I 0
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
      C/Free
-       // ***?Create catalog object
+       // *** Create catalog object
        WritePDF('%PDF-1.0');
        WritePDF('%âãÏÓ');
        NewObject();
@@ -378,7 +378,7 @@
        WritePDF('>>');
        WritePDF('endobj');
 
-       // ***?Create outlines object
+       // *** Create outlines object
        NewObject();
        WritePDF(%trim(NumToText(wiObject))+' 0 obj');
        WritePDF('<<');
@@ -392,13 +392,13 @@
        WritePDF('>>');
        WritePDF('endobj');
 
-       // ***?Create procedures object
+       // *** Create procedures object
        NewObject();
        WritePDF(%trim(NumToText(wiObject))+' 0 obj');
        WritePDF('[/PDF /Text]');
        WritePDF('endobj');
 
-       // ***?Create fonts object
+       // *** Create fonts object
        NewObject();
        WritePDF(%trim(NumToText(wiObject))+' 0 obj');
        WritePDF('<<');
@@ -410,14 +410,14 @@
        WritePDF ('>>');
        WritePDF ('endobj');
 
-       // ***?Create pages object
+       // *** Create pages object
        NewObject();
        WritePDF(%trim(NumToText(wiObject))+' 0 obj');
        WritePDF ('<<');
        WritePDF ('/Type /Pages');
        WritePDF('/Count '+%trim(NumToText(ziPages)));
 
-       // ***?Write list of child pages
+       // *** Write list of child pages
        liPage    = wiObject + 1;
        liPageObj = liPage;
        WritePDF (  '/Kids ['
@@ -442,14 +442,14 @@
       **********************************************************************************
 
       **********************************************************************************
-      *****  Procedure:?PDFPages                                 Date:?2006-01-05  *****
+      *****  Procedure: PDFPages                                 Date: 2006-01-05  *****
       **********************************************************************************
       *****     Purpose: Create PDF pages                                          *****
       *****       Input : None                                                     *****
       *****     Returns : None                                                     *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-06   FRT       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -459,30 +459,30 @@
      D PDFPages        PI
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      D liLine          S             10I 0
      D liLength        S              5I 0
      D liChar          S              5I 0
      D liX             S              5I 0
      D liY             S              5I 0
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
      C/Free
-       // ***?Create page object for first page
+       // *** Create page object for first page
        wiPage = 0;
        liX = 0;
 
-       // ***?Read spooled file data from input work file
+       // *** Read spooled file data from input work file
        READ cvtwork02 InputData;
        *INLR = %EOF;
 
        DOW *INLR = *OFF;
 
-       // ***?Skip to a line if specified, handling page throw if it occurs
+       // *** Skip to a line if specified, handling page throw if it occurs
          IF zaSkipLine <> *Blanks;
            IF zzSkipLine < liLine or liLine = 0;
              IF wiPage <> 0;
@@ -499,14 +499,14 @@
            EndIf;
          EndIf;
 
-       // ***?Space a number of lines if specified
+       // *** Space a number of lines if specified
          IF zaSpceLine <> *Blanks;
            liLine = liLine + zzSpceLine;
            liY
                = -((612/ziPageLen) * zzSpceLine);
          EndIf;
 
-       // ***?Set up bookmark if position option specified
+       // *** Set up bookmark if position option specified
          IF paBookmark = '*POS';
            IF liLine = znPosLine and waBookmark = *Blanks;
              waBookmark = %trim(%subst(zaInput  :
@@ -515,7 +515,7 @@
            EndIf;
          EndIf;
 
-       // ***?Set up bookmark if key option specified
+       // *** Set up bookmark if key option specified
          IF paBookmark = '*KEY';
            liChar = %Scan(%TrimR(zaKeyStr):zaInput:1);
            IF liChar > 0;
@@ -538,10 +538,10 @@
            EndIf;
          EndIf;
 
-       // ***?Add escape character before special characters \, ( and )
+       // *** Add escape character before special characters \, ( and )
          zaInput = AddEscape(zaInput);
 
-       // ***?Output the line of text
+       // *** Output the line of text
          WritePDF(  %trim(NumToText(liX))
              + ' '
              + %trim(NumToText(liY))
@@ -561,14 +561,14 @@
       **********************************************************************************
 
       **********************************************************************************
-      *****  Procedure:?PDFTrailer                               Date:?2006-01-05  *****
+      *****  Procedure: PDFTrailer                               Date: 2006-01-05  *****
       **********************************************************************************
       *****     Purpose: Create a PDF trailer                                      *****
       *****       Input : None                                                     *****
       *****     Returns : None                                                     *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-06   FRT       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -578,17 +578,17 @@
      D PDFTrailer      PI
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      D laDateTime      S             14A
      D liXRef          S             10I 0
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
      C/Free
-       // ***?Create information object
+       // *** Create information object
        NewObject();
        WritePDF(%trim(NumToText(wiObject))+' 0 obj');
        WritePDF('<<');
@@ -619,7 +619,7 @@
        WritePDF('>>');
        WritePDF('endobj');
 
-       // ***?Create cross-reference
+       // *** Create cross-reference
        liXref = wiChrCount - 1;
        WritePDF('xref 0 '
            + %trim(NumToText(wiObject+1)) );
@@ -629,7 +629,7 @@
          WritePDF(aaStart(idx) + ' 00000 n');
        EndFor;
 
-       // ***?Write trailer
+       // *** Write trailer
        WritePDF('trailer');
        WritePDF('<<');
        WritePDF('/Size '
@@ -648,14 +648,14 @@
       **********************************************************************************
 
       **********************************************************************************
-      *****  Procedure:?NewObject                                Date:?2006-01-05  *****
+      *****  Procedure: NewObject                                Date: 2006-01-05  *****
       **********************************************************************************
       *****     Purpose: Create a new PDF 'object'                                 *****
       *****       Input : None                                                     *****
       *****     Returns : None                                                     *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-06   FRT       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -665,10 +665,10 @@
      D NewObject       PI
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      D lsDataLen       S             10S 0
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
@@ -684,14 +684,14 @@
       **********************************************************************************
 
       **********************************************************************************
-      *****  Procedure:?WritePDF                                 Date:?2006-01-05  *****
+      *****  Procedure: WritePDF                                 Date: 2006-01-05  *****
       **********************************************************************************
       *****     Purpose: Output PDF data                                           *****
       *****       Input : Data to Output                                           *****
       *****     Returns : None                                                     *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-06   FRT       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -702,21 +702,21 @@
      D   iaOutput                   378A   CONST OPTIONS(*VARSIZE)
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      D liLength        S              5I 0
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
-       // ***?Update byte count with length of data to be written
+       // *** Update byte count with length of data to be written
      C     ' '           CHECKR    iaOutput      liLength
 
      C/Free
        wiChrCount= wiChrCount + liLength + 2;
 
-       // ***?Output data to work file
+       // *** Output data to work file
        zaOutput = %trimr(iaOutput);
        WRITE cvtwork01 OutputData;
 
@@ -725,14 +725,14 @@
       **********************************************************************************
 
       **********************************************************************************
-      *****  Procedure:?NumToText                                Date:?2006-01-05  *****
+      *****  Procedure: NumToText                                Date: 2006-01-05  *****
       **********************************************************************************
       *****     Purpose: Convert a number to text                                  *****
       *****       Input : Number to Convert                                        *****
       *****     Returns : Alpha version of Number                                  *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-06   FRT       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -743,7 +743,7 @@
      D    iiNum                      10I 0 CONST
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      D laSign          S              1A
      D laInput         S             10A
      D laOutput        S             10A
@@ -751,13 +751,13 @@
      D liOut           S              5I 0
      D liNum           S             10I 0
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
      C/Free
-       // ***?Set up sign if and make number positive if number is negative
+       // *** Set up sign if and make number positive if number is negative
        IF iiNum < 0;
          laSign = '-';
          liNum = -iiNum;
@@ -766,11 +766,11 @@
          liNum = iiNum;
        EndIf;
 
-       // ***?Number number to work character variable
+       // *** Number number to work character variable
       /END-FREE
      C                   MOVE      liNum         laInput
       /FREE
-       // ***?Skip over leading zeros
+       // *** Skip over leading zeros
        liIn  = 1;
        liOut = 1;
        DOW liIn < %size(laInput)
@@ -778,7 +778,7 @@
          liIn = liIn + 1;
        EndDo;
 
-       // ***?Move digits to output area
+       // *** Move digits to output area
        DOW liIn  <= %size(laInput)
              and liOut <= %size(laOutput);
          %subst(laOutput:liOut:1)
@@ -787,12 +787,12 @@
          liOut = liOut + 1;
        EndDo;
 
-       // ***?Add sign
+       // *** Add sign
        IF laSign = '-';
          laOutput = laSign + laOutput;
        EndIf;
 
-       // ***?Return number in text format
+       // *** Return number in text format
        RETURN laOutput;
 
       /END-FREE
@@ -800,14 +800,14 @@
       **********************************************************************************
 
       **********************************************************************************
-      *****  Procedure:?AddEscape                                Date:?2006-01-05  *****
+      *****  Procedure: AddEscape                                Date: 2006-01-05  *****
       **********************************************************************************
       *****     Purpose: Add an escape character before special characters         *****
       *****       Input : Character Data                                           *****
       *****     Returns : Character Data With Escape                               *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-06   FRT       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -818,20 +818,20 @@
      D   iaInput                    378A
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      D laOutput        S            378A
      D laChar          S              1A
      D liLength        S              5I 0
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
-       // ***?Determine length of input data
+       // *** Determine length of input data
      C     ' '           CHECKR    iaInput       liLength
      C/Free
-       // ***?Work through input data and prefix special characters with escape
+       // *** Work through input data and prefix special characters with escape
        idx = 1;
        idx1 = 0;
        DOW idx <= liLength;
@@ -853,14 +853,14 @@
       **********************************************************************************
 
       **********************************************************************************
-      *****  Procedure:?NewPage                                  Date:?2006-01-05  *****
+      *****  Procedure: NewPage                                  Date: 2006-01-05  *****
       **********************************************************************************
       *****     Purpose: Procedure to create a new page object                     *****
       *****       Input : None                                                     *****
       *****     Returns : None                                                     *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-06   FRT       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -869,13 +869,13 @@
       /Title  Proto-Type definition section
      D NewPage         PI
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
      C/Free
-       // ***?Create a page object
+       // *** Create a page object
        wiPage = wiPage + 1;
        NewObject();
 
@@ -893,7 +893,7 @@
        WritePDF('>>');
        WritePDF('endobj');
 
-       // ***?Set up bookmark if *PAGNBR option specified
+       // *** Set up bookmark if *PAGNBR option specified
        IF paBookmark = '*PAGNBR';
          waBookmark = 'Page '
              + %trim(NumToText(wiPage));
@@ -902,7 +902,7 @@
          wiOccurs   = 0;
        EndIf;
 
-       // ***?Create a stream object
+       // *** Create a stream object
        NewObject();
 
        WritePDF(%trim(NumToText(wiObject))+' 0 obj');
@@ -913,7 +913,7 @@
        wiStart = wiChrCount;
        WritePDF('BT');
 
-       // ***?Determine font size to use from Characters per inch setting
+       // *** Determine font size to use from Characters per inch setting
        SELECT;
        WHEN ziCPI = 50;
          WritePDF('/F1 20 Tf');
@@ -932,14 +932,14 @@
       **********************************************************************************
 
       **********************************************************************************
-      *****  Procedure:?EndPage                                  Date:?2006-01-05  *****
+      *****  Procedure: EndPage                                  Date: 2006-01-05  *****
       **********************************************************************************
       *****     Purpose: Procedure to finish a page object.                        *****
       *****       Input : None                                                     *****
       *****     Returns : None                                                     *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-06   FRT       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -949,10 +949,10 @@
      D EndPage         PI
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      D liLength        S             10I 0
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
@@ -963,13 +963,13 @@
        WritePDF('endstream');
        WritePDF('endobj');
 
-       // ***?Create indirect length object for stream
+       // *** Create indirect length object for stream
        NewObject();
        WritePDF(%trim(NumToText(wiObject))+' 0 obj');
        WritePDF(%trim(NumToText(liLength)));
        WritePDF('endobj');
 
-       // ***?Create outline object
+       // *** Create outline object
        waBookmark = AddEscape(waBookMark);
        NewObject();
        WritePDF(%trim(NumToText(wiObject))+' 0 obj');

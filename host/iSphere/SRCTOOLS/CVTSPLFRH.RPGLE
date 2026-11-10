@@ -1,5 +1,5 @@
       **********************************************************************************
-      *** Program name:?CVTSPLFRH                                  Date:?2005-08-09  ***
+      *** Program name: CVTSPLFRH                                  Date: 2005-08-09  ***
       **********************************************************************************
       ***    Copyright - Free RPG/i5 Tools                                           ***
       ***       E-Mail - Utilities@FreeRPGTools.com                                  ***
@@ -8,34 +8,34 @@
       ***    Maintenance History: (Most recent is listed first)                      ***
       ***                                                                            ***
       ***    Project  Date of      Pgmr                                              ***
-      ***     Id.   Last Change Initials Description of Changes                  ***
-      ***   xxxxxxx  2006-01-10   FRT       Initial Creation                        ***
-      ***                                                                           ***
+      ***      Id.    Last Change  Initials  Description of Changes                  ***
+      ***    xxxxxxx  2006-01-10   FRT       Initial Creation                        ***
+      ***                                                                            ***
       **********************************************************************************
-      ***?                             Creation Keywords                             ***
-      *** Keyword      Keyword Data                                                ***
-      *** *NONE         No special keywords are required                            ***
-      ***                                                                           ***
+      ***                              Creation Keywords                             ***
+      ***  Keyword       Keyword Data                                                ***
+      ***  *NONE         No special keywords are required                            ***
+      ***                                                                            ***
       **********************************************************************************
-      ***?                                 Overrides                                 ***
-      *** DB-File      Override                                                    ***
-      *** *NONE         No Overrides are used for this program                      ***
-      ***                                                                           ***
+      ***                                  Overrides                                 ***
+      ***  DB-File       Override                                                    ***
+      ***  *NONE         No Overrides are used for this program                      ***
+      ***                                                                            ***
       **********************************************************************************
-      ***?                           Indicator Usage                                 ***
-      *** XX    Description                                                       ***
-      *** LR      Last Record Processed Indicator                                   ***
-      ***                                                                           ***
+      ***                            Indicator Usage                                 ***
+      ***  XX      Description                                                       ***
+      ***  LR      Last Record Processed Indicator                                   ***
+      ***                                                                            ***
       **********************************************************************************
-      ***?                             Parameters                                    ***
-      ***  Field     Length Usage Description                                   ***
+      ***                              Parameters                                    ***
+      ***   Field       Length  Usage  Description                                   ***
       ***                                                                            ***
       **********************************************************************************
       *** Files Used:                                                                ***
       ***  Usage - I=Input, O=Output, W=Work, R=Reference, P=Print                   ***
       ***          D=Display, U=Update, C=Communication                              ***
       ***                                                                            ***
-      ***Usage  Name         Description                                          ***
+      *** Usage   Name          Description                                          ***
       ***   I     InputFile     Input File                                           ***
       ***                                                                            ***
       **********************************************************************************
@@ -55,24 +55,24 @@
       **********************************************************************************
       /Title  Control Specifications
      H BNDDIR('ISPHERE')
-     /Define FRT_Header
-     /COPY SRCTOOLS,ISTPRCR
-     /Undefine FRT_Header
+      /Define FRT_Header
+      /COPY SRCTOOLS,ISTPRCR
+      /Undefine FRT_Header
 
       /Title  File definition section
-      ***?Primary Work File
+      *** Primary Work File
      Fcvtwork02 IF   F  382        DISK
 
-      ***?Secondary Work File
+      *** Secondary Work File
      Fcvtwork01 UF A F  378        DISK
 
       /Title  Proto-Type definition section
-      ***?Program Entry Parameters
+      *** Program Entry Parameters
      DConvertHTML      PR                  ExtPgm('CVTSPLFRH')
      D paTitle                       50A                                        Page Title
      D piPageLen                     10I 0                                      Page Length
 
-      ***?Program Interface Parameters
+      *** Program Interface Parameters
      DConvertHTML      PI
      D paTitle                       50A                                        Page Title
      D piPageLen                     10I 0                                      Page Length
@@ -93,12 +93,12 @@
      D SkipLines       PR
      D    isSkipLine                       LIKE(zzSkipLine)
 
-     /Define Prototypes
-     /COPY SRCTOOLS,ISTPRCR
-     /Undefine Prototypes
+      /Define Prototypes
+      /COPY SRCTOOLS,ISTPRCR
+      /Undefine Prototypes
 
       /Title  Data definition section
-      ***?Define Program Standalone Fields
+      *** Define Program Standalone Fields
      DCurrDate         S               D   INZ(*JOB)
      DCurrTime         S               T   INZ(*SYS)
      DCommand          S           1024A                                        QCMDEXC Command
@@ -110,12 +110,12 @@
      D aaFooter        S             80A   DIM(1) CTDATA PERRCD(1)              Std Ftr Lines
      D wiLine          S             10I 0                                      Line Counter
 
-      ***?Compile-Time Arrays
+      *** Compile-Time Arrays
 
-      ***?Default Field Overlay Data Structure
+      *** Default Field Overlay Data Structure
      DOverlays         DS
 
-      ***?Input spooled file data including control characters
+      *** Input spooled file data including control characters
      D InputData       DS
      D   zaSkipLine                   3A
      D   zzSkipLine                   3S 0 OVERLAY(zaSkipLine:1)
@@ -123,11 +123,11 @@
      D   zzSpceLine                   1S 0 OVERLAY(zaSpceLine:1)
      D   zaInput                    378A
 
-      ***?Output HTML-format data
+      *** Output HTML-format data
      D OutputData      DS
      D   zaOutput                   378A
 
-      ***?Program Status Data Structure
+      *** Program Status Data Structure
      DProgramStatus   SDS
      D Program                       10A   Overlay(ProgramStatus:1)             Current Program
      D MsgId                          7A   Overlay(ProgramStatus:40)
@@ -136,7 +136,7 @@
      D JobNumber                      6S 0 Overlay(ProgramStatus:264)           Job Number
      D CurrUser                      10A   Overlay(ProgramStatus:358)           Current User
 
-      ***?Standard API Error Code Data-Structure
+      *** Standard API Error Code Data-Structure
      D apiError        DS                  Inz
      D  apiLen                       10I 0 Inz(0)
      D  apiRLen                      10I 0
@@ -144,18 +144,18 @@
      D  apiResv1                      1A   Inz(X'00')
      D  apiErrText                   24A
 
-     ?/Eject
+      /Eject
       /Title  M A I N  L I N E
       **********************************************************************************
       *****                            M A I N  L I N E                            *****
       **********************************************************************************
      C/Free
-       // ***?Output HTML header lines
+       // *** Output HTML header lines
        HTMLHeader();
 
        wiLine = 1;
 
-       // ***?Convert spool file lines to HTML
+       // *** Convert spool file lines to HTML
        READ cvtwork02 InputData;
        *INLR = %EOF;
        DOW *INLR = *OFF;
@@ -164,14 +164,14 @@
          *INLR = %EOF;
        EndDo;
 
-       // ***?Output HTML footer lines
+       // *** Output HTML footer lines
        HTMLFooter();
 
-       // ***?Exit program
+       // *** Exit program
         Exsr EndProgram;
        // **********************************************************************************
 
-     ?/Eject
+      /Eject
       /Title  Controlled Program has Been Requested
        // **********************************************************************************
        // *****  Subroutine : EndProgram                                               *****
@@ -179,14 +179,14 @@
        // **********************************************************************************
         Begsr EndProgram;
 
-       // ***?Exit program
+       // *** Exit program
         *INLR = *ON;
         Return;
 
         EndSR;
        // **********************************************************************************
 
-     ?/Eject
+      /Eject
       /Title  Process all one time functions
        // **********************************************************************************
        // *****  Subroutine : *INZSR                                                   *****
@@ -200,14 +200,14 @@
       /End-free
 
       **********************************************************************************
-      *****  Procedure:?HTMLHeader                               Date:?2006-01-05  *****
+      *****  Procedure: HTMLHeader                               Date: 2006-01-05  *****
       **********************************************************************************
       *****     Purpose: Create HTML header lines                                  *****
       *****       Input : None                                                     *****
       *****     Returns : None                                                     *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-06   FRT       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -216,7 +216,7 @@
       /Title  Proto-Type definition section
      D HTMLHeader      PI
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
@@ -238,14 +238,14 @@
       **********************************************************************************
 
       **********************************************************************************
-      *****  Procedure:?HTMLFooter                               Date:?2006-01-05  *****
+      *****  Procedure: HTMLFooter                               Date: 2006-01-05  *****
       **********************************************************************************
       *****     Purpose: Create HTML footer line                                   *****
       *****       Input : None                                                     *****
       *****     Returns : None                                                     *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-06   FRT       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -254,7 +254,7 @@
       /Title  Proto-Type definition section
      D HTMLFooter      PI
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
@@ -268,14 +268,14 @@
       **********************************************************************************
 
       **********************************************************************************
-      *****  Procedure:?Convert                                  Date:?2006-01-05  *****
+      *****  Procedure: Convert                                  Date: 2006-01-05  *****
       **********************************************************************************
       *****     Purpose: Convert spooled file data to HTML text                    *****
       *****       Input : None                                                     *****
       *****     Returns : None                                                     *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-06   FRT       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -284,13 +284,13 @@
       /Title  Proto-Type definition section
      D Convert         PI
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
       **********************************************************************************
      C/Free
-       // ***?If 'space' position is zero, 'overprint' previous line
+       // *** If 'space' position is zero, 'overprint' previous line
        IF zaSpceLine = '0';
 
          SETGT *HIVAL cvtwork01;
@@ -301,17 +301,17 @@
 
        ELSE;
 
-       // ***?Skip to a line if specified
+       // *** Skip to a line if specified
          IF zaSkipLine <> *Blanks;
            SkipLines(zzSkipLine);
          EndIf;
 
-       // ***?Space a number of lines if specified
+       // *** Space a number of lines if specified
          IF zaSpceLine <> *Blanks;
            SpceLines(zzSpceLine);
          EndIf;
 
-       // ***?'Print' line
+       // *** 'Print' line
          zaOutput   = zaInput;
          WRITE cvtwork01 OutputData;
 
@@ -324,7 +324,7 @@
       **********************************************************************************
 
       **********************************************************************************
-      *****  Procedure:?Merge                                    Date:?2006-01-05  *****
+      *****  Procedure: Merge                                    Date: 2006-01-05  *****
       **********************************************************************************
       *****     Purpose: Merge two overlaid lines of text                          *****
       *****       Input : Output Text                                              *****
@@ -332,7 +332,7 @@
       *****     Returns : Output Text                                              *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-06   FRT       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -344,11 +344,11 @@
      D    iaInput                          LIKE(zaInput)
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      D laOutput        S                   LIKE(zaOutput)
      D i               S              5I 0
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
@@ -373,14 +373,14 @@
       **********************************************************************************
 
       **********************************************************************************
-      *****  Procedure:?SkipLines                                Date:?2006-01-05  *****
+      *****  Procedure: SkipLines                                Date: 2006-01-05  *****
       **********************************************************************************
       *****     Purpose: Skip to a given line number                               *****
       *****       Input : Skip to Line Number                                      *****
       *****     Returns : None                                                     *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-06   FRT       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -390,7 +390,7 @@
      D SkipLines       PI
      D    isSkipLine                       LIKE(zzSkipLine)
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****
@@ -425,14 +425,14 @@
       **********************************************************************************
 
       **********************************************************************************
-      *****  Procedure:?SpceLines                                Date:?2006-01-05  *****
+      *****  Procedure: SpceLines                                Date: 2006-01-05  *****
       **********************************************************************************
       *****     Purpose: Space a number of lines                                   *****
       *****       Input : Number of Spaces                                         *****
       *****     Returns : None                                                     *****
       *****                                                                        *****
       *****  Date of      Pgmr                                                     *****
-      ***** Last Change Initials Description of Changes                         *****
+      *****  Last Change  Initials  Description of Changes                         *****
       *****  2006-01-06   FRT       Initial Creation                               *****
       *****                                                                        *****
       **********************************************************************************
@@ -443,10 +443,10 @@
      D    isSpceLine                       LIKE(zzSpceLine)
 
       /Title  Data definition section
-      ***?Procedure Work Variables
+      *** Procedure Work Variables
      D liCount         S              5I 0
 
-     ?/Eject
+      /Eject
       /Title  P R O C E D U R E  M A I N  L I N E
       **********************************************************************************
       *****                   P R O C E D U R E  M A I N  L I N E                  *****

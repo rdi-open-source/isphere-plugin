@@ -9,8 +9,10 @@
 package biz.isphere.core.spooledfiles;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 
 import com.ibm.as400.access.QSYSObjectPathName;
 import com.ibm.as400.access.SpooledFile;
@@ -29,8 +31,13 @@ public class SpooledFileTransformerHTML extends AbstractSpooledFileTransformer {
     }
 
     @Override
+    public String getCharset() {
+        return Charset.defaultCharset().name();
+    }
+
+    @Override
     protected void openPrinter(String target) throws IOException {
-        writer = new BufferedWriter(new FileWriter(target));
+        writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(target), getCharset()));
     }
 
     @Override
@@ -42,7 +49,8 @@ public class SpooledFileTransformerHTML extends AbstractSpooledFileTransformer {
 
     @Override
     protected void initPrinter() throws IOException {
-        writer.write("<html><head><title></title></head><body><table><tr><td><pre>");
+        writer.write("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + getCharset()
+            + "\"><title></title></head><body><table><tr><td><pre>");
     }
 
     @Override

@@ -12,4 +12,12 @@ public interface ISpooledFileTransformer {
 
     public boolean transformSpooledFile(String target) throws Exception;
 
+    /**
+     * Returns the character set that is used for writing the target file.
+     *
+     * @return character set of the target file or <code>null</code> for
+     *         binary files, such as PDF files
+     */
+    public String getCharset();
+
 }

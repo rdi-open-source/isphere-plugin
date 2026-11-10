@@ -11,10 +11,14 @@ package biz.isphere.core.spooledfiles;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -91,6 +95,14 @@ public class SpooledFile implements ISpooledFileBrief, IPropertySource {
 
     private static final String IBMI_FILE_SEPARATOR = "/";
     private static final String ISPHERE_IFS_TMP_DIRECTORY = IBMI_FILE_SEPARATOR + "tmp"; // $NON-NLS-N$
+
+    /**
+     * Code page (STCODPAG) of the stream files created by CVTSPLF and the
+     * matching Java character set. Variable &CODPAG passes the same code page
+     * to user defined commands.
+     */
+    private static final String STREAM_FILE_CODE_PAGE = "1252"; //$NON-NLS-1$
+    private static final String STREAM_FILE_CHARSET = "windows-1252"; //$NON-NLS-1$
 
     private AS400 as400;
 
@@ -809,14 +821,20 @@ public class SpooledFile implements ISpooledFileBrief, IPropertySource {
     private IFile getLocalSpooledFile(String format, String source, IFile target) throws Exception {
 
         boolean hasSpooledFile = false;
+        String charset = null;
 
         if (doTransformSpooledFile(format)) {
-            // CHANGED: Rz, 29.05.2018
-            hasSpooledFile = transformSpooledFile(format, target.getLocation().toOSString());
+            ISpooledFileTransformer transformer = createTransformer(format);
+            if (transformer != null) {
+                // CHANGED: Rz, 29.05.2018
+                hasSpooledFile = transformer.transformSpooledFile(target.getLocation().toOSString());
+                charset = transformer.getCharset();
+            }
         } else {
             if (createStreamFile(format)) {
                 // CHANGED: Rz, 29.05.2018
                 hasSpooledFile = uploadStreamFile(source, target.getLocation().toOSString());
+                charset = getStreamFileCharset(format);
             }
         }
 
@@ -837,8 +855,109 @@ public class SpooledFile implements ISpooledFileBrief, IPropertySource {
         // CHANGED: Rz, 29.05.2018
         target.refreshLocal(1, null);
 
+        // PDF files are binary files.
+        if (!IPreferences.OUTPUT_FORMAT_PDF.equals(format)) {
+            setCharset(target, charset);
+        }
+
         // CHANGED: Rz, 29.05.2018
         return target;
+    }
+
+    /**
+     * Sets the character set of a local spooled file, unless Eclipse already
+     * reads the file with that character set. That way opening the file does
+     * not depend on the text file encoding of the workspace, which might be
+     * different or even unsupported, for example 'COMPAT' when RDi is started
+     * with -Dfile.encoding=COMPAT.
+     * <p>
+     * An unknown character set is replaced with the character set of the
+     * CVTSPLF command, but only when Eclipse cannot read the file at all,
+     * because of an unsupported workspace encoding.
+     *
+     * @param file - local spooled file
+     * @param charset - character set of the file or <code>null</code>, if
+     *        unknown (user defined conversion)
+     */
+    private void setCharset(IFile file, String charset) {
+
+        try {
+
+            String currentCharset = file.getCharset();
+            String newCharset;
+
+            if (charset != null) {
+                if (isSameCharset(charset, currentCharset)) {
+                    return;
+                }
+                newCharset = charset;
+            } else {
+                if (isSupportedCharset(currentCharset)) {
+                    return;
+                }
+                newCharset = STREAM_FILE_CHARSET;
+            }
+
+            file.setCharset(newCharset, null);
+
+        } catch (CoreException e) {
+            ISpherePlugin.logError("*** Could not set character set of local spooled file: " + file.getName() + " ***", e); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+    }
+
+    private boolean isSupportedCharset(String charset) {
+
+        try {
+            return Charset.isSupported(charset);
+        } catch (IllegalArgumentException e) {
+            // Illegal character set name or null.
+            return false;
+        }
+    }
+
+    private boolean isSameCharset(String charset1, String charset2) {
+
+        try {
+            return Charset.forName(charset1).equals(Charset.forName(charset2));
+        } catch (IllegalArgumentException e) {
+            // Unsupported or illegal character set name, such as 'COMPAT'.
+            return false;
+        }
+    }
+
+    /**
+     * Returns the character set of the stream file that has been created on
+     * the host for a given output format.
+     *
+     * @param format - output format
+     * @return character set or <code>null</code>, if the character set is
+     *         unknown (user defined conversion)
+     */
+    private String getStreamFileCharset(String format) {
+
+        if (isUserDefinedConversion(format)) {
+            return null;
+        }
+
+        return STREAM_FILE_CHARSET;
+    }
+
+    private boolean isUserDefinedConversion(String format) {
+
+        Preferences store = Preferences.getInstance();
+
+        String conversion;
+        if (IPreferences.OUTPUT_FORMAT_TEXT.equals(format)) {
+            conversion = store.getSpooledFileConversionText();
+        } else if (IPreferences.OUTPUT_FORMAT_HTML.equals(format)) {
+            conversion = store.getSpooledFileConversionHTML();
+        } else if (IPreferences.OUTPUT_FORMAT_PDF.equals(format)) {
+            conversion = store.getSpooledFileConversionPDF();
+        } else {
+            return false;
+        }
+
+        return IPreferences.SPLF_CONVERSION_USER_DEFINED.equals(conversion);
     }
 
     private boolean doTransformSpooledFile(String format) {
@@ -917,12 +1036,14 @@ public class SpooledFile implements ISpooledFileBrief, IPropertySource {
 
                     cleanUp = true;
 
-                    String messageId = ISphereHelper.executeCommand(as400, command);
+                    List<AS400Message> messages = new ArrayList<AS400Message>();
+                    String errorMessage = ISphereHelper.executeCommand(as400, command, messages);
 
-                    if (messageId != null && messageId.equals("")) {
-                        return true;
+                    if (errorMessage != null) {
+                        throw new Exception(getCreateStreamFileErrorMessage(messages, errorMessage));
                     }
 
+                    return true;
                 }
 
             }
@@ -939,6 +1060,47 @@ public class SpooledFile implements ISpooledFileBrief, IPropertySource {
 
         return false;
 
+    }
+
+    /**
+     * Returns the error message of a conversion command that could not create
+     * the stream file on the host. The message lists the diagnostic and escape
+     * messages of the command, because the escape message alone often does not
+     * tell the reason, for example CPF0001 'Error found on CVTSPLF command.'.
+     * <p>
+     * The message is a single line, because
+     * {@link ExceptionHelper#getLocalizedMessage(Throwable)} replaces line
+     * breaks.
+     *
+     * @param messages - messages returned by the conversion command
+     * @param errorMessage - error message returned by
+     *        {@link ISphereHelper#executeCommand(AS400, String, List)}, used
+     *        when the command did not return a diagnostic or escape message
+     * @return error message
+     */
+    private String getCreateStreamFileErrorMessage(List<AS400Message> messages, String errorMessage) {
+
+        StringBuilder buffer = new StringBuilder(Messages.Could_not_create_stream_file_for_spooled_file_on_host);
+
+        boolean hasHostMessages = false;
+        for (AS400Message message : messages) {
+            if (message.getType() == AS400Message.DIAGNOSTIC || message.getType() == AS400Message.ESCAPE) {
+                buffer.append(" "); //$NON-NLS-1$
+                if (!StringHelper.isNullOrEmpty(message.getID())) {
+                    buffer.append(message.getID());
+                    buffer.append(": "); //$NON-NLS-1$
+                }
+                buffer.append(message.getText());
+                hasHostMessages = true;
+            }
+        }
+
+        if (!hasHostMessages) {
+            buffer.append(" "); //$NON-NLS-1$
+            buffer.append(errorMessage);
+        }
+
+        return buffer.toString();
     }
 
     public String replaceVariables(String mask) {
@@ -964,7 +1126,7 @@ public class SpooledFile implements ISpooledFileBrief, IPropertySource {
             mask = replace(mask, VARIABLE_JOBSYS, getJobSystem());
             mask = replace(mask, VARIABLE_STMFDIR, ISPHERE_IFS_TMP_DIRECTORY);
             mask = replace(mask, VARIABLE_STMF, getTemporaryName(tFormat));
-            mask = replace(mask, VARIABLE_CODPAG, "1252"); //$NON-NLS-1$
+            mask = replace(mask, VARIABLE_CODPAG, STREAM_FILE_CODE_PAGE);
             mask = replace(mask, VARIABLE_FMT, tFormat); // $NON-NLS-1$
 
             mask = replace(mask, VARIABLE_STATUS, getStatus());
@@ -997,20 +1159,26 @@ public class SpooledFile implements ISpooledFileBrief, IPropertySource {
 
     private boolean transformSpooledFile(String format, String target) throws Exception {
 
-        ISpooledFileTransformer transformer = null;
-
-        if (IPreferences.OUTPUT_FORMAT_TEXT.equals(format)) {
-            transformer = new SpooledFileTransformerText(connectionName, getToolboxSpooledFile());
-        } else if (IPreferences.OUTPUT_FORMAT_HTML.equals(format)) {
-            transformer = new SpooledFileTransformerHTML(connectionName, getToolboxSpooledFile());
-        } else if (IPreferences.OUTPUT_FORMAT_PDF.equals(format)) {
-            transformer = new SpooledFileTransformerPDF(connectionName, getToolboxSpooledFile());
-        } else {
+        ISpooledFileTransformer transformer = createTransformer(format);
+        if (transformer == null) {
             return false;
         }
 
         return transformer.transformSpooledFile(target);
 
+    }
+
+    private ISpooledFileTransformer createTransformer(String format) {
+
+        if (IPreferences.OUTPUT_FORMAT_TEXT.equals(format)) {
+            return new SpooledFileTransformerText(connectionName, getToolboxSpooledFile());
+        } else if (IPreferences.OUTPUT_FORMAT_HTML.equals(format)) {
+            return new SpooledFileTransformerHTML(connectionName, getToolboxSpooledFile());
+        } else if (IPreferences.OUTPUT_FORMAT_PDF.equals(format)) {
+            return new SpooledFileTransformerPDF(connectionName, getToolboxSpooledFile());
+        }
+
+        return null;
     }
 
     private boolean uploadStreamFile(String source, String target) throws Exception {

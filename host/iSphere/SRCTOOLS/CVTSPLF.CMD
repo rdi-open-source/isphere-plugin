@@ -1,6 +1,6 @@
      /* **************************************************************************** */
-     /* *** Command name:?CVTSPLF                              Date:?2005-08-09  *** */
-     /* ***          CPP:?CVTSPLFC                                               *** */
+     /* *** Command name: CVTSPLF                              Date: 2005-08-09  *** */
+     /* ***          CPP: CVTSPLFC                                               *** */
      /* **************************************************************************** */
      /* ***  Copyright - Free RPG/i5 Tools                                       *** */
      /* ***     E-Mail - Utilities@FreeRPGTools.com                              *** */
@@ -9,14 +9,14 @@
      /* ***    Maintenance History: (Most recent is listed first)                *** */
      /* ***                                                                      *** */
      /* ***    Project  Date of      Pgmr                                        *** */
-     /* ***     Id.   Last Change Initials Description of Changes            *** */
-     /* ***   xxxxxxx  2006-12-05   FRT       Initial Creation                  *** */
-     /* ***                                                                     *** */
+     /* ***      Id.    Last Change  Initials  Description of Changes            *** */
+     /* ***    xxxxxxx  2006-12-05   FRT       Initial Creation                  *** */
+     /* ***                                                                      *** */
      /* **************************************************************************** */
-     /* ***?                          Creation Keywords                          *** */
-     /* *** Keyword      Keyword Data                                          *** */
-     /* *** *NONE         No Keywords used for this program                     *** */
-     /* ***                                                                     *** */
+     /* ***                           Creation Keywords                          *** */
+     /* ***  Keyword       Keyword Data                                          *** */
+     /* ***  *NONE         No Keywords used for this program                     *** */
+     /* ***                                                                      *** */
      /* **************************************************************************** */
      /* *** STRPREPRC Compile Options:                                           *** */
      /* ***   >>PRE-COMPILER<<                                                   *** */
@@ -45,8 +45,8 @@
              QUAL       TYPE(*NAME) LEN(10) MIN(1) PROMPT('User')
              QUAL       TYPE(*CHAR) LEN(6) RANGE(000000 999999) MIN(1) PROMPT('Number')
 
-             PARM       KWD(SPLNBR) TYPE(*DEC) LEN(4) DFT(*ONLY) RANGE(1 9999) SPCVAL((*LAST +
-                          -2) (*ONLY -3)) PROMPT('Spooled file number')
+             PARM       KWD(SPLNBR) TYPE(*INT4) DFT(*ONLY) RANGE(1 999999) +
+                          SPCVAL((*LAST -2) (*ONLY -3)) PROMPT('Spooled file number')
 
              PARM       KWD(TOFMT) TYPE(*CHAR) LEN(5) RSTD(*YES) DFT(*TEXT) VALUES(*TEXT *HTML +
                           *PDF) PROMPT('Stream file format')
