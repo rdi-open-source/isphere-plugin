@@ -1,6 +1,13 @@
 
 Changelog: iSphere 6.2.0.r
 --------------------------
+ • Added value '0' to option 'Maximum depth' of the stream file
+   search for searching only the selected directories.
+ • Fixed the stream file search, which ignored the 'Maximum depth'
+   of the search dialog for RSE filters and with 'Batch resolve
+   enabled'.
+ • Fixed the stream file search, which showed the title 'iSphere
+   Source File Search' in its progress and messages.
  • Ant build: Change FTP to use passive mode for fixing firewall
    problems.
  • Fixed 'Unsupported encoding when reading file.' when opening a

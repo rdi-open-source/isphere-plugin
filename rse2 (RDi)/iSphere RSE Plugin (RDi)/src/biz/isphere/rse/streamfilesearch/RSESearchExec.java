@@ -26,6 +26,7 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.MessageDialogAsync;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.GenericSearchOption;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.streamfilesearch.SearchElement;
@@ -81,6 +82,14 @@ public class RSESearchExec extends SearchExec {
         execute(_qualifiedConnectionName, _jdbcConnection, searchOptions, filteredElements, postRun);
     }
 
+    /**
+     * Returns the 'maximum depth' of the search options or, if the search
+     * options do not specify it, the 'maximum depth' of the preferences.
+     */
+    private int getMaxDepth(SearchOptions searchOptions) {
+        return searchOptions.getGenericIntOption(GenericSearchOption.Key.MAX_DEPTH, Preferences.getInstance().getStreamFileSearchMaxDepth());
+    }
+
     private SearchPostRun createPostRun(IWorkbenchWindow workbenchWindow, IBMiConnection connection, SearchOptions searchOptions) {
         return createPostRun(workbenchWindow, connection, new ArrayList<SearchElement>(), searchOptions);
     }
@@ -109,7 +118,7 @@ public class RSESearchExec extends SearchExec {
 
         public FilterResolverJob(IWorkbenchWindow workbenchWindow, IBMiConnection connection, Connection jdbcConnection, SearchOptions searchOptions,
             List<Object> selectedElements, SearchPostRun postRun) {
-            super(biz.isphere.core.Messages.iSphere_Source_File_Search);
+            super(biz.isphere.core.Messages.iSphere_Stream_File_Search);
 
             this.workbenchWindow = workbenchWindow;
             this.connection = connection;
@@ -127,13 +136,13 @@ public class RSESearchExec extends SearchExec {
                 monitor.beginTask(biz.isphere.core.Messages.Resolving_filters, 0);
 
                 Map<String, SearchElement> searchElements = new StreamFileSearchFilterResolver(getShell(), connection, monitor)
-                    .resolveRSEFilter(selectedElements);
+                    .resolveRSEFilter(selectedElements, getMaxDepth(searchOptions));
                 final ArrayList<SearchElement> filteredElements = new StreamFileSearchFilter().applyFilter(searchElements.values(), searchOptions);
 
                 postRun.setSearchElements(searchElements);
 
                 if (filteredElements.size() == 0) {
-                    MessageDialogAsync.displayNonBlockingInformation(getShell(), biz.isphere.core.Messages.iSphere_Source_File_Search,
+                    MessageDialogAsync.displayNonBlockingInformation(getShell(), biz.isphere.core.Messages.iSphere_Stream_File_Search,
                         Messages.No_objects_found_that_match_the_selection_criteria);
                     return Status.OK_STATUS;
                 }
@@ -170,7 +179,7 @@ public class RSESearchExec extends SearchExec {
 
         public ObjectResolverJob(IWorkbenchWindow workbenchWindow, IBMiConnection connection, Connection jdbcConnection, SearchOptions searchOptions,
             String directory, String streamFile, SearchPostRun postRun) {
-            super(biz.isphere.core.Messages.iSphere_Source_File_Search);
+            super(biz.isphere.core.Messages.iSphere_Stream_File_Search);
 
             this.workbenchWindow = workbenchWindow;
             this.connection = connection;
@@ -191,13 +200,13 @@ public class RSESearchExec extends SearchExec {
                 HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
 
                 StreamFileSearchDelegate delegate = new StreamFileSearchDelegate(getShell(), connection, monitor);
-                delegate.addElements(searchElements, directory, streamFile, searchOptions.getGenericIntOption(GenericSearchOption.Key.MAX_DEPTH, 1));
+                delegate.addElements(searchElements, directory, streamFile, getMaxDepth(searchOptions));
                 ArrayList<SearchElement> filteredElements = new StreamFileSearchFilter().applyFilter(searchElements.values(), searchOptions);
 
                 postRun.setSearchElements(searchElements);
 
                 if (filteredElements.size() == 0) {
-                    MessageDialogAsync.displayNonBlockingInformation(getShell(), biz.isphere.core.Messages.iSphere_Source_File_Search,
+                    MessageDialogAsync.displayNonBlockingInformation(getShell(), biz.isphere.core.Messages.iSphere_Stream_File_Search,
                         Messages.No_objects_found_that_match_the_selection_criteria);
                     return Status.OK_STATUS;
                 }

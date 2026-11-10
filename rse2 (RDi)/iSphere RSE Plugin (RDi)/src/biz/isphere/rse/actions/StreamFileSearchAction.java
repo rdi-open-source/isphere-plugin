@@ -106,7 +106,10 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
             if (Preferences.getInstance().isStreamFileSearchBatchResolveEnabled()) {
                 _searchElements = null;
             } else {
-                _searchElements = new StreamFileSearchFilterResolver(_shell, _connection).resolveRSEFilter(_selectedElements);
+                // Resolved before the search dialog opens, which therefore
+                // shows the 'maximum depth' of the preferences read-only.
+                _searchElements = new StreamFileSearchFilterResolver(_shell, _connection).resolveRSEFilter(_selectedElements,
+                    Preferences.getInstance().getStreamFileSearchMaxDepth());
             }
         } catch (InterruptedException e) {
             SystemMessageDialog.displayExceptionMessage(_shell, e);

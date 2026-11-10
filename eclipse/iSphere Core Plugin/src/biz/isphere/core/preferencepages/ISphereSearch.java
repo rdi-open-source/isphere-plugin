@@ -167,7 +167,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         labelMaxDepth.setLayoutData(createLabelLayoutData());
         labelMaxDepth.setText(Messages.Max_depth_colon);
 
-        comboMaxDepth = WidgetFactory.createIntegerCombo(group, true);
+        comboMaxDepth = WidgetFactory.createIntegerCombo(group, false);
         comboMaxDepth.setToolTipText(Messages.Specifies_the_maximum_depth_of_sub_directories_included_in_the_search);
         comboMaxDepth.setLayoutData(createTextLayoutData(1, 100));
         comboMaxDepth.addModifyListener(new ModifyListener() {
@@ -189,7 +189,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
                 updateMaxDepthWarning();
             }
         });
-        comboMaxDepth.setItems(new String[] { "1", Preferences.UNLIMITTED });
+        comboMaxDepth.setItems(Preferences.getInstance().getStreamFileSearchMaxDepthItems());
 
         labelMaxDepthWarning = new Label(group, SWT.NONE);
         labelMaxDepthWarning.setLayoutData(createLabelLayoutData(2));
@@ -207,7 +207,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
     private void updateMaxDepthWarning() {
         if (labelMaxDepthWarning != null) {
-            if (getMaxDepth() != 1) {
+            if (Preferences.getInstance().isStreamFileSearchMaxDepthMoreThanOneLevel(getMaxDepth())) {
                 labelMaxDepthWarning.setVisible(true);
             } else {
                 labelMaxDepthWarning.setVisible(false);

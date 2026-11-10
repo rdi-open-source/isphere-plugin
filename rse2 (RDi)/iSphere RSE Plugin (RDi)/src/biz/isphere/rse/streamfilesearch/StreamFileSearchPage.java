@@ -140,7 +140,7 @@ public class StreamFileSearchPage extends AbstractSearchPage {
         maxDepthLabel.setText(Messages.Max_depth_colon);
         maxDepthLabel.setToolTipText(Messages.Specifies_the_maximum_depth_of_sub_directories_included_in_the_search);
 
-        comboMaxDepth = WidgetFactory.createIntegerCombo(parent, true);
+        comboMaxDepth = WidgetFactory.createIntegerCombo(parent, false);
         comboMaxDepth.setToolTipText(Messages.Specifies_the_maximum_depth_of_sub_directories_included_in_the_search);
         GridData maxDepthGridData = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 1, 1);
         maxDepthGridData.widthHint = 100;
@@ -161,7 +161,7 @@ public class StreamFileSearchPage extends AbstractSearchPage {
                 updateMaxDepthWarning();
             }
         });
-        comboMaxDepth.setItems(new String[] { "1", Preferences.UNLIMITTED });
+        comboMaxDepth.setItems(preferences.getStreamFileSearchMaxDepthItems());
 
         labelMaxDepthWarning = new Label(parent, SWT.NONE);
         labelMaxDepthWarning.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, numColumns - 2, 1));
@@ -177,7 +177,7 @@ public class StreamFileSearchPage extends AbstractSearchPage {
 
     private void updateMaxDepthWarning() {
         if (labelMaxDepthWarning != null) {
-            if (getMaxDepth() != 1) {
+            if (preferences.isStreamFileSearchMaxDepthMoreThanOneLevel(getMaxDepth())) {
                 labelMaxDepthWarning.setVisible(true);
             } else {
                 labelMaxDepthWarning.setVisible(false);
@@ -495,7 +495,7 @@ public class StreamFileSearchPage extends AbstractSearchPage {
         selectedFilters.add(filter);
 
         StreamFileSearchFilterResolver filterResolver = new StreamFileSearchFilterResolver(getShell(), connection);
-        Map<String, SearchElement> searchElements = filterResolver.resolveRSEFilter(selectedFilters);
+        Map<String, SearchElement> searchElements = filterResolver.resolveRSEFilter(selectedFilters, getMaxDepth());
 
         return searchElements;
     }

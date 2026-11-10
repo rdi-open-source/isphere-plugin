@@ -202,7 +202,7 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
         maxDepthLabel.setText(Messages.Max_depth_colon);
         maxDepthLabel.setToolTipText(Messages.Specifies_the_maximum_depth_of_sub_directories_included_in_the_search);
 
-        comboMaxDepth = WidgetFactory.createIntegerCombo(groupOptions, true);
+        comboMaxDepth = WidgetFactory.createIntegerCombo(groupOptions, false);
         comboMaxDepth.setToolTipText(Messages.Specifies_the_maximum_depth_of_sub_directories_included_in_the_search);
         GridData maxDepthGridData = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 1, 1);
         maxDepthGridData.widthHint = 100;
@@ -223,7 +223,7 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
                 updateMaxDepthWarning();
             }
         });
-        comboMaxDepth.setItems(new String[] { "1", Preferences.UNLIMITTED });
+        comboMaxDepth.setItems(preferences.getStreamFileSearchMaxDepthItems());
 
         if (hasSearchElements()) {
             comboMaxDepth.setEnabled(false);
@@ -244,7 +244,7 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
 
     private void updateMaxDepthWarning() {
         if (labelMaxDepthWarning != null) {
-            if (getMaxDepth() != 1) {
+            if (preferences.isStreamFileSearchMaxDepthMoreThanOneLevel(getMaxDepth())) {
                 labelMaxDepthWarning.setVisible(true);
             } else {
                 labelMaxDepthWarning.setVisible(false);

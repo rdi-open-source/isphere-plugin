@@ -585,6 +585,22 @@ public final class Preferences {
         return maxDepth == UNLIMITTED_DEPTH;
     }
 
+    /**
+     * Returns <code>true</code>, if the 'maximum depth' value includes more
+     * than one level of subdirectories.
+     */
+    public boolean isStreamFileSearchMaxDepthMoreThanOneLevel(int maxDepth) {
+        return isStreamFileSearchUnlimitedMaxDepth(maxDepth) || maxDepth > 1;
+    }
+
+    /**
+     * Returns the items of the 'maximum depth' combo boxes of the stream file
+     * search.
+     */
+    public String[] getStreamFileSearchMaxDepthItems() {
+        return new String[] { "0", "1", UNLIMITTED }; //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
     public int getStreamFileSearchMaxDepth() {
         return preferenceStore.getInt(STREAM_FILE_SEARCH_MAX_DEPTH);
     }
