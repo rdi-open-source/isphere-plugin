@@ -534,7 +534,7 @@ dcl-proc SYNCMBR_resolveGenericMembers export;
     srcType    varchar(10);
   end-ds;
 
-  dcl-s parts varchar(10) dim(2);
+  dcl-s dotPos int(10);
 
   dcl-s pattern like(pattern_t);
   dcl-ds hRegex likeds(hRegex_t) inz;
@@ -593,23 +593,21 @@ dcl-proc SYNCMBR_resolveGenericMembers export;
         filterItem = '*.*';
       endif;
 
-      // First idea was to induvidially compare name and source type.
-      // There the name and source type were stored separately.
-      if (%len(%trim(filterItem)) > 0);
-        parts = %split(filterItem: '.'); // = name.type
-        if (parts(1) <> '' or parts(2) <> '' );
-          numFilters += 1;
-          nameTypeFilter(numFilters).isNegated = isNegated;
-          if (parts(1) <> '');
-            nameTypeFilter(numFilters).name = %trim(ucase(parts(1)));
-          else;
-            nameTypeFilter(numFilters).name = '*';
-          endif;
-          if (parts(2) <> '');
-            nameTypeFilter(numFilters).srcType = %trim(ucase(parts(2)));
-          else;
-            nameTypeFilter(numFilters).srcType = '*';
-          endif;
+      // The dot separates name and source type. A missing name or source
+      // type matches all: '.rpgle' = '*.rpgle', 'demo*' = 'demo*.*'.
+      numFilters += 1;
+      nameTypeFilter(numFilters).isNegated = isNegated;
+      nameTypeFilter(numFilters).name = '*';
+      nameTypeFilter(numFilters).srcType = '*';
+      dotPos = %scanr('.': filterItem);
+      if (dotPos = 0);
+        nameTypeFilter(numFilters).name = ucase(filterItem);
+      else;
+        if (dotPos > 1);
+          nameTypeFilter(numFilters).name = ucase(%subst(filterItem: 1: dotPos - 1));
+        endif;
+        if (dotPos < %len(filterItem));
+          nameTypeFilter(numFilters).srcType = ucase(%subst(filterItem: dotPos + 1));
         endif;
       endif;
     endfor;
@@ -783,15 +781,16 @@ dcl-proc SYNCMBR_resolveGenericMembers export;
 
                 if (isFound);
 
-                  // Check negated patterns:
+                  // Check negated patterns: a member is excluded as soon as it
+                  // matches one of them.
                   for i = 1 to numFilters;
                     if (not nameTypeFilter(i).isNegated);
                       iter;
                     endif;
 
                     memberNameMask = nameTypeFilter(i).name + '.' + nameTypeFilter(i).srcType;
-                    isFound = not (matches(memberNameMask: fullMemberName));
-                    if (isFound);
+                    if (matches(memberNameMask: fullMemberName));
+                      isFound = *off;
                       leave;
                     endif;
                   endfor;
@@ -1485,6 +1484,7 @@ dcl-proc initRegex;
   dcl-s rc int(10);
   dcl-s cflags int(10);
   dcl-s pattern like(i_pattern);
+  dcl-s error char(256);
 
   // ----------------------------------------------------------------------------------------
 
@@ -1495,7 +1495,8 @@ dcl-proc initRegex;
   cflags = REG_EXTENDED + REG_ICASE;
   rc = regcomp(hRegex.regex: pattern: cflags);
   if (rc <> 0);
-    kill('initRegex: regcomp() returned error code ' + %char(rc));
+    regerror(rc: hRegex.regex: %addr(error): %size(error));
+    kill('Invalid regular expression: ' + %str(%addr(error): 100));
   endif;
 
   hRegex.isInit = *on;
@@ -1556,8 +1557,8 @@ dcl-proc matchRegex;
   when rc = REG_NOMATCH;   // not found
     isMatch = *off;
   other;                   // error!
-    regerror(rc: io_hRegex: %addr(error): %size(error));
-    kill('matchRegex: regcomp() returned error code ' + %char(rc));
+    regerror(rc: io_hRegex.regex: %addr(error): %size(error));
+    kill('Regular expression failed: ' + %str(%addr(error): 100));
   endsl;
 
   return isMatch;

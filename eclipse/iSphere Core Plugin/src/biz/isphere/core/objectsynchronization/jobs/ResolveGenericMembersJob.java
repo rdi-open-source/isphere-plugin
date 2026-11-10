@@ -84,9 +84,15 @@ public class ResolveGenericMembersJob extends AbstractCompareMembersJob {
             StatusObserverThread statusObserverThread = new StatusObserverThread(subMonitor, handle, mode);
             statusObserverThread.start();
 
-            new SYNCMBR_resolveGenericMembers().run(getSystem(), handle, mode.mode(), memberFilter, isRegEx);
+            SYNCMBR_resolveGenericMembers resolveGenericMembers = new SYNCMBR_resolveGenericMembers();
+            int rc = resolveGenericMembers.run(getSystem(), handle, mode.mode(), memberFilter, isRegEx);
 
             statusObserverThread.joinChecked(THREAD_WAIT_TIMEOUT_IN_MILLISECONDS);
+
+            if (rc < 0) {
+                cancel(handle,
+                    new Exception(Messages.bind(Messages.Could_not_determine_the_items_to_compare_A, resolveGenericMembers.getErrorMessage())));
+            }
 
         } finally {
             restoreCurrentLibrary();

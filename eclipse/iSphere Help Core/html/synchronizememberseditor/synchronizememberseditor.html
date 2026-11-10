@@ -80,16 +80,19 @@
     <pre class="codeIndent">
     <b>*.rpgle, *.clle</b>.
     </pre>
+    <p>The name or the type of a pattern may be omitted: <b>.rpgle</b> is the same as
+       <b>*.rpgle</b>, and <b>demo*</b> is the same as <b>demo*.*</b>.
     <p>In case you want to exclude members by name and/or type, you can negate
        the selection mask by a preceding &quot;|&quot; (pipe symbol):
     <p>
         <img src="assets/filter_mask_negated.png" align="middle">
-    <p>All patterns following the pipe symbol are considered negated, for example:
+    <p>All patterns following the pipe symbol are considered negated. A member is
+       excluded, if it matches one of them, for example:
     <pre class="codeIndent">
-    <b>*.rpgle, |demo*.*</b>.
+    <b>*.rpgle, |demo*.* test*.*</b>.
     </pre>
     <p>It is also possible to use regular expressions for filtering items by name
-    and type. Regular expressions must be start with a "<" character. The following
+    and type. Regular expressions must start with a "<" character. The following
     example selects all members starting with "DEMO" followed by up to 6 unspecified
     characters. The member type must be "DSPF" or "PRTF":
     <pre class="codeIndent">

@@ -6,6 +6,14 @@ Changelog: iSphere 6.2.0.r
  • Fixed problem that the iSphere Stream File Search ignored
    option 'Maximum depth' of the search dialog for RSE filters and
    with 'Batch resolve enabled'.
+ • Fixed problem that the iSphere Synchronize Members editor
+   excluded only members that matched all negated masks instead of
+   any of them.
+ • Fixed problem that the iSphere Synchronize Members editor took
+   a mask such as '.rpgle' as 'rpgle.*' instead of '*.rpgle'.
+ • Changed the iSphere Synchronize Members editor to show an error
+   message, if the members could not be determined, e.g. because
+   of an invalid regular expression.
  • Ant build: Change FTP to use passive mode for fixing firewall
    problems.
  • Fixed 'Unsupported encoding when reading file.' when opening

@@ -72,7 +72,11 @@ public class ResolveGenericFilesJob extends AbstractCompareMembersJob {
                 return;
             }
 
-            new SYNCMBR_resolveGenericFiles().run(getSystem(), handle, mode.mode(), memberFilter);
+            SYNCMBR_resolveGenericFiles resolveGenericFiles = new SYNCMBR_resolveGenericFiles();
+            if (resolveGenericFiles.run(getSystem(), handle, mode.mode(), memberFilter) < 0) {
+                cancel(handle,
+                    new Exception(Messages.bind(Messages.Could_not_determine_the_items_to_compare_A, resolveGenericFiles.getErrorMessage())));
+            }
 
         } finally {
             restoreCurrentLibrary();
