@@ -1,0 +1,47 @@
+     /*-----------------------------------------------------------------------*/
+     /*                                                                       */
+     /* Copyright (c) 2012-2026 iSphere Project Owners                        */
+     /* All rights reserved. This program and the accompanying materials      */
+     /* are made available under the terms of the Common Public License v1.0  */
+     /* which accompanies this distribution, and is available at              */
+     /* http://www.eclipse.org/legal/cpl-v10.html                             */
+     /*                                                                       */
+     /*-----------------------------------------------------------------------*/
+     /*                                                                       */
+     /* Synchronize IFS FIles API                                             */
+     /*                                                                       */
+     /*-----------------------------------------------------------------------*/
+     /* STRPREPRC Compile Options:                                            */
+     /*   >>PRE-COMPILER<<                                                    */
+     /*     >>CRTCMD<< CRTSRVPGM  SRVPGM(&LI/&OB);                            */
+     /*       >>COMPILE<<                                                     */
+     /*         >>PARM<<  EXPORT(*SRCFILE);                                   */
+     /*         >>PARM<<  SRCFILE(&SL/&SF) SRCMBR(&SM);                       */
+     /*         >>PARM<<  BNDSRVPGM(*LIBL/NBRRNG *LIBL/STRING *LIBL/CRC32);   */
+     /*         >>PARM<<  ACTGRP(ISPHERE);                                    */
+     /*         >>PARM<<  TGTRLS(&TR);                                        */
+     /*         >>PARM<<  MODULE(&LI/SYNCIFS);                                */
+     /*         >>PARM<<  DETAIL(*BASIC);                                     */
+     /*         >>PARM<<  TEXT('Synchronize IFS Files API');                  */
+     /*       >>END-COMPILE<<                                                 */
+     /*       >>EXECUTE<<                                                     */
+     /*   >>END-PRE-COMPILER<<                                                */
+     /*-----------------------------------------------------------------------*/
+
+     /* Start Export */
+             STRPGMEXP
+
+     /* Export */
+             EXPORT     SYMBOL('SYNCIFS_getHandle')
+             EXPORT     SYMBOL('SYNCIFS_getNumberOfCompareElements')
+             EXPORT     SYMBOL('SYNCIFS_clear')
+             EXPORT     SYMBOL('SYNCIFS_retrieveItemAttributes')
+             EXPORT     SYMBOL('SYNCIFS_resolveGenericFiles')
+
+     /* Internal Tests */
+             EXPORT     SYMBOL('getParentPath')
+             EXPORT     SYMBOL('joinPath')
+             EXPORT     SYMBOL('normalizePath')
+
+     /* End Export */
+             ENDPGMEXP

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2024 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,9 +32,11 @@ import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
 import biz.isphere.core.dataareaeditor.DataAreaEditor;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.ibmi.contributions.extension.point.BasicQualifiedConnectionName;
+import biz.isphere.core.ifssynchronization.rse.SynchronizeStreamFilesEditor;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.internal.RemoteStreamFile;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditor;
 import biz.isphere.core.messagefileeditor.MessageDescription;
@@ -227,6 +229,20 @@ public class Access {
         ISynchronizeMembersEditorConfiguration configuration) throws Exception {
 
         SynchronizeMembersEditor.openEditor(leftRemoteObject, rightRemoteObject, configuration);
+
+    }
+
+    /**
+     * @param shell - the parent shell.
+     * @param leftRemoteObject - left remote library or source file.
+     * @param rightRemoteObject - right remote library or source file.
+     * @param configuration - synchronize editor configuration
+     * @throws Exception
+     */
+    public static void openSynchronizeIfsFilesEditor(Shell shell, RemoteStreamFile leftRemoteObject, RemoteStreamFile rightRemoteObject,
+        ISynchronizeStreamFilesEditorConfiguration configuration) throws Exception {
+
+        SynchronizeStreamFilesEditor.openEditor(leftRemoteObject, rightRemoteObject, configuration);
 
     }
 

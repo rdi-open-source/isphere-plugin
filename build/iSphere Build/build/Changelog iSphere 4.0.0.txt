@@ -1,6 +1,7 @@
 
 Changelog: iSphere 6.2.0.r
 --------------------------
+ • Added option 'iSphere Synchronize Stream Files' editor.
  • Added value '0' to option 'Maximum depth' of the stream file
    search for searching only the selected directories.
  • Fixed the stream file search, which ignored the 'Maximum depth'

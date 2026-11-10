@@ -1,0 +1,5 @@
+<pcml version="4.0">
+   <program name="SYNCIFS_clear" path="/QSYS.LIB/%LIBL%.LIB/W006003.PGM">
+      <data name="handle" type="zoned" length="10" precision="0" usage="input" />
+   </program>
+</pcml>
