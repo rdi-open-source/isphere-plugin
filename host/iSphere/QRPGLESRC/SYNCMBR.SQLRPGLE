@@ -523,29 +523,14 @@ dcl-proc SYNCMBR_resolveGenericMembers export;
   dcl-s mask varchar(10);
   dcl-ds errCode likeds(errCode_t) inz(*likeds);
 
-  dcl-c FILTER_DELIMITER_CHARS ' ,;';
-
-  dcl-s filterItem varchar(21); // = name.type
-
-  dcl-s numFilters int(10);
-  dcl-ds nameTypeFilter qualified dim(50) inz;
-    isNegated  ind;
-    name       varchar(10);
-    srcType    varchar(10);
-  end-ds;
-
-  dcl-s dotPos int(10);
+  dcl-ds nameTypeFilters likeds(mbrNameTypeFilters_t) inz;
 
   dcl-s pattern like(pattern_t);
   dcl-ds hRegex likeds(hRegex_t) inz;
 
-  dcl-s i int(10);
-  dcl-s isNegated ind;
   dcl-s isFound ind;
   dcl-s fullMemberName varchar(21);
-  dcl-s memberNameMask varchar(21);
 
-  dcl-s countNonNegatedPatterns int(10);
   dcl-s countMembersResolved int(10);
 
   dcl-ds lastUpdateMembersResolved qualified inz;
@@ -574,43 +559,7 @@ dcl-proc SYNCMBR_resolveGenericMembers export;
   else;
     clear hRegex;
     hRegex.isInit = *off;
-    numFilters = 0;
-    isNegated = *off;
-    for-each filterItem in %split(i_memberFilter: FILTER_DELIMITER_CHARS);
-
-      // Starting with a pipe (|) all following
-      // entries are negated.
-      if (startsWith('|': filterItem));
-        if (%len(filterItem) >= 2);
-          filterItem = %subst(filterItem: 2);
-        else;
-          filterItem = '';
-        endif;
-        isNegated = *on;
-      endif;
-
-      if (filterItem = '');
-        filterItem = '*.*';
-      endif;
-
-      // The dot separates name and source type. A missing name or source
-      // type matches all: '.rpgle' = '*.rpgle', 'demo*' = 'demo*.*'.
-      numFilters += 1;
-      nameTypeFilter(numFilters).isNegated = isNegated;
-      nameTypeFilter(numFilters).name = '*';
-      nameTypeFilter(numFilters).srcType = '*';
-      dotPos = %scanr('.': filterItem);
-      if (dotPos = 0);
-        nameTypeFilter(numFilters).name = ucase(filterItem);
-      else;
-        if (dotPos > 1);
-          nameTypeFilter(numFilters).name = ucase(%subst(filterItem: 1: dotPos - 1));
-        endif;
-        if (dotPos < %len(filterItem));
-          nameTypeFilter(numFilters).srcType = ucase(%subst(filterItem: dotPos + 1));
-        endif;
-      endif;
-    endfor;
+    nameTypeFilters = parseMbrNameTypeFilters(i_memberFilter);
   endif;
 
   // Declare cursor
@@ -749,53 +698,13 @@ dcl-proc SYNCMBR_resolveGenericMembers export;
             // Let's check performance before any optimization.
             fullMemberName = %trim(MBRDMbr) + '.' + %trim(MBRDSrcTyp);
 
-            // Check non-negated patterns:
-            isFound = *off;
+            // Check the member filter:
             if (i_isRegEx);
               // Compare using regular expression
               isFound = matchRegex(fullMemberName: hRegex);
             else;
               // String compare
-              if (numFilters = 0);
-                isFound = *on;
-              else;
-
-                countNonNegatedPatterns = 0;
-                for i = 1 to numFilters;
-                  if (nameTypeFilter(i).isNegated);
-                    iter;
-                  endif;
-
-                  countNonNegatedPatterns += 1;
-
-                  memberNameMask = nameTypeFilter(i).name + '.' + nameTypeFilter(i).srcType;
-                  isFound = matches(memberNameMask: fullMemberName);
-                  if (isFound);
-                    leave;
-                  endif;
-                endfor;
-
-                if (countNonNegatedPatterns = 0);
-                  isFound = *on;
-                endif;
-
-                if (isFound);
-
-                  // Check negated patterns: a member is excluded as soon as it
-                  // matches one of them.
-                  for i = 1 to numFilters;
-                    if (not nameTypeFilter(i).isNegated);
-                      iter;
-                    endif;
-
-                    memberNameMask = nameTypeFilter(i).name + '.' + nameTypeFilter(i).srcType;
-                    if (matches(memberNameMask: fullMemberName));
-                      isFound = *off;
-                      leave;
-                    endif;
-                  endfor;
-                endif;
-              endif;
+              isFound = matchesMbrNameTypeFilters(fullMemberName: nameTypeFilters);
             endif;
 
             if (not isFound);
@@ -907,6 +816,144 @@ on-exit;
   Exec SQL
      CLOSE
         GENERIC_MEMBERS;
+
+end-proc;
+
+// ==========================================================================================
+//  Splits a given member filter into its name and source type masks.
+//  The masks are separated by blanks, commas or semicolons. A mask that starts
+//  with a pipe (|) and all following masks are negated.
+// ==========================================================================================
+
+dcl-proc parseMbrNameTypeFilters export;
+  dcl-pi *n likeds(mbrNameTypeFilters_t);
+    i_memberFilter char(1024) const;
+  end-pi;
+
+  // Return value
+  dcl-ds nameTypeFilters likeds(mbrNameTypeFilters_t) inz;
+
+  // Local field declarations
+  dcl-c FILTER_DELIMITER_CHARS ' ,;';
+
+  dcl-s filterItem varchar(21); // = name.type
+  dcl-s dotPos int(10);
+  dcl-s i int(10);
+  dcl-s isNegated ind;
+
+  // ----------------------------------------------------------------------------------------
+
+  nameTypeFilters.numE = 0;
+  isNegated = *off;
+  for-each filterItem in %split(i_memberFilter: FILTER_DELIMITER_CHARS);
+
+    // Starting with a pipe (|) all following
+    // entries are negated.
+    if (startsWith('|': filterItem));
+      if (%len(filterItem) >= 2);
+        filterItem = %subst(filterItem: 2);
+      else;
+        filterItem = '';
+      endif;
+      isNegated = *on;
+    endif;
+
+    if (filterItem = '');
+      filterItem = '*.*';
+    endif;
+
+    // The last dot separates name and source type. A missing name or source
+    // type matches all: '.rpgle' = '*.rpgle', 'demo*' = 'demo*.*'.
+    nameTypeFilters.numE += 1;
+    i = nameTypeFilters.numE;
+    nameTypeFilters.entry(i).isNegated = isNegated;
+    nameTypeFilters.entry(i).name = '*';
+    nameTypeFilters.entry(i).srcType = '*';
+    dotPos = %scanr('.': filterItem);
+    if (dotPos = 0);
+      nameTypeFilters.entry(i).name = ucase(filterItem);
+    else;
+      if (dotPos > 1);
+        nameTypeFilters.entry(i).name = ucase(%subst(filterItem: 1: dotPos - 1));
+      endif;
+      if (dotPos < %len(filterItem));
+        nameTypeFilters.entry(i).srcType = ucase(%subst(filterItem: dotPos + 1));
+      endif;
+    endif;
+  endfor;
+
+  return nameTypeFilters;
+
+end-proc;
+
+// ==========================================================================================
+//  Returns *on, if a given member (name.srcType) passes the name and source
+//  type masks of a member filter: it matches one of the non-negated masks (or
+//  there is none) and none of the negated masks. A filter without masks passes
+//  all members.
+// ==========================================================================================
+
+dcl-proc matchesMbrNameTypeFilters export;
+  dcl-pi *n ind;
+    i_fullMemberName  varchar(21) const;
+    i_nameTypeFilters likeds(mbrNameTypeFilters_t) const;
+  end-pi;
+
+  // Return value
+  dcl-s isFound ind;
+
+  // Local field declarations
+  dcl-s memberNameMask varchar(21);
+  dcl-s i int(10);
+  dcl-s countNonNegatedPatterns int(10);
+
+  // ----------------------------------------------------------------------------------------
+
+  if (i_nameTypeFilters.numE = 0);
+    return *on;
+  endif;
+
+  // Check non-negated patterns:
+  isFound = *off;
+  countNonNegatedPatterns = 0;
+  for i = 1 to i_nameTypeFilters.numE;
+    if (i_nameTypeFilters.entry(i).isNegated);
+      iter;
+    endif;
+
+    countNonNegatedPatterns += 1;
+
+    memberNameMask = i_nameTypeFilters.entry(i).name + '.'
+                     + i_nameTypeFilters.entry(i).srcType;
+    isFound = matches(memberNameMask: i_fullMemberName);
+    if (isFound);
+      leave;
+    endif;
+  endfor;
+
+  if (countNonNegatedPatterns = 0);
+    isFound = *on;
+  endif;
+
+  if (isFound);
+
+    // Check negated patterns: a member is excluded as soon as it
+    // matches one of them.
+    for i = 1 to i_nameTypeFilters.numE;
+      if (not i_nameTypeFilters.entry(i).isNegated);
+        iter;
+      endif;
+
+      memberNameMask = i_nameTypeFilters.entry(i).name + '.'
+                       + i_nameTypeFilters.entry(i).srcType;
+      if (matches(memberNameMask: i_fullMemberName));
+        isFound = *off;
+        leave;
+      endif;
+    endfor;
+  endif;
+
+  return isFound;
 
 end-proc;
 

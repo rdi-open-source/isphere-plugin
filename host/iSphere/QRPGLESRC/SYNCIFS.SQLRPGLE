@@ -107,17 +107,6 @@ dcl-ds hRegex_t qualified template;
   regex  likeds(regex_t);
 end-ds;
 
-dcl-ds nameTypeFilters_t qualified template;
-  numE  int(10);
-  entry likeds(nameTypeFilter_t) dim(50);
-end-ds;
-
-dcl-ds nameTypeFilter_t qualified template;
-  isNegated  ind;
-  name like(ifsItem_t);
-  type like(ifsItem_t);
-end-ds;
-
 dcl-ds statusUpdate_t qualified inz;
   time  timestamp;
   count int(10);
@@ -196,19 +185,12 @@ dcl-proc SYNCIFS_resolveGenericFiles export;
   dcl-s fileName varchar(2048);
   dcl-s dirPath varchar(2048);
 
-  dcl-c FILTER_DELIMITER_CHARS ' ,;';
-
-  dcl-s filterItem varchar(2048); // = name.type
-
   dcl-ds nameTypeFilters likeds(nameTypeFilters_t) inz;
-
-  dcl-s dotPos int(10);
 
   dcl-s pattern like(pattern_t);
   dcl-ds hRegex likeds(hRegex_t) inz;
 
   dcl-s i int(10);
-  dcl-s isNegated ind;
   dcl-s maxItemID int(10);
 
   dcl-ds lastUpdateFilesResolved likeds(statusUpdate_t) inz;
@@ -232,44 +214,7 @@ dcl-proc SYNCIFS_resolveGenericFiles export;
   else;
     clear hRegex;
     hRegex.isInit = *off;
-    nameTypeFilters.numE = 0;
-    isNegated = *off;
-    for-each filterItem in %split(i_itemFilter: FILTER_DELIMITER_CHARS);
-
-      // Starting with a pipe (|) all following
-      // entries are negated.
-      if (startsWith('|': filterItem));
-        if (%len(filterItem) >= 2);
-          filterItem = %subst(filterItem: 2);
-        else;
-          filterItem = '';
-        endif;
-        isNegated = *on;
-      endif;
-
-      if (filterItem = '');
-        filterItem = '*.*';
-      endif;
-
-      // The last dot separates name and type. A missing name or type
-      // matches all: '.txt' = '*.txt', 'README' = 'README.*'.
-      nameTypeFilters.numE += 1;
-      i = nameTypeFilters.numE;
-      nameTypeFilters.entry(i).isNegated = isNegated;
-      nameTypeFilters.entry(i).name = '*';
-      nameTypeFilters.entry(i).type = '*';
-      dotPos = %scanr('.': filterItem);
-      if (dotPos = 0);
-        nameTypeFilters.entry(i).name = ucase(filterItem);
-      else;
-        if (dotPos > 1);
-          nameTypeFilters.entry(i).name = ucase(%subst(filterItem: 1: dotPos - 1));
-        endif;
-        if (dotPos < %len(filterItem));
-          nameTypeFilters.entry(i).type = ucase(%subst(filterItem: dotPos + 1));
-        endif;
-      endif;
-    endfor;
+    nameTypeFilters = parseNameTypeFilters(i_itemFilter);
   endif;
 
   type = TYPE_FILE;
@@ -589,13 +534,9 @@ dcl-proc resolveGenericFiles;
 
   dcl-s isFound ind;
   dcl-s fullFileName varchar(2048);
-  dcl-s fileNameForMask varchar(2049);
-  dcl-s fileNameMask varchar(2048);
   dcl-ds itemAttrs likeds(itemAttrs_t) inz;
   dcl-s parentID like(i_parentID);
 
-  dcl-s i int(10);
-  dcl-s countNonNegatedPatterns int(10);
   dcl-s countFilesFound int(10);
   dcl-s subDirPath like(i_dirPath);
   dcl-s subDirMaxDepth like(i_maxDepth);
@@ -641,62 +582,13 @@ dcl-proc resolveGenericFiles;
           endif;
         else;
 
-          // Check non-negated patterns:
-          isFound = *off;
+          // Check the item filter:
           if (i_isRegEx);
             // Compare using regular expression
             isFound = matchRegex(fullFileName: io_hRegEx);
           else;
             // String compare
-            if (i_nameTypeFilters.numE = 0);
-              isFound = *on;
-            else;
-
-              // A file name without a dot has an empty type. The added dot
-              // lets masks such as '*.*' and 'README.*' match it.
-              if (%scan('.': fullFileName) = 0);
-                fileNameForMask = fullFileName + '.';
-              else;
-                fileNameForMask = fullFileName;
-              endif;
-
-              countNonNegatedPatterns = 0;
-              for i = 1 to i_nameTypeFilters.numE;
-                if (i_nameTypeFilters.entry(i).isNegated);
-                  iter;
-                endif;
-
-                countNonNegatedPatterns += 1;
-
-                fileNameMask = i_nameTypeFilters.entry(i).name + '.'
-                               + i_nameTypeFilters.entry(i).type;
-                isFound = matches(fileNameMask : fileNameForMask: *on);
-                if (isFound);
-                  leave;
-                endif;
-              endfor;
-
-              if (countNonNegatedPatterns = 0);
-                isFound = *on;
-              endif;
-
-              if (isFound);
-                // Check negated patterns: a file is excluded as soon as it
-                // matches one of them.
-                for i = 1 to i_nameTypeFilters.numE;
-                  if (not i_nameTypeFilters.entry(i).isNegated);
-                    iter;
-                  endif;
-
-                  fileNameMask = i_nameTypeFilters.entry(i).name + '.'
-                                 + i_nameTypeFilters.entry(i).type;
-                  if (matches(fileNameMask : fileNameForMask: *on));
-                    isFound = *off;
-                    leave;
-                  endif;
-                endfor;
-              endif;
-            endif;
+            isFound = matchesNameTypeFilters(fullFileName: i_nameTypeFilters);
           endif;
 
           if (isFound);
@@ -735,6 +627,152 @@ dcl-proc resolveGenericFiles;
   endif;
 
   updateStatusFilesFound(i_handle: io_lastUpdateFound: countFilesFound);
+
+end-proc;
+
+// ==========================================================================================
+//  Splits a given item filter into its name and type masks.
+//  The masks are separated by blanks, commas or semicolons. A mask that starts
+//  with a pipe (|) and all following masks are negated.
+// ==========================================================================================
+
+dcl-proc parseNameTypeFilters export;
+  dcl-pi *n likeds(nameTypeFilters_t);
+    i_itemFilter char(1024) const;
+  end-pi;
+
+  // Return value
+  dcl-ds nameTypeFilters likeds(nameTypeFilters_t) inz;
+
+  // Local field declarations
+  dcl-c FILTER_DELIMITER_CHARS ' ,;';
+
+  dcl-s filterItem varchar(2048); // = name.type
+  dcl-s dotPos int(10);
+  dcl-s i int(10);
+  dcl-s isNegated ind;
+
+  // ----------------------------------------------------------------------------------------
+
+  nameTypeFilters.numE = 0;
+  isNegated = *off;
+  for-each filterItem in %split(i_itemFilter: FILTER_DELIMITER_CHARS);
+
+    // Starting with a pipe (|) all following
+    // entries are negated.
+    if (startsWith('|': filterItem));
+      if (%len(filterItem) >= 2);
+        filterItem = %subst(filterItem: 2);
+      else;
+        filterItem = '';
+      endif;
+      isNegated = *on;
+    endif;
+
+    if (filterItem = '');
+      filterItem = '*.*';
+    endif;
+
+    // The last dot separates name and type. A missing name or type
+    // matches all: '.txt' = '*.txt', 'README' = 'README.*'.
+    nameTypeFilters.numE += 1;
+    i = nameTypeFilters.numE;
+    nameTypeFilters.entry(i).isNegated = isNegated;
+    nameTypeFilters.entry(i).name = '*';
+    nameTypeFilters.entry(i).type = '*';
+    dotPos = %scanr('.': filterItem);
+    if (dotPos = 0);
+      nameTypeFilters.entry(i).name = ucase(filterItem);
+    else;
+      if (dotPos > 1);
+        nameTypeFilters.entry(i).name = ucase(%subst(filterItem: 1: dotPos - 1));
+      endif;
+      if (dotPos < %len(filterItem));
+        nameTypeFilters.entry(i).type = ucase(%subst(filterItem: dotPos + 1));
+      endif;
+    endif;
+  endfor;
+
+  return nameTypeFilters;
+
+end-proc;
+
+// ==========================================================================================
+//  Returns *on, if a given file name passes the name and type masks of an item
+//  filter: it matches one of the non-negated masks (or there is none) and none
+//  of the negated masks. The case does not matter. A filter without masks
+//  passes all files.
+// ==========================================================================================
+
+dcl-proc matchesNameTypeFilters export;
+  dcl-pi *n ind;
+    i_fileName        varchar(2048) const;
+    i_nameTypeFilters likeds(nameTypeFilters_t) const;
+  end-pi;
+
+  // Return value
+  dcl-s isFound ind;
+
+  // Local field declarations
+  dcl-s fileNameForMask varchar(2049);
+  dcl-s fileNameMask varchar(2048);
+  dcl-s i int(10);
+  dcl-s countNonNegatedPatterns int(10);
+
+  // ----------------------------------------------------------------------------------------
+
+  if (i_nameTypeFilters.numE = 0);
+    return *on;
+  endif;
+
+  // A file name without a dot has an empty type. The added dot
+  // lets masks such as '*.*' and 'README.*' match it.
+  if (%scan('.': i_fileName) = 0);
+    fileNameForMask = i_fileName + '.';
+  else;
+    fileNameForMask = i_fileName;
+  endif;
+
+  // Check non-negated patterns:
+  isFound = *off;
+  countNonNegatedPatterns = 0;
+  for i = 1 to i_nameTypeFilters.numE;
+    if (i_nameTypeFilters.entry(i).isNegated);
+      iter;
+    endif;
+
+    countNonNegatedPatterns += 1;
+
+    fileNameMask = i_nameTypeFilters.entry(i).name + '.'
+                   + i_nameTypeFilters.entry(i).type;
+    isFound = matches(fileNameMask : fileNameForMask: *on);
+    if (isFound);
+      leave;
+    endif;
+  endfor;
+
+  if (countNonNegatedPatterns = 0);
+    isFound = *on;
+  endif;
+
+  if (isFound);
+    // Check negated patterns: a file is excluded as soon as it
+    // matches one of them.
+    for i = 1 to i_nameTypeFilters.numE;
+      if (not i_nameTypeFilters.entry(i).isNegated);
+        iter;
+      endif;
+
+      fileNameMask = i_nameTypeFilters.entry(i).name + '.'
+                     + i_nameTypeFilters.entry(i).type;
+      if (matches(fileNameMask : fileNameForMask: *on));
+        isFound = *off;
+        leave;
+      endif;
+    endfor;
+  endif;
+
+  return isFound;
 
 end-proc;
 

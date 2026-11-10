@@ -39,5 +39,9 @@
              EXPORT     SYMBOL('SYNCMBR_resolveGenericFiles')
              EXPORT     SYMBOL('SYNCMBR_resolveGenericMembers')
 
+     /* Internal Tests */
+             EXPORT     SYMBOL('parseMbrNameTypeFilters')
+             EXPORT     SYMBOL('matchesMbrNameTypeFilters')
+
      /* End Export */
              ENDPGMEXP

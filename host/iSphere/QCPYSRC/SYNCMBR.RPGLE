@@ -60,3 +60,27 @@ dcl-pr SYNCMBR_retrieveMemberAttributes likeds(mbrAttrs_t) extproc(*dclcase);
   i_member       char(10) Options(*trim) const;
 end-pr;
 
+// ------------------------------------------------------------------------------------------
+//   Exported only for iRPGUnit tests.
+// ------------------------------------------------------------------------------------------
+
+dcl-ds mbrNameTypeFilter_t qualified template;
+  isNegated      ind;
+  name           varchar(10);
+  srcType        varchar(10);
+end-ds;
+
+dcl-ds mbrNameTypeFilters_t qualified template;
+  numE           int(10);
+  entry          likeds(mbrNameTypeFilter_t) dim(50);
+end-ds;
+
+dcl-pr parseMbrNameTypeFilters likeds(mbrNameTypeFilters_t) extproc(*dclcase);
+  i_memberFilter char(1024) const;
+end-pr;
+
+dcl-pr matchesMbrNameTypeFilters ind extproc(*dclcase);
+  i_fullMemberName  varchar(21) const;
+  i_nameTypeFilters likeds(mbrNameTypeFilters_t) const;
+end-pr;
+

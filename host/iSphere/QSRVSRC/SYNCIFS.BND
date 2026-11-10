@@ -42,6 +42,8 @@
              EXPORT     SYMBOL('getParentPath')
              EXPORT     SYMBOL('joinPath')
              EXPORT     SYMBOL('normalizePath')
+             EXPORT     SYMBOL('parseNameTypeFilters')
+             EXPORT     SYMBOL('matchesNameTypeFilters')
 
      /* End Export */
              ENDPGMEXP

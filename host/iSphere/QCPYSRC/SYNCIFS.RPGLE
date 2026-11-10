@@ -75,3 +75,23 @@ dcl-pr joinPath like(ifsItem_t) extproc(*dclcase);
   i_fileName  like(ifsItem_t) options(*trim: *nopass) const;
 end-pr;
 
+dcl-ds nameTypeFilter_t qualified template;
+  isNegated ind;
+  name      like(ifsItem_t);
+  type      like(ifsItem_t);
+end-ds;
+
+dcl-ds nameTypeFilters_t qualified template;
+  numE  int(10);
+  entry likeds(nameTypeFilter_t) dim(50);
+end-ds;
+
+dcl-pr parseNameTypeFilters likeds(nameTypeFilters_t) extproc(*dclcase);
+  i_itemFilter char(1024) const;
+end-pr;
+
+dcl-pr matchesNameTypeFilters ind extproc(*dclcase);
+  i_fileName        varchar(2048) const;
+  i_nameTypeFilters likeds(nameTypeFilters_t) const;
+end-pr;
+
