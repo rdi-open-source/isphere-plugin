@@ -1466,6 +1466,11 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
      */
     public SynchronizeMembersAction reportValidateMemberMessage(MemberCopyError errorId, CopyMemberItem item, String errorMessage) {
 
+        // File or library error.
+        if (item == null) {
+            return errorId.getDefaultAction();
+        }
+
         debug("ValidateMembersJob -> Validation error: " + item.getFromMember() + " - " + errorMessage);
 
         final MemberCompareItem compareItem = (MemberCompareItem)item.getData();
@@ -1498,9 +1503,9 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         }
 
         if (MemberCopyError.ERROR_NONE == errorId) {
-            debug("CopyMembersJob -> Copy error: " + item.getFromFile() + "." + item.getFromMember() + " - " + errorMessage);
-        } else {
             debug("CopyMembersJob -> Copied: " + item.getFromFile() + "." + item.getFromMember());
+        } else {
+            debug("CopyMembersJob -> Copy error: " + item.getFromFile() + "." + item.getFromMember() + " - " + errorMessage);
         }
 
         final MemberCompareItem compareItem = (MemberCompareItem)item.getData();
@@ -2224,13 +2229,44 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                 if (rc == IDialogConstants.YES_ID) {
 
                     if (AbstractSynchronizeMembersEditor.this.performDeleteMember(memberDescription)) {
+
+                        /*
+                         * The item is removed from the statistics, while it is
+                         * still in the state it has been counted in.
+                         */
+                        getTableStatistics().removeElement(selectedItem, filterData);
+
+                        /*
+                         * The description is also removed from the editor
+                         * input, because that is where the table content
+                         * provider rebuilds the compare items from, whenever
+                         * the table filter is refreshed.
+                         */
                         if (side == LEFT) {
                             selectedItem.setLeftMemberDescription(null);
+                            getEditorInput().removeLeftMemberDescription(memberDescription);
                         } else {
                             selectedItem.setRightMemberDescription(null);
+                            getEditorInput().removeRightMemberDescription(memberDescription);
                         }
                         selectedItem.clearCompareStatus();
-                        tableViewer.refresh(selectedItem);
+
+                        if (selectedItem.getLeftMemberDescription() == null && selectedItem.getRightMemberDescription() == null) {
+                            /*
+                             * Neither the left nor the right member does exist
+                             * anymore. Hence there is nothing left to display
+                             * or to synchronize and the item is removed from
+                             * the table.
+                             */
+                            getTableContentProvider().removeCompareItem(selectedItem);
+                            tableViewer.remove(selectedItem);
+                        } else {
+                            tableViewer.refresh(selectedItem);
+                            getTableStatistics().addElement(selectedItem, filterData);
+                        }
+
+                        tableViewer.getTable().redraw();
+                        setButtonEnablementAndDisplayCompareStatus();
                     }
                 } else {
                     break;

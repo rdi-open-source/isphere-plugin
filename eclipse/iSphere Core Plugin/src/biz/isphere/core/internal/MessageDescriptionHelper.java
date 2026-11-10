@@ -10,8 +10,6 @@ package biz.isphere.core.internal;
 
 import java.util.ArrayList;
 
-import org.eclipse.swt.widgets.Shell;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.CommandCall;
@@ -27,7 +25,13 @@ import biz.isphere.core.messagefileeditor.ValidReplyEntry;
 
 public final class MessageDescriptionHelper {
 
-    public static String mergeMessageDescription(Shell shell, MessageDescription messageDescription, String toConnectionName, String toMessageFile,
+    /**
+     * Copies a message description to another message file.
+     * <p>
+     * The method does not display any dialog, hence it can be called from a
+     * background job.
+     */
+    public static String mergeMessageDescription(MessageDescription messageDescription, String toConnectionName, String toMessageFile,
         String toLibrary) throws Exception {
 
         AS400 fromSystem = IBMiHostContributionsHandler.getSystem(messageDescription.getConnection());
@@ -160,7 +164,7 @@ public final class MessageDescriptionHelper {
         return messageDescription;
     }
 
-    private static boolean exists(String connectionName, String messageFile, String library, String messageId) {
+    public static boolean exists(String connectionName, String messageFile, String library, String messageId) {
 
         AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
 

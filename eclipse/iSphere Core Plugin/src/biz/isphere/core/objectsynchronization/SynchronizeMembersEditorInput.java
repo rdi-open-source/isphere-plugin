@@ -8,6 +8,10 @@
 
 package biz.isphere.core.objectsynchronization;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
@@ -136,6 +140,40 @@ public class SynchronizeMembersEditorInput implements IEditorInput {
 
     public void setRightMemberDescriptions(MemberDescription[] rightMemberDescriptions) {
         this.rightMemberDescriptions = rightMemberDescriptions;
+    }
+
+    /**
+     * Removes the description of a deleted member from the left side of the
+     * comparison.
+     * 
+     * @param memberDescription - description of the deleted member
+     */
+    public void removeLeftMemberDescription(MemberDescription memberDescription) {
+        leftMemberDescriptions = removeMemberDescription(leftMemberDescriptions, memberDescription);
+    }
+
+    /**
+     * Removes the description of a deleted member from the right side of the
+     * comparison.
+     * 
+     * @param memberDescription - description of the deleted member
+     */
+    public void removeRightMemberDescription(MemberDescription memberDescription) {
+        rightMemberDescriptions = removeMemberDescription(rightMemberDescriptions, memberDescription);
+    }
+
+    private MemberDescription[] removeMemberDescription(MemberDescription[] memberDescriptions, MemberDescription memberDescription) {
+
+        if (memberDescriptions == null || memberDescription == null) {
+            return memberDescriptions;
+        }
+
+        List<MemberDescription> remainingMemberDescriptions = new ArrayList<MemberDescription>(Arrays.asList(memberDescriptions));
+        if (!remainingMemberDescriptions.remove(memberDescription)) {
+            return memberDescriptions;
+        }
+
+        return remainingMemberDescriptions.toArray(new MemberDescription[remainingMemberDescriptions.size()]);
     }
 
     public String getName() {

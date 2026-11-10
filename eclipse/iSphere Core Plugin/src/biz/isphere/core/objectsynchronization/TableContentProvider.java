@@ -8,8 +8,10 @@
 
 package biz.isphere.core.objectsynchronization;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -71,6 +73,30 @@ public class TableContentProvider implements IStructuredContentProvider {
         Arrays.sort(compareItemsArray);
 
         return compareItemsArray;
+    }
+
+    /**
+     * Removes an item from the list of compare items, for example, when both
+     * the left and the right member have been deleted.
+     * <p>
+     * The item is removed from the cached array, because that array is
+     * returned by {@link #getElements(Object)} as long as the input of the
+     * table viewer does not change.
+     * 
+     * @param compareItem - item that is removed from the table
+     */
+    public void removeCompareItem(MemberCompareItem compareItem) {
+
+        if (compareItemsArray == null || compareItem == null) {
+            return;
+        }
+
+        List<MemberCompareItem> remainingCompareItems = new ArrayList<MemberCompareItem>(Arrays.asList(compareItemsArray));
+        if (!remainingCompareItems.remove(compareItem)) {
+            return;
+        }
+
+        compareItemsArray = remainingCompareItems.toArray(new MemberCompareItem[remainingCompareItems.size()]);
     }
 
     private String produceKey(boolean isFileSynchronization, MemberDescription memberDescription) {
