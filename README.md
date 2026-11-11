@@ -43,6 +43,10 @@ Thank you to all the people that helped translating iSphere.
 
 Please find the list of contributors on the [iSphere Web Site](https://rdi-open-source.github.io/isphere/).
 
+## Liability
+
+This software is free and provided without warranty. You use it at your own risk: test it with non-critical data first, and back up your data before you use it. The [license](LICENSE) applies in addition.
+
 ## See Also
 
 * [iSphere Update Site](https://github.com/rdi-open-source/isphere)
