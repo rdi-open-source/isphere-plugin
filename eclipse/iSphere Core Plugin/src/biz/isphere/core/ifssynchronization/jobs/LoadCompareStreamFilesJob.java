@@ -14,8 +14,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.eclipse.core.runtime.SubMonitor;
 
@@ -170,6 +172,13 @@ public class LoadCompareStreamFilesJob extends AbstractCompareStreamFilesJob {
 
             Map<Integer, StreamFileDescription> parents = new HashMap<Integer, StreamFileDescription>();
 
+            /*
+             * SYNCIFS stores the time of the last change as UTC time, hence it
+             * must be read with a UTC calendar. Otherwise it is taken as local
+             * time of the PC.
+             */
+            Calendar utcCalendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")); //$NON-NLS-1$
+
             while (resultSet.next()) {
 
                 if (subMonitor.isCanceled()) {
@@ -183,7 +192,7 @@ public class LoadCompareStreamFilesJob extends AbstractCompareStreamFilesJob {
                 parent = resultSet.getInt(PARENT);
                 type = resultSet.getString(TYPE).trim();
                 item = resultSet.getString(ITEM).trim();
-                lastChanged = resultSet.getTimestamp(LAST_CHANGED);
+                lastChanged = resultSet.getTimestamp(LAST_CHANGED, utcCalendar);
                 sizeInBytes = resultSet.getLong(SIZE_IN_BYTES);
                 checksum = resultSet.getLong(CHECKSUM);
 

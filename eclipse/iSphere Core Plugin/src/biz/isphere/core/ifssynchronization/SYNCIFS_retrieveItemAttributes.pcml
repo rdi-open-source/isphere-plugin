@@ -5,6 +5,11 @@
       PCML data type 'varchar' is parsed by JTOpen, but not supported at run
       time (PcmlDataValues.byteLength() throws 'Unknown data type, 11'), hence
       the 2 byte length prefix of a varying length field is declared here.
+
+      RPG: lastChanged timestamp (UTC time of the last change)
+
+      The timestamp is declared as 'char', because PCML data type 'timestamp'
+      converts it with the time zone of the IBM i.
    -->
    <struct name="ifsItem_t">
      <data name="length"      type="int"       length="2"     precision="16"  usage="inherit"/>
@@ -14,7 +19,7 @@
      <data name="name"        type="struct"    struct="ifsItem_t"             usage="inherit"/>
      <data name="type"        type="char"      length="1"                     usage="inherit"/>
      <data name="sizeInBytes" type="int"       length="8"                     usage="inherit"/>
-     <data name="lastChanged" type="timestamp"                                usage="inherit"/>
+     <data name="lastChanged" type="char"      length="26"                    usage="inherit"/>
      <data name="checkSum"    type="int"       length="8"     precision="63"  usage="inherit"/>
    </struct>
    <program name="SYNCIFS_retrieveItemAttributes" path="/QSYS.LIB/%LIBL%.LIB/W006006.PGM">

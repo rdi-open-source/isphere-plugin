@@ -9,6 +9,9 @@
 package biz.isphere.core.ifssynchronization;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
@@ -19,6 +22,10 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.PcmlProgramCallDocument;
 
 public class SYNCIFS_retrieveItemAttributes {
+
+    private static final String UTC_TIMESTAMP_SECONDS_PATTERN = "yyyy-MM-dd-HH.mm.ss"; //$NON-NLS-1$
+    private static final int UTC_TIMESTAMP_SECONDS_LENGTH = 19;
+    private static final int UTC_TIMESTAMP_LENGTH = 26;
 
     public IfsFileAttributes run(AS400 _as400, String path) {
 
@@ -54,7 +61,7 @@ public class SYNCIFS_retrieveItemAttributes {
                 ifsFileAttributes.setName(getVaryingLengthValue(pcml, "SYNCIFS_retrieveItemAttributes.itemAttrs.name")); //$NON-NLS-1$
                 ifsFileAttributes.setType(pcml.getStringValue("SYNCIFS_retrieveItemAttributes.itemAttrs.type")); //$NON-NLS-1$
                 ifsFileAttributes.setSize((Long)pcml.getValue("SYNCIFS_retrieveItemAttributes.itemAttrs.sizeInBytes")); //$NON-NLS-1$
-                ifsFileAttributes.setLastChanged((Timestamp)pcml.getValue("SYNCIFS_retrieveItemAttributes.itemAttrs.lastChanged")); //$NON-NLS-1$
+                ifsFileAttributes.setLastChanged(toUtcTimestamp(pcml.getStringValue("SYNCIFS_retrieveItemAttributes.itemAttrs.lastChanged"))); //$NON-NLS-1$
                 ifsFileAttributes.setCheckSum((Long)pcml.getValue("SYNCIFS_retrieveItemAttributes.itemAttrs.checkSum")); //$NON-NLS-1$
 
             }
@@ -86,6 +93,43 @@ public class SYNCIFS_retrieveItemAttributes {
         }
 
         return value.substring(0, length);
+    }
+
+    /**
+     * Converts the time of the last change, which SYNCIFS returns as UTC time
+     * in format <code>yyyy-mm-dd-hh.mm.ss.nnnnnn</code>, to a timestamp.
+     *
+     * @param value - UTC time of the last change
+     * @return timestamp or <code>null</code>, if the value is invalid
+     */
+    private Timestamp toUtcTimestamp(String value) {
+
+        if (value == null || value.length() < UTC_TIMESTAMP_SECONDS_LENGTH) {
+            ISpherePlugin.logError("*** Invalid timestamp returned by SYNCIFS_retrieveItemAttributes: " + value + " ***", null); //$NON-NLS-1$ //$NON-NLS-2$
+            return null;
+        }
+
+        try {
+
+            SimpleDateFormat formatter = new SimpleDateFormat(UTC_TIMESTAMP_SECONDS_PATTERN);
+            formatter.setTimeZone(TimeZone.getTimeZone("UTC")); //$NON-NLS-1$
+            formatter.setLenient(false);
+
+            Timestamp timestamp = new Timestamp(formatter.parse(value.substring(0, UTC_TIMESTAMP_SECONDS_LENGTH)).getTime());
+            if (value.length() >= UTC_TIMESTAMP_LENGTH) {
+                int microseconds = Integer.parseInt(value.substring(UTC_TIMESTAMP_SECONDS_LENGTH + 1, UTC_TIMESTAMP_LENGTH));
+                timestamp.setNanos(microseconds * 1000);
+            }
+
+            return timestamp;
+
+        } catch (ParseException e) {
+            ISpherePlugin.logError("*** Invalid timestamp returned by SYNCIFS_retrieveItemAttributes: " + value + " ***", e); //$NON-NLS-1$ //$NON-NLS-2$
+            return null;
+        } catch (NumberFormatException e) {
+            ISpherePlugin.logError("*** Invalid timestamp returned by SYNCIFS_retrieveItemAttributes: " + value + " ***", e); //$NON-NLS-1$ //$NON-NLS-2$
+            return null;
+        }
     }
 
     /**
