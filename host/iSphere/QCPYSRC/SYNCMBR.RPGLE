@@ -66,8 +66,8 @@ end-pr;
 
 dcl-ds mbrNameTypeFilter_t qualified template;
   isNegated      ind;
-  name           varchar(10);
-  srcType        varchar(10);
+  name           varchar(21); // up to 10 characters and 11 asterisks
+  srcType        varchar(21); // up to 10 characters and 11 asterisks
 end-ds;
 
 dcl-ds mbrNameTypeFilters_t qualified template;

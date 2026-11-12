@@ -148,6 +148,11 @@ dcl-pr cvtRegerrorText like(string_t) extproc(*dclcase);
   i_string         like(string_t) value;
 end-pr;
 
+dcl-pr toMbrMask varchar(21) extproc(*dclcase);
+  i_mask           varchar(1024) const;
+  i_filterItem     varchar(1024) const;
+end-pr;
+
 dcl-pr initRegex likeds(hRegex_t) extproc(*dclcase);
   i_pattern        like(string_t) const;
 end-pr;
@@ -854,7 +859,7 @@ dcl-proc parseMbrNameTypeFilters export;
   // Local field declarations
   dcl-c FILTER_DELIMITER_CHARS ' ,;';
 
-  dcl-s filterItem varchar(21); // = name.type
+  dcl-s filterItem varchar(1024); // = name.type
   dcl-s dotPos int(10);
   dcl-s i int(10);
   dcl-s isNegated ind;
@@ -889,18 +894,71 @@ dcl-proc parseMbrNameTypeFilters export;
     nameTypeFilters.entry(i).srcType = '*';
     dotPos = %scanr('.': filterItem);
     if (dotPos = 0);
-      nameTypeFilters.entry(i).name = ucase(filterItem);
+      nameTypeFilters.entry(i).name = toMbrMask(filterItem: filterItem);
     else;
       if (dotPos > 1);
-        nameTypeFilters.entry(i).name = ucase(%subst(filterItem: 1: dotPos - 1));
+        nameTypeFilters.entry(i).name
+          = toMbrMask(%subst(filterItem: 1: dotPos - 1): filterItem);
       endif;
       if (dotPos < %len(filterItem));
-        nameTypeFilters.entry(i).srcType = ucase(%subst(filterItem: dotPos + 1));
+        nameTypeFilters.entry(i).srcType
+          = toMbrMask(%subst(filterItem: dotPos + 1): filterItem);
       endif;
     endif;
   endfor;
 
   return nameTypeFilters;
+
+end-proc;
+
+// ==========================================================================================
+//  Returns the upper case mask of a member name or a source type. Consecutive asterisks
+//  are reduced to one. Sends an escape message, if the mask has more than 10 characters
+//  other than '*', because then it cannot match any member name or source type.
+// ==========================================================================================
+
+dcl-proc toMbrMask;
+  dcl-pi *n varchar(21);
+    i_mask           varchar(1024) const;
+    i_filterItem     varchar(1024) const;
+  end-pi;
+
+  // Local field declarations
+  dcl-c MAX_NAME_LENGTH 10;
+  dcl-c MAX_ITEM_LENGTH_IN_MESSAGE 40;
+
+  dcl-s mask varchar(1024);
+  dcl-s maskChar char(1);
+  dcl-s countChars int(10);
+  dcl-s item varchar(1024);
+  dcl-s i int(10);
+
+  // ----------------------------------------------------------------------------------------
+
+  mask = '';
+  countChars = 0;
+  for i = 1 to %len(i_mask);
+    maskChar = %subst(i_mask: i: 1);
+    if (maskChar = '*');
+      if (%len(mask) > 0 and %subst(mask: %len(mask): 1) = '*');
+        iter;
+      endif;
+    else;
+      countChars += 1;
+    endif;
+    mask += maskChar;
+  endfor;
+
+  if (countChars > MAX_NAME_LENGTH);
+    item = i_filterItem;
+    if (%len(item) > MAX_ITEM_LENGTH_IN_MESSAGE);
+      item = %subst(item: 1: MAX_ITEM_LENGTH_IN_MESSAGE) + '...';
+    endif;
+    kill('Invalid mask ''' + item
+         + ''': name or source type longer than 10 characters');
+  endif;
+
+  return ucase(mask);
 
 end-proc;
 
@@ -921,7 +979,7 @@ dcl-proc matchesMbrNameTypeFilters export;
   dcl-s isFound ind;
 
   // Local field declarations
-  dcl-s memberNameMask varchar(21);
+  dcl-s memberNameMask varchar(43);
   dcl-s i int(10);
   dcl-s countNonNegatedPatterns int(10);
 

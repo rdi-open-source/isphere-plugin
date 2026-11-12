@@ -82,6 +82,9 @@
     </pre>
     <p>The name or the type of a pattern may be omitted: <b>.rpgle</b> is the same as
        <b>*.rpgle</b>, and <b>demo*</b> is the same as <b>demo*.*</b>.
+    <p>Like member names and source types, the name and the type of a pattern may
+       have up to 10 characters, not counting <b>*</b>. A pattern with more
+       characters cannot match any member and is rejected with an error message.
     <p>In case you want to exclude members by name and/or type, you can negate
        the selection mask by a preceding &quot;|&quot; (pipe symbol):
     <p>

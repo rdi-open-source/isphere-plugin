@@ -174,6 +174,101 @@ dcl-proc testParseMbrNameTypeFilters_Empty export;
 
 end-proc;
 
+dcl-proc testParseMbrNameTypeFilters_WildcardsLongerThanTen export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds filters likeds(mbrNameTypeFilters_t) inz;
+
+  filters = parseMbrNameTypeFilters('*a*b*c*d*e*.rpgle');
+  assertEqual(1: filters.numE);
+  assertEqual('*A*B*C*D*E*': filters.entry(1).name);
+  assertEqual('RPGLE': filters.entry(1).srcType);
+
+  filters = parseMbrNameTypeFilters('abcdefghij*.*sqlrpgle*');
+  assertEqual(1: filters.numE);
+  assertEqual('ABCDEFGHIJ*': filters.entry(1).name);
+  assertEqual('*SQLRPGLE*': filters.entry(1).srcType);
+
+end-proc;
+
+dcl-proc testParseMbrNameTypeFilters_ConsecutiveAsterisks export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds filters likeds(mbrNameTypeFilters_t) inz;
+
+  filters = parseMbrNameTypeFilters('ab**c***.**');
+  assertEqual(1: filters.numE);
+  assertEqual('AB*C*': filters.entry(1).name);
+  assertEqual('*': filters.entry(1).srcType);
+
+  filters = parseMbrNameTypeFilters('**********a*b*c*d*e*f*g*h*i*j**********');
+  assertEqual(1: filters.numE);
+  assertEqual('*A*B*C*D*E*F*G*H*I*J*': filters.entry(1).name);
+  assertEqual('*': filters.entry(1).srcType);
+
+end-proc;
+
+dcl-proc testParseMbrNameTypeFilters_NameTooLong export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds filters likeds(mbrNameTypeFilters_t) inz;
+  dcl-ds msgInfo likeds(msgInfo_t) inz;
+
+  monitor;
+    filters = parseMbrNameTypeFilters('*.rpgle abcdefghijk.rpgle');
+    fail('Must fail, because the name has more than 10 characters');
+  on-error;
+    msgInfo = getMonitoredMessage();
+    aEqual('CPF9897': msgInfo.Id);
+    aEqual('Invalid mask ''abcdefghijk.rpgle'': name or source type longer than 10 characters'
+           : msgInfo.txt);
+  endmon;
+
+  monitor;
+    filters = parseMbrNameTypeFilters('|???????????');
+    fail('Must fail, because the name has more than 10 characters');
+  on-error;
+    msgInfo = getMonitoredMessage();
+    aEqual('CPF9897': msgInfo.Id);
+    aEqual('Invalid mask ''???????????'': name or source type longer than 10 characters'
+           : msgInfo.txt);
+  endmon;
+
+end-proc;
+
+dcl-proc testParseMbrNameTypeFilters_TypeTooLong export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds filters likeds(mbrNameTypeFilters_t) inz;
+  dcl-ds msgInfo likeds(msgInfo_t) inz;
+
+  monitor;
+    filters = parseMbrNameTypeFilters('demo.abcdefghijk');
+    fail('Must fail, because the source type has more than 10 characters');
+  on-error;
+    msgInfo = getMonitoredMessage();
+    aEqual('CPF9897': msgInfo.Id);
+    aEqual('Invalid mask ''demo.abcdefghijk'': name or source type longer than 10 characters'
+           : msgInfo.txt);
+  endmon;
+
+  monitor;
+    filters = parseMbrNameTypeFilters('*a*b*c*d*e*f*g*h*i*j*k*l*m*n*o*p*q*r*s*t*.rpgle');
+    fail('Must fail, because the name has more than 10 characters');
+  on-error;
+    msgInfo = getMonitoredMessage();
+    aEqual('CPF9897': msgInfo.Id);
+    aEqual('Invalid mask ''*a*b*c*d*e*f*g*h*i*j*k*l*m*n*o*p*q*r*s*t...'': '
+           + 'name or source type longer than 10 characters'
+           : msgInfo.txt);
+  endmon;
+
+end-proc;
+
 dcl-proc testMatchesMbrNameTypeFilters_Asterisk export;
   dcl-pi *n extproc(*dclcase);
   end-pi;
@@ -331,3 +426,26 @@ dcl-proc testMatchesMbrNameTypeFilters_Empty export;
 
 end-proc;
 
+dcl-proc testMatchesMbrNameTypeFilters_WildcardsLongerThanTen export;
+  dcl-pi *n extproc(*dclcase);
+  end-pi;
+
+  dcl-ds filters likeds(mbrNameTypeFilters_t) inz;
+
+  filters = parseMbrNameTypeFilters('*a*b*c*d*e*.rpgle');
+  assert(matchesMbrNameTypeFilters('ABCDE.RPGLE': filters)
+         : '''*a*b*c*d*e*.rpgle'' must match ''ABCDE.RPGLE''');
+  assert(matchesMbrNameTypeFilters('ABCDEX.RPGLE': filters)
+         : '''*a*b*c*d*e*.rpgle'' must match ''ABCDEX.RPGLE''');
+  assert(matchesMbrNameTypeFilters('XAYBZCDE.RPGLE': filters)
+         : '''*a*b*c*d*e*.rpgle'' must match ''XAYBZCDE.RPGLE''');
+  assert(not matchesMbrNameTypeFilters('ABCD.RPGLE': filters)
+         : '''*a*b*c*d*e*.rpgle'' must not match ''ABCD.RPGLE''');
+
+  filters = parseMbrNameTypeFilters('abcdefghij*');
+  assert(matchesMbrNameTypeFilters('ABCDEFGHIJ.RPGLE': filters)
+         : '''abcdefghij*'' must match ''ABCDEFGHIJ.RPGLE''');
+  assert(not matchesMbrNameTypeFilters('ABCDEFGHI.RPGLE': filters)
+         : '''abcdefghij*'' must not match ''ABCDEFGHI.RPGLE''');
+
+end-proc;
