@@ -197,6 +197,7 @@ public abstract class AbstractCompareStreamFilesJob {
         cancelHostJob(handle);
 
         monitor.setCanceled(true);
+        sharedValues.setCanceledByError(true);
         ISpherePlugin.logError("*** Resolving IFS files: Unexpected error. ***", e);
         MessageDialogAsync.displayBlockingError(ExceptionHelper.getLocalizedMessage(e));
     }

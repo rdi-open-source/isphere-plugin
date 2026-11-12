@@ -197,6 +197,7 @@ public abstract class AbstractCompareMembersJob {
         cancelHostJob(handle);
 
         monitor.setCanceled(true);
+        sharedValues.setCanceledByError(true);
         ISpherePlugin.logError("*** Resolving members: Unexpected error. ***", e);
         MessageDialogAsync.displayBlockingError(ExceptionHelper.getLocalizedMessage(e));
     }

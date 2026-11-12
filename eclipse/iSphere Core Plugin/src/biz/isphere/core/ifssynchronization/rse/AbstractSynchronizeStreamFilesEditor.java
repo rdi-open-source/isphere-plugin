@@ -1894,7 +1894,9 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
 
         jobToCancel = null;
 
-        EndLoadIfsFilesUIJob job = new EndLoadIfsFilesUIJob(isCanceled);
+        // A compare job that canceled the operation because of an error has
+        // already displayed the error.
+        EndLoadIfsFilesUIJob job = new EndLoadIfsFilesUIJob(isCanceled && !sharedValues.isCanceledByError());
         job.schedule();
     }
 

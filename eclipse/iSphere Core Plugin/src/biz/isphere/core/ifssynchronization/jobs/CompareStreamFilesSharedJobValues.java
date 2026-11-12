@@ -30,6 +30,8 @@ public class CompareStreamFilesSharedJobValues implements Serializable {
 
     private CompareOptions compareOptions;
 
+    private boolean isCanceledByError;
+
     public CompareStreamFilesSharedJobValues() {
         this(new CompareOptions());
     }
@@ -74,5 +76,20 @@ public class CompareStreamFilesSharedJobValues implements Serializable {
     public void setRightHandle(String connectionName, int rightHandle) {
         this.rightHandle = rightHandle;
         this.rightConnectionName = connectionName;
+    }
+
+    /**
+     * Returns <code>true</code>, if a compare job canceled the operation
+     * because of an error, which it has already displayed.
+     *
+     * @return <code>true</code>, if the operation was canceled because of an
+     *         error
+     */
+    public boolean isCanceledByError() {
+        return isCanceledByError;
+    }
+
+    public void setCanceledByError(boolean isCanceledByError) {
+        this.isCanceledByError = isCanceledByError;
     }
 }

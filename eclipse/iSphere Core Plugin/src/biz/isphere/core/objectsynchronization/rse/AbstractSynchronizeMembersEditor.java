@@ -1381,7 +1381,9 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
         jobToCancel = null;
 
-        EndLoadMembersUIJob job = new EndLoadMembersUIJob(isCanceled);
+        // A compare job that canceled the operation because of an error has
+        // already displayed the error.
+        EndLoadMembersUIJob job = new EndLoadMembersUIJob(isCanceled && !sharedValues.isCanceledByError());
         job.schedule();
     }
 
