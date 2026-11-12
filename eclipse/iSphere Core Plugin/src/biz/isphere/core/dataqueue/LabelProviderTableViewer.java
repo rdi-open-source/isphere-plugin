@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ import biz.isphere.core.preferences.Preferences;
 
 public class LabelProviderTableViewer extends LabelProvider implements ITableLabelProvider, IPropertyChangeListener {
 
-    private static final String END_OF_DATA = "«"; //$NON-NLS-1$
+    private static final String END_OF_DATA = "Â«"; //$NON-NLS-1$
     private static final String CONTINUE = " ..."; //$NON-NLS-1$
 
     private static final int COLUMN_ENTRY_TYPE = 0;

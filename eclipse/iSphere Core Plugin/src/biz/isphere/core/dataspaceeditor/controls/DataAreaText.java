@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public class DataAreaText {
     private static final String CR = "\r";
     private static final String LF = "\n";
     private static final String CRLF = CR + LF;
-    private static final String EOL_CHAR = "¤";
+    private static final String EOL_CHAR = "Â¤";
 
     private Text textControl;
     private TextControlMouseMoveListener mouseMoveListener;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -216,7 +216,7 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
                             if (dialogMessage.length() > 0) {
                                 dialogMessage.append("\n"); //$NON-NLS-1$
                             }
-                            dialogMessage.append("• "); //$NON-NLS-1$
+                            dialogMessage.append("â€¢ "); //$NON-NLS-1$
                             dialogMessage.append(message);
                             metatableOutputFile.addWarningMessage(message);
                         }
