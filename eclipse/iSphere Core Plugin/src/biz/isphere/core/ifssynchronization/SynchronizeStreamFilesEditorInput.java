@@ -204,17 +204,35 @@ public class SynchronizeStreamFilesEditorInput implements IEditorInput {
         return this;
     }
 
+    /**
+     * Returns the hash code of the editor input. It is built from the same
+     * attributes as {@link #equals(Object)} and allows a side without a
+     * directory, because the editor can be opened with one directory only.
+     */
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((leftRemoteObject == null) ? 0 : leftRemoteObject.hashCode());
-        result = prime * result + ((leftRemoteObject.getConnectionName() == null) ? 0 : leftRemoteObject.getConnectionName().hashCode());
-        result = prime * result + ((leftRemoteObject.getName() == null) ? 0 : leftRemoteObject.getName().hashCode());
-        result = prime * result + ((rightRemoteObject == null) ? 0 : rightRemoteObject.hashCode());
-        result = prime * result + ((rightRemoteObject.getConnectionName() == null) ? 0 : rightRemoteObject.getConnectionName().hashCode());
-        result = prime * result + ((rightRemoteObject.getName() == null) ? 0 : rightRemoteObject.getName().hashCode());
+        result = prime * result + hashCode(leftRemoteObject);
+        result = prime * result + hashCode(rightRemoteObject);
         return result;
+    }
+
+    private int hashCode(RemoteStreamFile remoteObject) {
+
+        if (remoteObject == null) {
+            return 0;
+        }
+
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + hashCode(remoteObject.getConnectionName());
+        result = prime * result + hashCode(remoteObject.getName());
+        return result;
+    }
+
+    private int hashCode(String value) {
+        return (value == null) ? 0 : value.hashCode();
     }
 
     @Override
@@ -225,30 +243,29 @@ public class SynchronizeStreamFilesEditorInput implements IEditorInput {
 
         SynchronizeStreamFilesEditorInput other = (SynchronizeStreamFilesEditorInput)obj;
 
-        if (leftRemoteObject == null) {
-            if (other.leftRemoteObject != null) return false;
-        } else if (other.leftRemoteObject != null) {
-            if (leftRemoteObject.getConnectionName() == null) {
-                if (other.leftRemoteObject.getConnectionName() != null) return false;
-            } else if (!leftRemoteObject.getConnectionName().equals(other.leftRemoteObject.getConnectionName())) return false;
+        return isEqual(leftRemoteObject, other.leftRemoteObject) && isEqual(rightRemoteObject, other.rightRemoteObject);
+    }
 
-            if (leftRemoteObject.getName() == null) {
-                if (other.leftRemoteObject.getName() != null) return false;
-            } else if (!leftRemoteObject.getName().equals(other.leftRemoteObject.getName())) return false;
+    /**
+     * Returns <code>true</code>, if both directories are missing or if they
+     * refer to the same directory of the same connection.
+     */
+    private boolean isEqual(RemoteStreamFile remoteObject, RemoteStreamFile otherRemoteObject) {
+
+        if (remoteObject == null || otherRemoteObject == null) {
+            return remoteObject == otherRemoteObject;
         }
 
-        if (rightRemoteObject == null) {
-            if (other.rightRemoteObject != null) return false;
-        } else if (other.rightRemoteObject != null) {
-            if (rightRemoteObject.getConnectionName() == null) {
-                if (other.rightRemoteObject.getConnectionName() != null) return false;
-            } else if (!rightRemoteObject.getConnectionName().equals(other.rightRemoteObject.getConnectionName())) return false;
+        return isEqual(remoteObject.getConnectionName(), otherRemoteObject.getConnectionName())
+            && isEqual(remoteObject.getName(), otherRemoteObject.getName());
+    }
 
-            if (rightRemoteObject.getName() == null) {
-                if (other.rightRemoteObject.getName() != null) return false;
-            } else if (!rightRemoteObject.getName().equals(other.rightRemoteObject.getName())) return false;
+    private boolean isEqual(String value, String otherValue) {
+
+        if (value == null) {
+            return otherValue == null;
         }
 
-        return true;
+        return value.equals(otherValue);
     }
 }
