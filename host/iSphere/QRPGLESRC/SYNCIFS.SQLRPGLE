@@ -115,6 +115,10 @@ end-ds;
 // Global values
 
 dcl-ds g_hIconv likeds(hIconv_t) inz;
+dcl-ds g_hIconvRegerror likeds(hIconv_t) inz; // texts of regerror() -> job CCSID
+
+// regerror() returns its texts in CCSID 37, whatever the CCSID of the locale is.
+dcl-c REGERROR_CCSID 37;
 
 // ==========================================================================================
 //  Get Handle
@@ -158,6 +162,14 @@ dcl-proc SYNCIFS_getHandle export;
 
   if (not g_hIconv.isInit);
     g_hIconv = initIconv();
+  endif;
+
+  if (g_hIconvRegerror.isInit and g_hIconvRegerror.job_ccsid <> retrieveJobCcsid());
+    freeIconv(g_hIconvRegerror);
+  endif;
+
+  if (not g_hIconvRegerror.isInit);
+    g_hIconvRegerror = initIconv(REGERROR_CCSID: *on);
   endif;
 
   // Leave procedure
@@ -1163,11 +1175,15 @@ dcl-proc retrieveJobCcsid;
 end-proc;
 
 // ==========================================================================================
-//  Initializes character translation.
+//  Initializes the character translation between the job CCSID and a given CCSID, by
+//  default the CCSID of the C locale. By default, it converts from the job CCSID to the
+//  given CCSID; with i_isToJobCcsid = *on it converts from the given CCSID to the job CCSID.
 // ==========================================================================================
 
 dcl-proc initIconv;
   dcl-pi *n likeds(hIconv_t) extproc(*dclcase);
+    i_ccsid          int(10) const options(*nopass);
+    i_isToJobCcsid   ind const options(*nopass);
   end-pi;
 
   // Return value
@@ -1176,6 +1192,7 @@ dcl-proc initIconv;
   // Local field declarations
   dcl-ds from likeds(QtqCode_t) inz;
   dcl-ds to likeds(QtqCode_t) inz;
+  dcl-s isToJobCcsid ind inz(*off);
 
   dcl-c DIGITS const(%len(hIconv.nl_ccsid));
   dcl-c DECPOS const(%decpos(hIconv.nl_ccsid));
@@ -1186,7 +1203,15 @@ dcl-proc initIconv;
     hIconv.isInit = *off;
 
     hIconv.job_ccsid = retrieveJobCcsid();
-    hIconv.nl_ccsid = %dec(%str(nl_langinfo(CODESET)): DIGITS: DECPOS);
+    if (%parms() >= %parmnum(i_ccsid));
+      hIconv.nl_ccsid = i_ccsid;
+    else;
+      hIconv.nl_ccsid = %dec(%str(nl_langinfo(CODESET)): DIGITS: DECPOS);
+    endif;
+
+    if (%parms() >= %parmnum(i_isToJobCcsid));
+      isToJobCcsid = i_isToJobCcsid;
+    endif;
 
     if (hIconv.job_ccsid = hIconv.nl_ccsid);
         return hIconv;
@@ -1208,7 +1233,11 @@ dcl-proc initIconv;
     to.ErrorOpt = 1;     // Error option for mixed data
     to.Reserved = *ALLx'00';
 
-    hIconv.iconv = QtqIconvOpen(to: from);
+    if (isToJobCcsid);
+      hIconv.iconv = QtqIconvOpen(from: to);
+    else;
+      hIconv.iconv = QtqIconvOpen(to: from);
+    endif;
 
     hIconv.isInit = *on;
 
@@ -1284,6 +1313,43 @@ dcl-proc cvtCcsid;
 end-proc;
 
 // ==========================================================================================
+//  Converts a given message text of regerror() from CCSID 37 to the job CCSID.
+//  Returns the text unchanged, if it cannot be converted.
+// ==========================================================================================
+
+dcl-proc cvtRegerrorText;
+  dcl-pi *n like(string_t) extproc(*dclcase);
+    i_string like(string_t) value;
+  end-pi;
+
+  // Local field declarations
+  dcl-s rc int(10);
+  dcl-s inBytesLeft uns(10);
+  dcl-s outBytesLeft uns(10);
+  dcl-s outBuffer char(512);
+  dcl-s pInBuf pointer;
+  dcl-s pOutBuf pointer;
+
+  // ----------------------------------------------------------------------------------------
+
+  if (not g_hIconvRegerror.isInit);
+    return i_string;
+  endif;
+
+  inBytesLeft = %len(%trimr(i_string));
+  outBytesLeft = %size(outBuffer);
+  pInBuf = %addr(i_string: *data);
+  pOutBuf = %addr(outBuffer);
+  rc = iconv(g_hIconvRegerror.iconv: pInBuf: inBytesLeft: pOutBuf: outBytesLeft);
+  if (rc = -1);
+    return i_string;
+  endif;
+
+  return %subst(outBuffer: 1: %size(outBuffer) - outBytesLeft);
+
+end-proc;
+
+// ==========================================================================================
 //  Compiles a regular expression pattern.
 // ==========================================================================================
 
@@ -1310,7 +1376,7 @@ dcl-proc initRegex;
   rc = regcomp(hRegex.regex: pattern: cflags);
   if (rc <> 0);
     regerror(rc: hRegex.regex: %addr(error): %size(error));
-    kill('Invalid regular expression: ' + %str(%addr(error): 100));
+    kill('Invalid regular expression: ' + cvtRegerrorText(%str(%addr(error): 100)));
   endif;
 
   hRegex.isInit = *on;
@@ -1372,7 +1438,7 @@ dcl-proc matchRegex;
     isMatch = *off;
   other;                   // error!
     regerror(rc: io_hRegex.regex: %addr(error): %size(error));
-    kill('Regular expression failed: ' + %str(%addr(error): 100));
+    kill('Regular expression failed: ' + cvtRegerrorText(%str(%addr(error): 100)));
   endsl;
 
   return isMatch;
