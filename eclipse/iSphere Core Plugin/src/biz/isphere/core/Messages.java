@@ -342,6 +342,10 @@ public class Messages extends NLS {
 
     public static String Could_not_restore_library_A;
 
+    public static String Updating_objects_of_library_A;
+
+    public static String Could_not_update_library_A_Run_command_B;
+
     public static String Library_A_successfull_transfered;
 
     public static String Error_occurred_while_transfering_library_A;

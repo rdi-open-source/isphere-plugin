@@ -1,0 +1,63 @@
+.*-----------------------------------------------------------------------*
+.*                                                                       *
+.* Copyright (c) 2012-2026 iSphere Project Owners.                       *
+.* All rights reserved. This program and the accompanying materials      *
+.* are made available under the terms of the Common Public License v1.0  *
+.* which accompanies this distribution, and is available at              *
+.* http://www.eclipse.org/legal/cpl-v10.html                             *
+.*                                                                       *
+.*-----------------------------------------------------------------------*
+.*                                                                       *
+.* iSphere Update Library - Help                                         *
+.*                                                                       *
+.*-----------------------------------------------------------------------*
+.* STRPREPRC Compile Options:                                            *
+.*   >>PRE-COMPILER<<                                                    *
+.*     >>CRTCMD<<    CRTPNLGRP  PNLGRP(&LI/&OB) +                        *
+.*                              SRCFILE(&SL/&SF) SRCMBR(&SM);            *
+.*       >>COMPILE<<                                                     *
+.*       >>END-COMPILE<<                                                 *
+.*       >>EXECUTE<<                                                     *
+.*   >>END-PRE-COMPILER<<                                                *
+.*-----------------------------------------------------------------------*
+:PNLGRP.
+.*
+:HELP name='UPDLIB/ALL'.
+:IMHELP name=UPDLIB.
+:IMHELP name='UPDLIB/LIB       '.
+:EHELP.
+.*--------------------------------------------------------------------
+.* Command Help Text
+.*--------------------------------------------------------------------
+:HELP NAME='UPDLIB'.
+Update Library (UPDLIB) - Help
+:P.
+The UPDLIB command updates the iSphere library, after it has been
+restored with another name than ISPHERE. It changes the commands
+of the library, that refer to objects of library ISPHERE, to the
+objects of the restored library. Command STRPREPRC is created
+again from its source in file QSTRPREPRC.
+:P.
+The iSphere plug-in calls UPDLIB, when it transfers the iSphere
+library with another name. Call UPDLIB yourself, when you restored
+the library from the save file by hand, for example:
+:XMP.
+CHGCMD CMD(ISPHERE62/UPDLIB) PGM(*REXX) REXSRCFILE(ISPHERE62/QBUILD)
+ISPHERE62/UPDLIB LIB(ISPHERE62)
+:EXMP.
+.*
+:EHELP.
+.*
+.*--------------------------------------------------------------------
+.* Help text of keyword LIB
+.*--------------------------------------------------------------------
+:HELP name='UPDLIB/LIB'.
+Library - Help
+:XH3.Library (LIB)
+:P.
+Specifies the name of the restored iSphere library.
+:P.
+This is a required parameter.
+:EHELP.
+.*
+:EPNLGRP.

@@ -846,9 +846,25 @@
              /* Create build command                            */
              /* ----------------------------------------------- */
 
+             STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_HLP') +
+                          LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+                          SRCMBR(*DFT) TGTRLS(&TGTRLS)
              STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD') LIB(&PRDLIB) +
                           OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) +
                           TGTRLS(&TGTRLS)
+
+             /* ----------------------------------------------- */
+             /* Create command UPDLIB, which updates the        */
+             /* library, after it has been restored with        */
+             /* another name.                                   */
+             /* ----------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('UPDLIBHLP') +
+                          LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+                          SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('UPDLIB') +
+                          LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+                          SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
              /* ----------------------------------------------- */
              /* Change object owner to QPGMR                    */

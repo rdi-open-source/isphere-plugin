@@ -27,6 +27,9 @@ import com.ibm.as400.access.FTP;
 
 public class ProductLibraryUploader {
 
+    /** Name of the library in the save file. */
+    private static final String SAVED_LIBRARY = "ISPHERE"; //$NON-NLS-1$
+
     private Shell shell;
     private AS400 system;
     private int ftpPort;
@@ -103,6 +106,9 @@ public class ProductLibraryUploader {
                                 setStatus(Messages.bind(Messages.Restoring_library_A, iSphereLibrary));
                                 if (!restoreLibrary(workLibrary, saveFileName, iSphereLibrary, aspGroup)) {
                                     setStatus("!!!   " + Messages.bind(Messages.Could_not_restore_library_A, iSphereLibrary) + "   !!!");
+                                } else if (!updateLibrary(iSphereLibrary)) {
+                                    setStatus("!!!   " + Messages.bind(Messages.Could_not_update_library_A_Run_command_B, iSphereLibrary,
+                                        getUpdateLibraryCommand(iSphereLibrary)) + "   !!!");
                                 } else {
                                     successfullyTransfered = true;
                                 }
@@ -234,12 +240,48 @@ public class ProductLibraryUploader {
 
     private String produceRestoreLibraryCommand(String workLibrary, String saveFileName, String iSphereLibrary, String aspGroup) {
 
-        String command = "RSTLIB SAVLIB(ISPHERE) DEV(*SAVF) SAVF(" + workLibrary + "/" + saveFileName + ") RSTLIB(" + iSphereLibrary + ")";
+        String command = "RSTLIB SAVLIB(" + SAVED_LIBRARY + ") DEV(*SAVF) SAVF(" + workLibrary + "/" + saveFileName + ") RSTLIB(" + iSphereLibrary
+            + ")";
         if (ISphereHelper.isASPGroupSpecified(aspGroup)) {
             command += " RSTASPDEV(" + aspGroup + ")";
         }
 
         return command;
+    }
+
+    /**
+     * Updates the objects of the iSphere library, that refer to objects of
+     * library ISPHERE, e.g. the program of a command, after the library has
+     * been restored with another name. Host command UPDLIB does it. It is
+     * changed to the restored library first, because it refers to its REXX
+     * source and help panel group by the library list.
+     *
+     * @param iSphereLibrary - name of the restored library
+     * @return <code>true</code> on success, else <code>false</code>
+     */
+    private boolean updateLibrary(String iSphereLibrary) {
+
+        if (SAVED_LIBRARY.equalsIgnoreCase(iSphereLibrary)) {
+            return true;
+        }
+
+        setStatus(Messages.bind(Messages.Updating_objects_of_library_A, iSphereLibrary));
+
+        String command = "CHGCMD CMD(" + iSphereLibrary + "/UPDLIB) PGM(*REXX) REXSRCFILE(" + iSphereLibrary + "/QBUILD) HLPPNLGRP(" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            + iSphereLibrary + "/UPDLIBHLP)"; //$NON-NLS-1$
+        if (!executeCommand(command, true).equals("")) { //$NON-NLS-1$
+            return false;
+        }
+
+        if (!executeCommand(getUpdateLibraryCommand(iSphereLibrary), true).equals("")) { //$NON-NLS-1$
+            return false;
+        }
+
+        return true;
+    }
+
+    private String getUpdateLibraryCommand(String iSphereLibrary) {
+        return iSphereLibrary + "/UPDLIB LIB(" + iSphereLibrary + ")"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private String executeCommand(String command, boolean logError) {
