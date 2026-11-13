@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 6.2.0.r
+Bundle-Version: 6.3.0.r
 X-Bundle-Update-Library: true
-X-Bundle-Update-Library-Info: New 'Synchronize Stream Files' library services.\nCVTSPLF accepts spooled file numbers up to 999999.\nFixed the member filters of the iSphere Synchronize Members editor.
-X-Bundle-Info: Added iSphere Synchronize Stream Files editor.\nFixed the negated masks and the masks without name of the iSphere Synchronize Members editor.\nFixed option 'Maximum depth' of the iSphere Stream File Search for RSE filters and with 'Batch resolve enabled'.\nFixed opening spooled files with workspace encoding COMPAT in RDi 9.9.\nFixed opening spooled files with spooled file numbers greater than 9999.\nChanged HTML of spooled files converted with 'Transform' to specify the character set.
-X-Beta-Version: 6.2.0.r
+X-Bundle-Update-Library-Info: Fixed the error messages of invalid regular expressions in the synchronize editors.\nFixed masks longer than 10 characters of the iSphere Synchronize Members editor.\nFixed the commands STRPREPRC and BUILD for a library with another name.
+X-Bundle-Info: Fixed the time of the last change in the iSphere Synchronize Stream Files editor.\nFixed the extra message 'Operation has been canceled by the user.' after an error in the synchronize editors.\nFixed the error 'Compute launch button tooltip' of the synchronize editors opened with one side only.\nFixed special characters in the data area editor; the data queue monitor and the Journal Explorer.\nFixed the line breaks of error messages.
+X-Beta-Version: 6.3.0.r
 X-Beta-Update-Library: true
-X-Beta-Update-Library-Info: New 'Synchronize Stream Files' library services.\nCVTSPLF accepts spooled file numbers up to 999999.\nFixed the member filters of the iSphere Synchronize Members editor.
-X-Beta-Info: Added iSphere Synchronize Stream Files editor.\nFixed the negated masks and the masks without name of the iSphere Synchronize Members editor.\nFixed option 'Maximum depth' of the iSphere Stream File Search for RSE filters and with 'Batch resolve enabled'.\nFixed opening spooled files with workspace encoding COMPAT in RDi 9.9.\nFixed opening spooled files with spooled file numbers greater than 9999.\nChanged HTML of spooled files converted with 'Transform' to specify the character set.
+X-Beta-Update-Library-Info: Fixed the error messages of invalid regular expressions in the synchronize editors.\nFixed masks longer than 10 characters of the iSphere Synchronize Members editor.\nFixed the commands STRPREPRC and BUILD for a library with another name.
+X-Beta-Info: Fixed the time of the last change in the iSphere Synchronize Stream Files editor.\nFixed the extra message 'Operation has been canceled by the user.' after an error in the synchronize editors.\nFixed the error 'Compute launch button tooltip' of the synchronize editors opened with one side only.\nFixed special characters in the data area editor; the data queue monitor and the Journal Explorer.\nFixed the line breaks of error messages.
