@@ -808,17 +808,37 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         SynchronizeMembersEditorInput editorInput = getEditorInput();
         if (editorInput != null) {
             lblLeftObject.setText(getEditorInput().getLeftObjectName());
+            lblLeftObject.setToolTipText(getObjectToolTipText(getEditorInput().getLeftObjectName()));
             lblRightObject.setText(getEditorInput().getRightObjectName());
+            lblRightObject.setToolTipText(getObjectToolTipText(getEditorInput().getRightObjectName()));
             // The title shows the names of the compared objects.
             setPartName(editorInput.getName());
         } else {
             lblLeftObject.setText(Messages.EMPTY);
+            lblLeftObject.setToolTipText(null);
             lblRightObject.setText(Messages.EMPTY);
+            lblRightObject.setToolTipText(null);
         }
 
         headerArea.layout(true);
 
         setButtonEnablementAndDisplayCompareStatus();
+    }
+
+    /**
+     * Returns the tool tip of the label of a library or source file. It shows
+     * the full name, which may not fit into the label.
+     *
+     * @param objectName - name of the left or right object
+     * @return tool tip text or <code>null</code>, if no object is selected
+     */
+    private String getObjectToolTipText(String objectName) {
+
+        if (StringHelper.isNullOrEmpty(objectName)) {
+            return null;
+        }
+
+        return objectName;
     }
 
     /**

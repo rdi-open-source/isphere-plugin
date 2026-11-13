@@ -28,6 +28,8 @@ Changelog: iSphere 6.3.0.r
  • Changed the iSphere Synchronize Stream Files editor to show the
    full names of the directories as tool tips and the checksums of
    the stream files in the properties view.
+ • Changed the iSphere Synchronize Members editor to show the full
+   names of the libraries and source files as tool tips.
  • Fixed problem that the iSphere data area editor, the data queue
    monitor and the iSphere Journal Explorer showed the character
    '�' instead of '¤', '«' and '•'.
