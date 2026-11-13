@@ -1,0 +1,118 @@
+name: Mirror release
+
+# Copies the GitHub releases of the pages repository - name, notes and files -
+# into this repository, for every release version that is tagged here, too.
+# The pages repository publishes a release with its own workflow; this
+# repository tags the same version with "Tag release". Beta versions have
+# neither tags nor releases.
+
+on:
+  workflow_run:
+    workflows:
+      - Tag release
+    types:
+      - completed
+  schedule:
+    - cron: '23 4 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Only show, what would be mirrored'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mirror-release
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mirror the releases
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PAGES: 'rdi-open-source/isphere'
+          PROPERTIES: 'build/iSphere Build/build/build.properties'
+          DRY_RUN: ${{ inputs.dry_run || false }}
+          # After "Tag release" the pages repository publishes its release a
+          # little later: wait for it up to this number of minutes.
+          WAIT: ${{ github.event_name == 'workflow_run' && '30' || '0' }}
+        run: |
+          set -euo pipefail
+
+          # The release tags of this repository, lowest version first.
+          mapfile -t TAGS < <(gh api --paginate "repos/${REPO}/git/matching-refs/tags/v" --jq '.[].ref' \
+            | sed 's#^refs/tags/##' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+\.r$' | sort -V || true)
+          if [ ${#TAGS[@]} -eq 0 ]; then
+            echo "No release tags."
+            exit 0
+          fi
+
+          published() {  # $1 = tag, $2 = repository: a release that is neither a draft nor a pre-release
+            gh release view "$1" -R "$2" --json isDraft,isPrerelease \
+              --jq 'select((.isDraft or .isPrerelease) | not) | "yes"' 2>/dev/null | grep -qx yes
+          }
+
+          # The version that "Tag release" has just tagged: build.version on main.
+          if [ "${WAIT}" -gt 0 ]; then
+            VERSION=$(gh api -H 'Accept: application/vnd.github.raw' \
+              "repos/${REPO}/contents/$(printf '%s' "${PROPERTIES}" | sed 's/ /%20/g')" \
+              | sed -n 's/^build\.version=//p' | tr -d '[:space:]')
+            TAG="v${VERSION}"
+            if [[ "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.r$ ]] \
+                && ! gh release view "${TAG}" -R "${REPO}" > /dev/null 2>&1; then
+              for ((i = 0; i < WAIT; i++)); do
+                published "${TAG}" "${PAGES}" && break
+                echo "Waiting for the release ${TAG} of ${PAGES} ..."
+                sleep 60
+              done
+            fi
+          fi
+
+          # Lowest version first; "Latest" becomes the highest version with a
+          # release in this repository.
+          MIRRORED=0
+          LATEST=""
+          for TAG in "${TAGS[@]}"; do
+            if gh release view "${TAG}" -R "${REPO}" > /dev/null 2>&1; then
+              LATEST="${TAG}"
+              continue
+            fi
+            if ! published "${TAG}" "${PAGES}"; then
+              echo "${TAG}: no release in ${PAGES}."
+              continue
+            fi
+            NAME=$(gh release view "${TAG}" -R "${PAGES}" --json name --jq .name)
+            FILES=$(gh release view "${TAG}" -R "${PAGES}" --json assets --jq '[.assets[].name] | join(", ")')
+            echo "${TAG}: mirror '${NAME}' with ${FILES:-no files}"
+            LATEST="${TAG}"
+            MIRRORED=$((MIRRORED + 1))
+            if [ "${DRY_RUN}" = "true" ]; then
+              continue
+            fi
+            DIR="mirror/${TAG}"
+            mkdir -p "${DIR}"
+            gh release view "${TAG}" -R "${PAGES}" --json body --jq .body > "${DIR}.md"
+            if [ -n "${FILES}" ]; then
+              gh release download "${TAG}" -R "${PAGES}" -D "${DIR}"
+            fi
+            shopt -s nullglob
+            ASSETS=( "${DIR}"/* )
+            shopt -u nullglob
+            gh release create "${TAG}" "${ASSETS[@]}" -R "${REPO}" --verify-tag \
+              --title "${NAME}" --notes-file "${DIR}.md" --latest=false
+          done
+
+          if [ ${MIRRORED} -gt 0 ] && [ "${DRY_RUN}" != "true" ]; then
+            gh release edit "${LATEST}" -R "${REPO}" --latest
+          fi
+          echo "${MIRRORED} release(s) mirrored; latest: ${LATEST:-none}."
+          if [ "${DRY_RUN}" = "true" ]; then
+            echo "Dry run: nothing has been changed."
+          fi
