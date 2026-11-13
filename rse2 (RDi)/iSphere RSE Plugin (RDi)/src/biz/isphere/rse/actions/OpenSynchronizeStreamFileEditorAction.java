@@ -117,11 +117,27 @@ public class OpenSynchronizeStreamFileEditorAction implements IObjectActionDeleg
             structuredSelection = null;
         }
 
-        if (structuredSelection.size() >= 1 && structuredSelection.size() <= 2) {
+        if (structuredSelection != null && structuredSelection.size() >= 1 && structuredSelection.size() <= 2
+            && isDirectorySelection(structuredSelection)) {
             action.setEnabled(true);
         } else {
             action.setEnabled(false);
         }
+    }
+
+    /**
+     * Returns <code>true</code>, if all selected items are directories, because
+     * the editor compares directories, but not single stream files.
+     */
+    private boolean isDirectorySelection(IStructuredSelection selection) {
+
+        for (Object object : selection.toList()) {
+            if (!(object instanceof IFSRemoteFile) || !((IFSRemoteFile)object).isDirectory()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
