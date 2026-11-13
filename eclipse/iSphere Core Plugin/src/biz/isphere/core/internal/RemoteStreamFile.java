@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2024 iSphere Project Owners
+ * Copyright (c) 2012-2026 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,9 @@ import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributio
  * The RemoteIfsFile class is used by the RDI plug-in as an adapter to pass
  * IFSRemoteFile (RDi) to the core plug-in.
  */
-public class RemoteStreamFile {
+public class RemoteStreamFile extends AbstractStreamFileObject {
 
     private String connectionName;
-    private String name;
 
     private AS400 system;
 
@@ -28,8 +27,8 @@ public class RemoteStreamFile {
     }
 
     public RemoteStreamFile(String connectionName, String name) {
+        super(name);
         this.connectionName = connectionName;
-        this.name = name;
     }
 
     public void setConnectionName(String connectionName) {
@@ -50,37 +49,30 @@ public class RemoteStreamFile {
         return connectionName;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public String getIFSName() {
 
         StringBuilder buffer = new StringBuilder();
 
-        buffer.append(name);
+        buffer.append(getName());
 
         return buffer.toString();
     }
 
     public String getQualifiedObject() {
-        return name;
-    }
-
-    public String getAbsoluteName() {
-        return connectionName + ":" + name;
-    }
-
-    public String getObjectPathName() {
-        return name;
-    }
-
-    public String getToolTipText() {
-        return "\\\\" + connectionName + "\\" + name;
+        return getName();
     }
 
     @Override
-    public String toString() {
-        return getAbsoluteName();
+    public String getAbsoluteName() {
+        return connectionName + ":" + getName();
+    }
+
+    public String getObjectPathName() {
+        return getName();
+    }
+
+    @Override
+    public String getToolTipText() {
+        return "\\\\" + connectionName + "\\" + getName();
     }
 }
