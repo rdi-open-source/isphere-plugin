@@ -1,27 +1,12 @@
 <!--
  * =====================================================================
- *   This Ant script helps you to create and upload the project's
- *   update site.
+ *   This Ant script creates the update site of an RDi plug-in and
+ *   publishes it on the GitHub pages of the product.
  *
- *   Version: 2026-10-29
- *
- *   This file is shared. It must be identical in all of the
- *   following projects:
- *
- *     - IFS Projects   ifs-projects-plugin/build/IFS Projects Build
- *     - iRpgFormatter  irpgformatter-plugin/build/iRpgFormatter Build
- *     - iRPGUnit       irpgunit/build/iRPGUnit Build
- *     - iSphere        isphere-plugin/build/iSphere Build
- *     - JCRCMDS        jcrcmds/build/JCRCMDS Build
- *     - Rapid Fire     rapid-fire-plugin/build/Rapid Fire Build
- *
- *   Never change it in one project only. Project specific settings
- *   belong into 'build.properties', the templates or the GitHub
- *   pages repository.
- *
- *   In order to use all features of the script, you need to
- *   have the 'iSphere Ant Plugin' installed and the 'iSphere Help Builder'
- *   project in your workspace.
+ *   This file is shared. It must be identical in the build projects of
+ *   all products that use it. Never change it in one project only.
+ *   Project specific settings belong into 'build.properties', the
+ *   templates or the GitHub pages repository.
  *
  *   The main switches to control the build process are:
  *
@@ -39,6 +24,14 @@
  *                                 for updating the PDF file
  *     local.updateSite.enabled  - specifies whether to update the local
  *                                 update site of your company
+ *
+ *   Requirements of some switches:
+ *
+ *     build.help.enabled=true      - the help builder project, that is
+ *                                    named in 'build.help.builder', must
+ *                                    be in the workspace.
+ *     build.winword.available=true - an Ant plug-in that contributes the
+ *                                    task 'winword' must be installed.
  *
  *   The 'Release' and the 'Beta' section of the home page and of the
  *   'files' page are published, only if they are relevant: the release
@@ -70,25 +63,15 @@
  *
  *   Workspace structure
  *
- *     All Git repositories must be cloned into the same Eclipse workspace. An example
- *     workspace with some of the repositories looks like that:
+ *     The Git repository of the plug-in and the Git repository of its
+ *     GitHub pages must be cloned into the same Eclipse workspace:
  *
  *     [workspace]
- *      ├╌╌ .analysis
  *      ├╌╌ .metadata
- *      └╌╌ irpgunit
- *          ├╌╌ .git
- *          └╌╌ ...
- *      └╌╌ isphere
- *          ├╌╌ .git
- *          └╌╌ ...
- *      └╌╌ isphere-plugin
- *          ├╌╌ .git
- *          └╌╌ ...
- *      └╌╌ rapid-fire
- *          ├╌╌ .git
- *          └╌╌ ...
- *      └╌╌ rapid-fire-plugin
+ *      ├╌╌ <product>-plugin   sources and build project of the plug-in
+ *      │   ├╌╌ .git
+ *      │   └╌╌ ...
+ *      └╌╌ <product>          GitHub pages, folder 'docs'
  *          ├╌╌ .git
  *          └╌╌ ...
  *
@@ -104,43 +87,44 @@
  *   Here are the steps to create a new version of the plug-in:
  *
  *     1 Preparation
- *     1.1 On the PC run the 'CheckNLSMessages' JUnit test to check
- *         for missing or obsolete message property entries.
- *     1.2 On the PC search java sources for missing copyright header.
+ *     1.1 Run the JUnit tests of the plug-in, e.g. 'CheckNLSMessages',
+ *         that checks for missing or obsolete message property entries.
+ *     1.2 Search the Java sources for a missing copyright header.
  *         Menu: Search -> File -> (?s)\A((?!copyright).)*\Z
  *               Check: Regular expression
- *     1.3 On the PC change version number in COPYRIGHT.RPGLE.
- *     1.4 On the PC push changes of project's i Project to the AS/400.
- *     1.5 On the PC update the project history document, e.g. 'iSphere.doc'
- *         and also save it as a PDF file, e.g. 'iSphere for RDi 9.6.0.13+.pdf'.
- *     1.6 Refresh the project with the history document, e.g. 'iSphere Core Plugin'.
- *     1.7 On the PC increment version number of property 'build.version'
+ *     1.3 Update the project documentation and save it as a PDF file
+ *         (only if build.project.doc.enable=true).
+ *     1.4 Change the version number of property 'build.version'
  *         in file 'build.properties'.
  *
  *     2 Creating the library (only if build.library.enabled=true)
- *     2.1 On the IBM i run the command for building the library.
- *     2.2 Run target 'downloadIBMiLibrary' of build.xml.
+ *     2.1 Change the version number of the library in its sources and
+ *         transfer the sources to the IBM i.
+ *     2.2 On the IBM i run the command for building the library.
+ *     2.3 Run target 'downloadIBMiLibrary' of build.xml.
  *
  *     3 Creating the update site
- *     3.1 On the PC run target 'build' of file 'build.xml'.
+ *     3.1 Run target 'build' of file 'build.xml'.
  *     3.2 Right-click 'site.xml', select 'PDE Tools -> Build Site'.
- *     3.3 On the PC run target 'createGitHubFiles' of file 'build.xml'.
- *     3.4 Commit the changes with message 'Prepared <version>.'
- *     3.5 On the PC run target 'uploadGitHubFiles' of file 'build.xml'.
- *     3.6 Commit the changes with message 'Released <version>.'
- *     3.7 Optionally on the PC run target 'uploadLocalUpdateSite' to update
+ *     3.3 Run target 'createGitHubFiles' of file 'build.xml'.
+ *     3.4 Run target 'uploadGitHubFiles' of file 'build.xml'.
+ *     3.5 Optionally run target 'uploadLocalUpdateSite' to update
  *         the local update site of your company
  *         (only if local.updateSite.enabled=true).
- *     3.8 Create the version tag.
  *
- *     4 Eclipse Marketplace (only if build.marketplace.enabled=true)
- *     4.1 Login to Eclipse Marketplace (https://marketplace.eclipse.org)
- *     4.2 Go to the project.
- *     4.3 Click the "Edit" button to enter edit mode.
- *     4.4 Scroll down to "Solution Version(s)" and click the "Edit" button
+ *     4 Publishing
+ *     4.1 Commit and push the plug-in repository first, then the
+ *         repository of the GitHub pages. The GitHub workflows of both
+ *         repositories tag the version and publish the GitHub release.
+ *
+ *     5 Eclipse Marketplace (only if build.marketplace.enabled=true)
+ *     5.1 Login to Eclipse Marketplace (https://marketplace.eclipse.org)
+ *     5.2 Go to the project.
+ *     5.3 Click the "Edit" button to enter edit mode.
+ *     5.4 Scroll down to "Solution Version(s)" and click the "Edit" button
  *         next to "Solution".
- *     4.5 Update the "Version number" field.
- *     4.6 Scroll down to the bottom and click the large "Update" button.
+ *     5.5 Update the "Version number" field.
+ *     5.6 Scroll down to the bottom and click the large "Update" button.
  *
  * ===================================================================== -->
 <project name="Project Build Script" default="build" basedir="." >
@@ -267,7 +251,7 @@
     * =====================================================================
     *   Stores the version number that is encoded in the name of an update
     *   site zip file in property 'property', for example '1.0.0.b002' of
-    *   'IFS Projects for RDi 9.6.0.13+ (v1.0.0.b002 Update Site).zip'.
+    *   '<Product> for RDi 9.6.0.13+ (v1.0.0.b002 Update Site).zip'.
     *   The property is set to an empty string, if attribute 'file' does
     *   not contain a version number.
     * ===================================================================== -->
@@ -1041,7 +1025,7 @@
         <echo>Found variable: ${replace.error.home.page}</echo>
         <fail if="replace.error.home.page" message="Not all variables have been replaced." />
 
-        <!-- The support page is optional, e.g. JCRCMDS has none -->
+        <!-- The support page is optional -->
         <if>
             <available file="${build.upload.dir.home}/${support.page}" type="file" />
             <then>
