@@ -283,9 +283,13 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
         leftHeaderArea.setLayoutData(leftHeaderAreaLayoutData);
         leftHeaderArea.setLayout(createGridLayoutNoBorder(2, false));
 
+        // The width hint keeps the left and right header areas equally wide,
+        // regardless of the length of the directory names. The tool tip shows
+        // the full name.
         lblLeftObject = new Label(leftHeaderArea, SWT.BORDER);
         GridData lblLeftObjectLayoutData = new GridData(GridData.FILL_HORIZONTAL);
         lblLeftObjectLayoutData.minimumWidth = 120;
+        lblLeftObjectLayoutData.widthHint = 120;
         lblLeftObject.setLayoutData(lblLeftObjectLayoutData);
 
         btnSelectLeftObject = WidgetFactory.createPushButton(leftHeaderArea);
@@ -340,6 +344,7 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
         lblRightObject = new Label(rightHeaderArea, SWT.BORDER);
         GridData lblRightObjectLayoutData = new GridData(GridData.FILL_HORIZONTAL);
         lblRightObjectLayoutData.minimumWidth = 120;
+        lblRightObjectLayoutData.widthHint = 120;
         lblRightObject.setLayoutData(lblRightObjectLayoutData);
 
         btnSelectRightObject = WidgetFactory.createPushButton(rightHeaderArea);
@@ -1257,17 +1262,37 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
         SynchronizeStreamFilesEditorInput editorInput = getEditorInput();
         if (editorInput != null) {
             lblLeftObject.setText(getEditorInput().getLeftObjectName());
+            lblLeftObject.setToolTipText(getObjectToolTipText(getEditorInput().getLeftObjectName()));
             lblRightObject.setText(getEditorInput().getRightObjectName());
+            lblRightObject.setToolTipText(getObjectToolTipText(getEditorInput().getRightObjectName()));
             // The title shows the names of the compared directories.
             setPartName(editorInput.getName());
         } else {
             lblLeftObject.setText(Messages.EMPTY);
+            lblLeftObject.setToolTipText(null);
             lblRightObject.setText(Messages.EMPTY);
+            lblRightObject.setToolTipText(null);
         }
 
         headerArea.layout(true);
 
         setButtonEnablementAndDisplayCompareStatus();
+    }
+
+    /**
+     * Returns the tool tip of the label of a directory. It shows the full name,
+     * which may not fit into the label.
+     *
+     * @param objectName - name of the left or right directory
+     * @return tool tip text or <code>null</code>, if no directory is selected
+     */
+    private String getObjectToolTipText(String objectName) {
+
+        if (StringHelper.isNullOrEmpty(objectName)) {
+            return null;
+        }
+
+        return objectName;
     }
 
     /**

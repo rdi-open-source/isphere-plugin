@@ -21,6 +21,8 @@ public class StreamFileCompareItemPropertySource implements IPropertySource {
 
     private static final String PROPERTY_LEFT_FILE = "biz.isphere.core.ifssynchronization.leftFile"; //$NON-NLS-1$
     private static final String PROPERTY_RIGHT_FILE = "biz.isphere.core.ifssynchronization.rightFile"; //$NON-NLS-1$
+    private static final String PROPERTY_LEFT_CHECKSUM = "biz.isphere.core.ifssynchronization.leftChecksum"; //$NON-NLS-1$
+    private static final String PROPERTY_RIGHT_CHECKSUM = "biz.isphere.core.ifssynchronization.rightChecksum"; //$NON-NLS-1$
     private static final String PROPERTY_SELECTION = "biz.isphere.core.ifssynchronization.selection"; //$NON-NLS-1$
     private static final String PROPERTY_ERROR_MESSAGE = "biz.isphere.core.ifssynchronization.errorMessage"; //$NON-NLS-1$
 
@@ -47,13 +49,15 @@ public class StreamFileCompareItemPropertySource implements IPropertySource {
         if (propertyDescriptors == null) {
 
             PropertyDescriptor leftFile = createPropertyDescriptor(PROPERTY_LEFT_FILE, Messages.File, Messages.Left);
+            PropertyDescriptor leftChecksum = createPropertyDescriptor(PROPERTY_LEFT_CHECKSUM, Messages.Checksum, Messages.Left);
 
             PropertyDescriptor rightFile = createPropertyDescriptor(PROPERTY_RIGHT_FILE, Messages.File, Messages.Right);
+            PropertyDescriptor rightChecksum = createPropertyDescriptor(PROPERTY_RIGHT_CHECKSUM, Messages.Checksum, Messages.Right);
 
             PropertyDescriptor selection = createPropertyDescriptor(PROPERTY_SELECTION, Messages.Selection, Messages.Other);
             PropertyDescriptor errorMessage = createPropertyDescriptor(PROPERTY_ERROR_MESSAGE, Messages.Message, Messages.Other);
 
-            propertyDescriptors = new IPropertyDescriptor[] { leftFile, rightFile, selection, errorMessage };
+            propertyDescriptors = new IPropertyDescriptor[] { leftFile, leftChecksum, rightFile, rightChecksum, selection, errorMessage };
         }
         return propertyDescriptors;
     }
@@ -76,6 +80,10 @@ public class StreamFileCompareItemPropertySource implements IPropertySource {
             return getFileUI(ifsFileCompareItem.getLeftIfsFileDescription());
         } else if (PROPERTY_RIGHT_FILE.equals(propertyName)) {
             return getFileUI(ifsFileCompareItem.getRightIfsFileDescription());
+        } else if (PROPERTY_LEFT_CHECKSUM.equals(propertyName)) {
+            return getChecksumUI(ifsFileCompareItem.getLeftIfsFileDescription());
+        } else if (PROPERTY_RIGHT_CHECKSUM.equals(propertyName)) {
+            return getChecksumUI(ifsFileCompareItem.getRightIfsFileDescription());
         } else if (PROPERTY_SELECTION.equals(propertyName)) {
             if (compareOptions != null) {
                 return getSelectionUI();
@@ -103,6 +111,14 @@ public class StreamFileCompareItemPropertySource implements IPropertySource {
     private String getFileUI(StreamFileDescription ifsFileDescription) {
         if (ifsFileDescription != null) {
             return ifsFileDescription.getAbsolutePath();
+        }
+        return Messages.EMPTY;
+    }
+
+    private String getChecksumUI(StreamFileDescription ifsFileDescription) {
+        if (ifsFileDescription != null && ifsFileDescription.isFile() && ifsFileDescription.getChecksum() != null) {
+            long checksum = ifsFileDescription.getChecksum().longValue();
+            return checksum + " (" + Long.toHexString(checksum).toUpperCase() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         return Messages.EMPTY;
     }

@@ -1971,6 +1971,8 @@ public class Messages extends NLS {
     public static String Enter_the_maximum_depth_of_subdirectories_to_be_compared;
     public static String Could_not_determine_the_items_to_compare_A;
 
+    public static String Checksum;
+
     public static String Directory_A_is_not_empty;
 
     public static String Could_not_delete_A;
