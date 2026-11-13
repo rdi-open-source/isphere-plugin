@@ -1,4 +1,44 @@
 
+Changelog: iSphere 6.3.0.r
+--------------------------
+ • Fixed problem that the iSphere Synchronize Stream Files editor
+   showed the time of the last change as UTC time instead of the
+   local time.
+ • Fixed problem that the error message of an invalid regular
+   expression showed wrong characters, e.g. 'Ö' instead of '\',
+   in the iSphere Synchronize Members and Synchronize Stream Files
+   editors.
+ • Fixed problem that the iSphere Synchronize Members editor cut off
+   the name and the type of a mask after 10 characters, e.g.
+   '*a*b*c*d*e*.rpgle'.
+ • Changed the iSphere Synchronize Members editor to show an error
+   message for a mask that cannot match any member, e.g.
+   'abcdefghijk.rpgle'.
+ • Fixed problem that the iSphere Synchronize Members and Synchronize
+   Stream Files editors showed the message 'Operation has been
+   canceled by the user.' after an error message.
+ • Fixed NullPointerException 'Compute launch button tooltip', when
+   the iSphere Synchronize Members or Synchronize Stream Files
+   editor was opened with one side only.
+ • Fixed problem that the iSphere Synchronize Members and Synchronize
+   Stream Files editors did not update their title, when the left or
+   right side was changed.
+ • Changed the context menu option 'iSphere Synchronize Stream
+   Files' to be enabled for directories only.
+ • Changed the iSphere Synchronize Stream Files editor to show the
+   full names of the directories as tool tips and the checksums of
+   the stream files in the properties view.
+ • Fixed problem that the iSphere data area editor, the data queue
+   monitor and the iSphere Journal Explorer showed the character
+   '�' instead of '¤', '«' and '•'.
+ • Fixed problem that error messages showed line breaks, tabs and
+   unprintable characters as '�'. Line breaks and tabs are kept
+   now and unprintable characters are shown as '÷'.
+ • Fixed problem that the commands STRPREPRC and BUILD did not work,
+   when the iSphere library was transferred with another name.
+ • Added the demo programs DEMO10, DEMO11 and DEMO12 to the iSphere
+   library.
+
 Changelog: iSphere 6.2.0.r
 --------------------------
  • Added iSphere Synchronize Stream Files editor for synchronizing
