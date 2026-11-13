@@ -292,6 +292,7 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
         btnSelectLeftObject.setToolTipText(Messages.Tooltip_Select_object);
         btnSelectLeftObject.setImage(getImage(ISpherePlugin.IMAGE_OPEN));
         btnSelectLeftObject.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent arg0) {
                 String connectionName = null;
                 String fileName = null;
@@ -345,6 +346,7 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
         btnSelectRightObject.setToolTipText(Messages.Tooltip_Select_object);
         btnSelectRightObject.setImage(getImage(ISpherePlugin.IMAGE_OPEN));
         btnSelectRightObject.addSelectionListener(new SelectionAdapter() {
+            @Override
             public void widgetSelected(SelectionEvent arg0) {
                 String connectionName = null;
                 String fileName = null;
@@ -654,7 +656,7 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
                 if (selection instanceof StructuredSelection) {
                     StructuredSelection structuredSelection = (StructuredSelection)selection;
                     for (Iterator<?> iterator = structuredSelection.iterator(); iterator.hasNext();) {
-                        Object item = (Object)iterator.next();
+                        Object item = iterator.next();
                         if (item instanceof StreamFileCompareItem) {
                             StreamFileCompareItem compareItem = (StreamFileCompareItem)item;
                             performOpenCompareIfsFilesDialog(compareItem);
@@ -1193,6 +1195,7 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
         return shell;
     }
 
+    @Override
     public SynchronizeStreamFilesEditorInput getEditorInput() {
 
         IEditorInput input = super.getEditorInput();
@@ -1255,6 +1258,8 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
         if (editorInput != null) {
             lblLeftObject.setText(getEditorInput().getLeftObjectName());
             lblRightObject.setText(getEditorInput().getRightObjectName());
+            // The title shows the names of the compared directories.
+            setPartName(editorInput.getName());
         } else {
             lblLeftObject.setText(Messages.EMPTY);
             lblRightObject.setText(Messages.EMPTY);
@@ -1626,7 +1631,7 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
         if (tableViewer.getSelection() instanceof StructuredSelection) {
             StructuredSelection selection = (StructuredSelection)tableViewer.getSelection();
             for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
-                Object selectedItem = (Object)iterator.next();
+                Object selectedItem = iterator.next();
                 if (selectedItem instanceof StreamFileCompareItem) {
                     StreamFileCompareItem compareItem = (StreamFileCompareItem)selectedItem;
                     selectedItems.add(compareItem);
@@ -1770,7 +1775,7 @@ public abstract class AbstractSynchronizeStreamFilesEditor extends EditorPart
 
         if (sideBySide) {
             if (editorWidth * 2 > maxMonitorWidth) {
-                editorWidth = (int)Math.abs(maxMonitorWidth / 2);
+                editorWidth = Math.abs(maxMonitorWidth / 2);
             }
         } else {
             if (editorWidth > maxMonitorWidth) {

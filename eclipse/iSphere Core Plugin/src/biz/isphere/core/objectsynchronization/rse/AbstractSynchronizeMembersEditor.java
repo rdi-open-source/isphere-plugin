@@ -645,7 +645,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                 if (selection instanceof StructuredSelection) {
                     StructuredSelection structuredSelection = (StructuredSelection)selection;
                     for (Iterator<?> iterator = structuredSelection.iterator(); iterator.hasNext();) {
-                        Object item = (Object)iterator.next();
+                        Object item = iterator.next();
                         if (item instanceof MemberCompareItem) {
                             MemberCompareItem compareItem = (MemberCompareItem)item;
                             performOpenCompareMembersDialog(compareItem);
@@ -809,6 +809,8 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         if (editorInput != null) {
             lblLeftObject.setText(getEditorInput().getLeftObjectName());
             lblRightObject.setText(getEditorInput().getRightObjectName());
+            // The title shows the names of the compared objects.
+            setPartName(editorInput.getName());
         } else {
             lblLeftObject.setText(Messages.EMPTY);
             lblRightObject.setText(Messages.EMPTY);
@@ -1119,7 +1121,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         if (tableViewer.getSelection() instanceof StructuredSelection) {
             StructuredSelection selection = (StructuredSelection)tableViewer.getSelection();
             for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
-                Object selectedItem = (Object)iterator.next();
+                Object selectedItem = iterator.next();
                 if (selectedItem instanceof MemberCompareItem) {
                     MemberCompareItem compareItem = (MemberCompareItem)selectedItem;
                     selectedItems.add(compareItem);
@@ -1263,7 +1265,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
         if (sideBySide) {
             if (editorWidth * 2 > maxMonitorWidth) {
-                editorWidth = (int)Math.abs(maxMonitorWidth / 2);
+                editorWidth = Math.abs(maxMonitorWidth / 2);
             }
         } else {
             if (editorWidth > maxMonitorWidth) {
@@ -1800,8 +1802,8 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                                 /*
                                  * Redraw the table, because the image of the
                                  * compare status is painted and not assigned to
-                                 * the cell, see
-                                 * AbstractTableLabelProvider.useCompareStatusImagePainter().
+                                 * the cell, see AbstractTableLabelProvider.
+                                 * useCompareStatusImagePainter().
                                  */
                                 owner.tableViewer.getTable().redraw();
                                 debug("Member updated: " + memberDescription.getQualifiedMemberName());
