@@ -1,0 +1,71 @@
+name: Tag release
+
+# Tags the commit, that sets a release version (x.y.z.r) in build.properties,
+# with v<version>. Beta versions are not tagged.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'build/iSphere Build/build/build.properties'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Only show, what would be tagged'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tag-release
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Tag the release
+        shell: bash
+        env:
+          PROPERTIES: 'build/iSphere Build/build/build.properties'
+          DRY_RUN: ${{ inputs.dry_run || false }}
+        run: |
+          set -euo pipefail
+
+          VERSION=$(sed -n 's/^build\.version=//p' "${PROPERTIES}" | tr -d '[:space:]')
+          if [[ ! "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.r$ ]]; then
+            echo "No release version: '${VERSION}'"
+            exit 0
+          fi
+
+          TAG="v${VERSION}"
+          if [ -n "$(git ls-remote --tags origin "refs/tags/${TAG}")" ]; then
+            echo "Tag ${TAG} exists already."
+            exit 0
+          fi
+
+          # The commit, that changed build.version last, sets the version.
+          COMMIT=$(git log -1 --format=%H -G'^build\.version=' -- "${PROPERTIES}")
+          if ! git show "${COMMIT}:${PROPERTIES}" | grep -qxF "build.version=${VERSION}"; then
+            echo "Commit ${COMMIT} does not set build.version=${VERSION}." >&2
+            exit 1
+          fi
+          echo "Tag ${TAG} -> $(git log -1 --format='%h %s' "${COMMIT}")"
+
+          if [ "${DRY_RUN}" = "true" ]; then
+            echo "Dry run: the tag is not created."
+            exit 0
+          fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git tag -a "${TAG}" -m "Tag ${TAG}." "${COMMIT}"
+          git push origin "refs/tags/${TAG}"
