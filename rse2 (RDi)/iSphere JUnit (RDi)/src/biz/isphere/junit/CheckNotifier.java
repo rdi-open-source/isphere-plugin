@@ -11,6 +11,8 @@ package biz.isphere.junit;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Iterator;
@@ -18,9 +20,7 @@ import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import org.eclipse.osgi.util.ManifestElement;
 import org.junit.Test;
-import org.osgi.framework.BundleException;
 
 import biz.isphere.core.internal.Version;
 import junit.framework.JUnit4TestAdapter;
@@ -139,7 +139,7 @@ public class CheckNotifier {
         System.out.println("** Finished testing beta release properties **");
     }
 
-    private String getString(Manifest manifest, String version, boolean replaceControlCharacter) throws BundleException {
+    private String getString(Manifest manifest, String version, boolean replaceControlCharacter) throws Exception {
 
         String value = getString(manifest, version);
         if (value == null) {
@@ -151,7 +151,7 @@ public class CheckNotifier {
         return value;
     }
 
-    private String getString(Manifest manifest, String version) throws BundleException {
+    private String getString(Manifest manifest, String version) throws Exception {
 
         String[] propertyValues = getPropertyValues(manifest, version);
         if (propertyValues != null && propertyValues.length == 1) {
@@ -161,18 +161,53 @@ public class CheckNotifier {
         return null;
     }
 
-    private String[] getPropertyValues(Manifest manifest, String property) throws BundleException {
+    private String[] getPropertyValues(Manifest manifest, String property) throws Exception {
         String[] propertyValues = null;
         Properties prop = _manifestToProperties(manifest.getMainAttributes());
         String requires = prop.getProperty(property);
         if (requires != null) {
-            ManifestElement elements[] = ManifestElement.parseHeader(property, requires);
-            propertyValues = new String[elements.length];
-            for (int idx = 0; idx < elements.length; idx++) {
-                propertyValues[idx] = elements[idx].getValue();
-            }
+            propertyValues = parseHeader(property, requires);
         }
         return propertyValues;
+    }
+
+    /**
+     * Parses a manifest header with <i>org.eclipse.osgi.util.ManifestElement</i>
+     * the same way as <i>SearchForUpdates</i> does at runtime.
+     * <p>
+     * The class is called by reflection, because the version of the
+     * <i>org.eclipse.osgi</i> bundle differs between the RDi versions, so that
+     * the build path cannot name its jar file. At runtime the bundle comes with
+     * the plug-in dependencies of the referenced iSphere projects.
+     * 
+     * @param header - name of the manifest header
+     * @param value - value of the manifest header
+     * @return values of the manifest elements of the header
+     * @throws Exception
+     */
+    private String[] parseHeader(String header, String value) throws Exception {
+
+        Class<?> manifestElementClass = Class.forName("org.eclipse.osgi.util.ManifestElement");
+        Method parseHeaderMethod = manifestElementClass.getMethod("parseHeader", String.class, String.class);
+        Method getValueMethod = manifestElementClass.getMethod("getValue");
+
+        Object[] elements;
+        try {
+            elements = (Object[])parseHeaderMethod.invoke(null, header, value);
+        } catch (InvocationTargetException e) {
+            // Pass on the BundleException of an invalid header
+            if (e.getCause() instanceof Exception) {
+                throw (Exception)e.getCause();
+            }
+            throw e;
+        }
+
+        String[] values = new String[elements.length];
+        for (int idx = 0; idx < elements.length; idx++) {
+            values[idx] = (String)getValueMethod.invoke(elements[idx]);
+        }
+
+        return values;
     }
 
     private Properties _manifestToProperties(Attributes d) {
