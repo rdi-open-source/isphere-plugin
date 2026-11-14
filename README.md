@@ -37,6 +37,18 @@ Please refer to the [iSphere Version History](<https://rdi-open-source.github.io
 * Job Trace Explorer
 * Comparing & Synchronizing Source Members
 
+## Installation
+
+1. Select **Help > Install New Software...** in RDi.
+2. Enter the update site `https://rdi-open-source.github.io/isphere/update-site/eclipse/rdi8.0/` and select the features of iSphere.
+3. Finish the wizard and restart RDi.
+
+Then install the iSphere library on the IBM i, see [Install iSphere Library](https://rdi-open-source.github.io/isphere/help/html/install/install_library.html) in the help.
+
+## Usage
+
+How to use iSphere is described in the [help](https://rdi-open-source.github.io/isphere/help/). It is part of the plug-in as well: **Help > Help Contents > iSphere** in RDi.
+
 ## Credits
 
 Thank you to all the people that helped translating iSphere.
