@@ -8,7 +8,7 @@ iSphere is an open source plug-in for IBM's Rational Developer for i 9.6.0.13+. 
 
 IBM's current Eclipse based Integrated Development Environment (IDE) is a huge step beyond SEU, but it still lacks features available only on the green screen. That is where the iSphere Project comes into play, filling in those gaps.
 
-Further information about iSphere are available on the [iSphere Web Site](https://rdi-open-source.github.io/isphere/).
+Further information about iSphere is available on the [iSphere Web Site](https://rdi-open-source.github.io/isphere/).
 
 Please refer to the [iSphere Version History](<https://rdi-open-source.github.io/isphere/files/iSphere for RDi 9.6.0.13+.pdf>) document to find out which operating system release is required for installing the iSphere library.
 
