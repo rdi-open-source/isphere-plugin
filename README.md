@@ -16,26 +16,31 @@ Please refer to the [iSphere Version History](<https://rdi-open-source.github.io
 
 * Message File Editor for editing message file descriptions within a message file.
 * Binding Directory Editor for editing binding directory entries within a binding directory.
+* Data Area Editor
+* User Space Editor
 * Compare/Merge Editor for comparing/merging source physical file members.
+* Compare/Merge Editor for comparing/merging stream files.
+* Message File Compare Editor for comparing message files.
+* Comparing & Synchronizing Source Members
+* Comparing & Synchronizing Stream Files
 * An extremely fast search feature for searching source files. Searching a member filter in the Remote Systems Explorer with iSphere Source File Search is about 60 times faster than searching with the original RSE Search.
 * An extremely fast search feature for searching message files.
 * An extremely fast search feature for searching stream files.
-* A spooled file subsystem with the ability to open spooled files in Text, HTML and PDF format.
-* LPEX Task Tags for marking positions in your source like TODO, FIXME ...
-* Decorators for objects in the RSE tree view
-* RSE Filter Management to export/import some or all filters to/from a repository
-* RSE Command Management to export/import some or all compile commands to/from a repository
-* RSE User Action Management to export/import some or all user actions to/from a repository
-* Data Area Editor
-* User Space Editor
 * Data Area Monitor/Viewer
 * User Space Monitor/Viewer
 * Data Queue Monitor/Viewer
 * Message Subsystem/Message Monitor
+* A spooled file subsystem with the ability to open spooled files in Text, HTML and PDF format.
 * Job Log Explorer
 * Journal Explorer
 * Job Trace Explorer
-* Comparing & Synchronizing Source Members
+* Display Module View
+* Decorators for objects in the RSE tree view
+* RSE Filter Management to export/import some or all filters to/from a repository
+* RSE Command Management to export/import some or all compile commands to/from a repository
+* RSE User Action Management to export/import some or all user actions to/from a repository
+* LPEX Task Tags for marking positions in your source like TODO, FIXME ...
+* 5250 Emulator
 
 ## Installation
 
