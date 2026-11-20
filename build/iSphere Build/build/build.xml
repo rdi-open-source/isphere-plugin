@@ -785,11 +785,11 @@
         <echo>|                                                      |</echo>
         <echo>|  Then proceed with:                                  |</echo>
         <echo>|    1. createGitHubFiles                              |</echo>
-        <echo>|    2. Commit 'Prepared &lt;version&gt;.'                   |</echo>
+        <echo>|    2. Commit 'Prepare v&lt;version&gt;.'                   |</echo>
         <echo>|    3. uploadGitHubFiles                              |</echo>
-        <echo>|    4. Commit 'Released &lt;version&gt;.'                   |</echo>
+        <echo>|    4. Commit 'Release v&lt;version&gt;.'                   |</echo>
         <echo>|    5. Optionally: uploadLocalUpdateSite              |</echo>
-        <echo>|    6. Create the version tag                         |</echo>
+        <echo>|    6. Push the plug-in repo, then the pages repo     |</echo>
         <echo>+------------------------------------------------------+</echo>
         <echo>*** Finished ***</echo>
 
@@ -801,7 +801,7 @@
     <target name="createGitHubFiles" depends="checkPublishedFiles, updatePdfFile, prepareUpdateSite, createZipFile, createUpdateSite, createUpdateSiteHtmlPages, createHelpHtmlPages, createHomePageHtml, createFilesHtml, refreshProjects" description="Step 3" >
 
         <echo>GitHub files have been created in: ${build.upload.dir}</echo>
-        <echo>Next: Commit 'Prepared &lt;version&gt;.', then run target 'uploadGitHubFiles'.</echo>
+        <echo>Next: Commit 'Prepare v&lt;version&gt;.', then run target 'uploadGitHubFiles'.</echo>
 
     </target>
 
@@ -1261,7 +1261,7 @@
             </then>
         </if>
 
-        <echo>Next: Commit 'Released &lt;version&gt;.', optionally run target 'uploadLocalUpdateSite', then create the version tag.</echo>
+        <echo>Next: Commit 'Release v&lt;version&gt;.', optionally run target 'uploadLocalUpdateSite', then push the plug-in repo and the pages repo; the workflows tag the release.</echo>
 
     </target>
 
